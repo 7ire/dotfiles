@@ -86,10 +86,14 @@ plugins=(
     git
     history-substring-search
     colored-man-pages
+    tmux
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-z
 )
+
+# TMUX autostart
+ZSH_TMUX_AUTOSTART=true
 
 source $ZSH/oh-my-zsh.sh
 
@@ -137,7 +141,6 @@ alias .5='cd ../../../../..'
 
 # Always mkdir a path (this doesn't inhibit functionality to make a single dir)
 alias mkdir='mkdir -p'
-
 
 # Fuzzy finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
