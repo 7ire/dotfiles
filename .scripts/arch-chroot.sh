@@ -195,6 +195,9 @@ ssh_key_config() {
 # 10. [y/n] Windows dualboot
 # 11. SSH key (github)
 
+# Change the running location in the home directory
+cd /home/atirelli/
+
 # 1. Pacman configuration
 print_info "Configuring package manager ..."
 pacman_config
