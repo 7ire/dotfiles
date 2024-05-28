@@ -136,16 +136,18 @@ gnome_theming() {
   # Install the following packages:
   #
   # - morewaita
+  # - flat remix
   # - adw-gtk3
   # - bibata cursor
   # - thunderbird libwaita theme
-  paru -S --noconfirm morewaita adw-gtk3 bibata-cursor-theme-bin
+  paru -S --noconfirm morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin
   # Also theme flatpak
   flatpak install -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
   git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme
 
   # Enable all the themes
-  gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
+  # gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
+  gsettings set org.gnome.desktop.interface icon-theme "Flat-Remix-Blue-Light"
   gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' && gsettings set org.gnome.desktop.interface color-scheme 'default'
 
   print_info "Thunderbird is not installed or neither execture for atleast 1 time, I cloned the repo but install it manually."
