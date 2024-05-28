@@ -69,7 +69,7 @@ gnome_debloat() {
   )
 
   print_warning "The following packages will be removed:"
-  for package in "${packages[@]}"; then
+  for package in "${packages[@]}"; do
     print_warning "- $package"
   done
 
