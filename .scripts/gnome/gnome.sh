@@ -112,7 +112,7 @@ gnome_app() {
   
   print_info "Installing flatpaks ..."
   # Install flatpaks
-  flatpak install flathub -y "${flatpaks[@]}"
+  sudo flatpak install flathub -y "${flatpaks[@]}"
   print_success "Flatpaks installed!"
   
   # [TODO] - Fedora support
