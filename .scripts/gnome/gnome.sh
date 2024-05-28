@@ -144,7 +144,7 @@ gnome_theming() {
   # - thunderbird libwaita theme
   paru -S --noconfirm morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin
   # Also theme flatpak
-  flatpak install -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
+  sudo flatpak install -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
   git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme
 
   # Enable all the themes
