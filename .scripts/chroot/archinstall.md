@@ -20,6 +20,14 @@
 	10. (optional) Windows dualboot
 ## Arch Linux Installation
 > Just follow the options that `archinstall` show to us.
+### iwctl
+> *[iwd](https://iwd.wiki.kernel.org/) (iNet wireless daemon) is a wireless daemon for Linux written by Intel. The core goal of the project is to optimize resource utilization by not depending on any external libraries and instead utilizing features provided by the Linux Kernel to the maximum extent possible.*
+
+[Arch Linux wiki - iwd](https://wiki.archlinux.org/title/Iwd)
+[Arch Linux man - iwctl](https://man.archlinux.org/man/iwctl.1)
+``` bash
+iwctl --passphrase=PASSPHRASE station DEVICE connect SSID
+```
 ## CHROOT
 ### Package manager configuration
 Configure the package manager cache clean using `paccache.timer` daemon provide in the `pacman-contrib` and improve the readability of the progress bar of it by adding **Color** and **ILoveCandy** tag in the configuration file.
