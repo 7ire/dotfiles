@@ -32,6 +32,12 @@ print_info() {
 # Useful function
 # -------
 
+# Configure Flatpak
+flatpak_setup() {
+  # Add the flatpak repo to current user
+  flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+}
+
 # Audio step
 gnome_audio() {
   # Change the audio mix step from 5 to 2
@@ -112,7 +118,9 @@ gnome_app() {
   
   print_info "Installing flatpaks ..."
   # Install flatpaks
-  sudo flatpak install flathub -y "${flatpaks[@]}"
+  flatpak install --user -y flathub "${flatpaks[@]}"
+  # Clean the installations
+  flatpak remove --unused
   print_success "Flatpaks installed!"
   
   # [TODO] - Fedora support
@@ -144,8 +152,10 @@ gnome_theming() {
   # - thunderbird libwaita theme
   paru -S --noconfirm morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin
   # Also theme flatpak
-  sudo flatpak install -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
+  flatpak install --user -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
   git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme
+  # Clean the installation
+  flatpak remove --unused
 
   # Enable all the themes
   # gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
@@ -163,12 +173,46 @@ gnome_theming() {
 gnome_ext() {
   # [TODO] - Fedora support
   # [TODO] - Debian support
+
+  # Install the required packages
   sudo pacman -S --noconfirm jq unzip wget curl
+
+  # Rounded window
+  sudo pacman -S --noconfirm nodejs npm gettext just
+  git clone https://github.com/flexagoon/rounded-window-corners
+  cd rounded-window-corners
+  just install
+  cd .. && rm -rf rounded-window-corners
+
+  # Unite
+  # URL of the zip file
+  url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
+  # Directory to extract the extension
+  extension_dir="$HOME/.local/share/gnome-shell/extensions"
+
+  # Create the directory if it doesn't exist
+  mkdir -p "$extension_dir"
+
+  # Download the zip file
+  curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "Download failed"; exit 1; }
+
+  # Extract the zip file
+  unzip -qo /tmp/unite-shell-v78.zip -d "$extension_dir" || { print_error "Extraction failed"; exit 1; }
+
+  # Clean up
+  rm /tmp/unite-shell-v78.zip
+
+  # Pop shell
+  sudo pacman -S --noconfirm typescript
+  git clone https://github.com/pop-os/shell.git
+  cd shell
+  make local-install || true
+  cd ..
+  rm -rf shell
 
   EXT_LIST=(
     blur-my-shell@aunetx                          # Blur
     just-perfection-desktop@just-perfection       # Perfection
-    gnome-ui-tune@itstime.tech                    # UI
     osd-volume-number@deminder                    # OSD Volume
     quick-settings-tweaks@qwreey                  # QS Tweak
     quick-settings-avatar@d-go                    # Avatar qs
@@ -214,74 +258,66 @@ gnome_ext() {
     fi
   done
 
-  # Rounded window
-  sudo pacman -S --noconfirm nodejs npm gettext just
-  git clone https://github.com/flexagoon/rounded-window-corners
-  cd rounded-window-corners
-  just install
-  cd .. && rm -rf rounded-window-corners
-
-  # Unite
-  # URL of the zip file
-  url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
-  # Directory to extract the extension
-  extension_dir="$HOME/.local/share/gnome-shell/extensions"
-
-  # Create the directory if it doesn't exist
-  mkdir -p "$extension_dir"
-
-  # Download the zip file
-  curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "Download failed"; exit 1; }
-
-  # Extract the zip file
-  unzip -qo /tmp/unite-shell-v78.zip -d "$extension_dir" || { print_error "Extraction failed"; exit 1; }
-
-  # Clean up
-  rm /tmp/unite-shell-v78.zip
-
-  # Pop shell
-  sudo pacman -S --noconfirm typescript
-  git clone https://github.com/pop-os/shell.git
-  cd shell
-  make local-install
-  cd ..
-  rm -rf shell
+  print_warning "Gnome 4x UI is bugged - Install it manually!"
 }
 
 
 # Main
 # -------
-# 1. Audio step
-# 2. Debloat
-# 3. Default application
-# 4. Personalizzation
-# 5. Extensions
+# 1. Flatpak configure
+# 2. Audio step
+# 3. Debloat
+# 4. Default application
+# 5. Personalizzation
+# 6. Extensions
 
 # Move to the home directory
-cd ~
+cd $HOME
 
-# 1. Audio step
-print_info "Changing audio step from 5 => 2 ..."
-gnome_audio
-print_success "Audio step changed successfully!"
+# 1. Flatpak configure
+read -p "Do you want to configure Flatpak? (y/n): " flatconfig_choice
+if [[ "$flatconfig_choice" == "y" || "$flatconfig_choice" == "Y" ]]; then
+  print_info "Configuring the Flathub repo for current user ..."
+  flatpak_setup
+  print_success "Flathub configured correctly!"
+fi
 
-# 2. Debloating
-print_info "Debloating the system ..."
-gnome_debloat
-print_success "System debloated!"
+# 2. Audio step
+read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
+if [[ "$audio_choice" == "y" || "$audio_choice" == "Y" ]]; then
+  print_info "Changing audio step from 5 => 2 ..."
+  gnome_audio
+  print_success "Audio step changed successfully!"
+fi
 
-# 3. Default application
-print_info "Installing default application ..."
-gnome_app
-print_success "Default application installed!"
+# 3. Debloating
+read -p "Do you want to debloat the system? (y/n): " debloat_choice
+if [[ "$debloat_choice" == "y" || "$debloat_choice" == "Y" ]]; then
+  print_info "Debloating the system ..."
+  gnome_debloat
+  print_success "System debloated!"
+fi
 
-# 4. Personalization
-print_info "Theming the system ..."
-gnome_theming
-print_success "System themed!"
+# 4. Default application
+read -p "Do you want to install the default applications? (y/n): " app_choice
+if [[ "$app_choice" == "y" || "$app_choice" == "Y" ]]; then
+  print_info "Installing default application ..."
+  gnome_app
+  print_success "Default application installed!"
+fi
 
-# 5. Extension
-print_info "Installing extensions ..."
-gnome_ext
-print_success "Extensions installed!"
+# 5. Personalization
+read -p "Do you want theme the system (GTK4/3 Libwaita friendly)? (y/n): " theme_choice
+if [[ "$theme_choice" == "y" || "$theme_choice" == "Y" ]]; then
+  print_info "Theming the system ..."
+  gnome_theming
+  print_success "System themed!"
+fi
 
+# 6. Extension
+read -p "Do you want to install the gnome extensions? (y/n): " ext_choice
+if [[ "$ext_choice" == "y" || "$ext_choice" == "Y" ]]; then
+  print_info "Installing extensions ..."
+  gnome_ext
+  print_success "Extensions installed!"
+fi
