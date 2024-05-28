@@ -28,13 +28,13 @@ print_info() {
 }
 
 
-# Usefull function
+# Useful function
 # -------
 
 # Package manager configuration
 pacman_config() {
   # Path of the configuration file
-  pacman_conf="/etc/pacman.conf"
+  local pacman_conf="/etc/pacman.conf"
   # Remove the comment for Color
   sudo sed -i 's/^#Color/Color/' "$pacman_conf"
   # Add the line ILoveCandy after the line Color
@@ -95,7 +95,7 @@ chaotic_aur_config() {
   sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
   
   # String to add the mirrorlist entry in the conf file
-  chaotic_repo=$(cat <<EOF
+  local chaotic_repo=$(cat <<EOF
 
 [chaotic-aur]
 Include = /etc/pacman.d/chaotic-mirrorlist
@@ -196,12 +196,15 @@ ssh_key_config() {
 # 11. SSH key (github)
 
 # Change the running location in the home directory
-cd /home/atirelli/
+cd "$HOME" || exit 1
 
 # 1. Pacman configuration
-print_info "Configuring package manager ..."
-pacman_config
-print_success "Package manager configured!"
+read -p "Do you want to configure pacman? (y/n): " pacman_choice
+if [[ "$pacman_choice" == "y" || "$pacman_choice" == "Y" ]]; then
+  print_info "Configuring package manager ..."
+  pacman_config
+  print_success "Package manager configured!"
+fi
 
 # 2. Bluetooth
 read -p "Do you want to configure Bluetooth? (y/n): " bluetooth_choice
@@ -212,29 +215,44 @@ if [[ "$bluetooth_choice" == "y" || "$bluetooth_choice" == "Y" ]]; then
 fi
 
 # 3. SSH
-print_info "Enabling SSH ..."
-ssh_config
-print_success "SSH enabled!"
+read -p "Do you want to configure SSH? (y/n): " ssh_choice
+if [[ "$ssh_choice" == "y" || "$ssh_choice" == "Y" ]]; then
+  print_info "Enabling SSH ..."
+  ssh_config
+  print_success "SSH enabled!"
+fi
 
 # 4. AUR Helper
-print_info "Install AUR helper ..."
-aur_helper_config
-print_success "AUR helper installed!"
+read -p "Do you want to install an AUR helper? (y/n): " aur_choice
+if [[ "$aur_choice" == "y" || "$aur_choice" == "Y" ]]; then
+  print_info "Install AUR helper ..."
+  aur_helper_config
+  print_success "AUR helper installed!"
+fi
 
 # 5. Flatpak
-print_info "Installing flatpak ..."
-flatpak_config
-print_success "Flatpak installed!"
+read -p "Do you want to install Flatpak? (y/n): " flatpak_choice
+if [[ "$flatpak_choice" == "y" || "$flatpak_choice" == "Y" ]]; then
+  print_info "Installing flatpak ..."
+  flatpak_config
+  print_success "Flatpak installed!"
+fi
 
 # 6. Chaotic AUR
-print_info "Configuring Chaotic AUR repository ..."
-chaotic_aur_config
-print_success "Chaotic AUR repostiory configured!"
+read -p "Do you want to configure the Chaotic AUR repository? (y/n): " chaotic_choice
+if [[ "$chaotic_choice" == "y" || "$chaotic_choice" == "Y" ]]; then
+  print_info "Configuring Chaotic AUR repository ..."
+  chaotic_aur_config
+  print_success "Chaotic AUR repostiory configured!"
+fi
 
 # 7. Update mirrorlist
-print_info "Updating mirrorlist ..."
-mirrorlist_config
-print_success "Mirrorlist updated!"
+read -p "Do you want to update the mirrorlist? (y/n): " mirrorlist_choice
+if [[ "$mirrorlist_choice" == "y" || "$mirrorlist_choice" == "Y" ]]; then
+  print_info "Updating mirrorlist ..."
+  mirrorlist_config
+  print_success "Mirrorlist updated!"
+fi
 
 # 8. Power plan
 read -p "Do you want to configure Power Plan? (y/n): " powerplan_choice
@@ -261,8 +279,14 @@ if [[ "$dualboot_choice" == "y" || "$dualboot_choice" == "Y" ]]; then
 fi
 
 # 11. SSH key (GitHub)
-print_info "Generating and adding a new SSH Key for GitHub ..."
-ssh_key_config
-print_success "SSH Key for GitHub generated and added to SSH-Agent!"
+read -p "Do you want to generate a new SSH key? (y/n): " sshkey_choice
+if [[ "$sshkey_choice" == "y" || "$sshkey_choice" == "Y" ]]; then
+  print_info "Generating and adding a new SSH Key for GitHub ..."
+  ssh_key_config
+  print_success "SSH Key for GitHub generated and added to SSH-Agent!"
+fi
+
+# [TODO] - Import existing sshkey from a hard secure device
 
 print_success "All selected configurations are completed!"
+
