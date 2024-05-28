@@ -159,10 +159,11 @@ gnome_theming() {
 }
 
 # Extensions
+# Extensions
 gnome_ext() {
   # [TODO] - Fedora support
   # [TODO] - Debian support
-  sudo pacman -S --noconfirm jq
+  sudo pacman -S --noconfirm jq unzip wget curl
 
   EXT_LIST=(
     blur-my-shell@aunetx                          # Blur
@@ -195,13 +196,22 @@ gnome_ext() {
 
   GN_CMD_OUTPUT=$(gnome-shell --version)
   GN_SHELL=${GN_CMD_OUTPUT:12:2}
-  for i in "${EXT_LIST[@]}"
-  do
-    VERSION_LIST_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${i}" | jq '.extensions[] | select(.uuid=="'"${i}"'")') 
-    VERSION_TAG="$(echo "$VERSION_LIST_TAG" | jq '.shell_version_map |."'"${GN_SHELL}"'" | ."pk"')"
-    wget -qO "${i}".zip "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
-    gnome-extensions install --force "${i}".zip
-    rm ${i}.zip
+
+  for i in "${EXT_LIST[@]}"; do
+    VERSION_LIST_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${i}" | jq -c '.extensions[] | select(.uuid=="'"${i}"'")') 
+    VERSION_TAG=$(echo "$VERSION_LIST_TAG" | jq -r '.shell_version_map | ."'"${GN_SHELL}"'" | ."pk"')
+    
+    if [ -n "$VERSION_TAG" ]; then
+      wget -qO "${i}.zip" "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
+      if [ $? -eq 0 ]; then
+        gnome-extensions install --force "${i}.zip"
+        rm "${i}.zip"
+      else
+        print_error "Failed to download extension: ${i}"
+      fi
+    else
+      print_warning "No valid version found for extension: ${i}"
+    fi
   done
 
   # Rounded window
@@ -210,7 +220,7 @@ gnome_ext() {
   cd rounded-window-corners
   just install
   cd .. && rm -rf rounded-window-corners
-  
+
   # Unite
   # URL of the zip file
   url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
