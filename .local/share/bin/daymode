@@ -1,0 +1,5 @@
+#!/bin/bash
+
+gnome-extensions disable custom-accent-colors@demiskp
+gnome-extensions disable user-theme@gnome-shell-extensions.gcampax.github.com
+gsettings set org.gnome.desktop.interface icon-theme "Flat-Remix-Blue-Light"
