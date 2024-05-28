@@ -93,6 +93,7 @@ gnome_app() {
     com.raggesilver.BlackBox           # Terminal
     com.mattjakeman.ExtensionManager   # Extension manager
     com.github.tchx84.Flatseal         # Flatpaks manager
+    com.brave.Browser                  # Browser
     org.mozilla.Thunderbird            # Email client
     md.obsidian.Obsidian               # Notes
     org.libreoffice.LibreOffice        # Document office
@@ -119,7 +120,8 @@ gnome_app() {
 
   # Packages list
   packages=(
-    brave-bin
+    noto-fonts-emoji
+    nerd-fonts
   )
   
   print_info "Installing packages"
@@ -163,31 +165,31 @@ gnome_ext() {
   sudo pacman -S --noconfirm jq
 
   EXT_LIST=(
-    blur-my-shell@aunetx              # Blur
+    blur-my-shell@aunetx                          # Blur
     just-perfection-desktop@just-perfection       # Perfection
-    gnome-ui-tune@itstime.tech              # UI
-    osd-volume-number@deminder              # OSD Volume
-    quick-settings-tweaks@qwreey          # QS Tweak
-    quick-settings-avatar@d-go              # Avatar qs
-    nightthemeswitcher@romainvigier.fr       # Night theme
-    custom-accent-colors@demiskp          # Accent color
-    smile-extension@mijorus.it              # Emoji
-    app-hider@lynith.dev              # App hider
+    gnome-ui-tune@itstime.tech                    # UI
+    osd-volume-number@deminder                    # OSD Volume
+    quick-settings-tweaks@qwreey                  # QS Tweak
+    quick-settings-avatar@d-go                    # Avatar qs
+    nightthemeswitcher@romainvigier.fr            # Night theme
+    custom-accent-colors@demiskp                  # Accent color
+    smile-extension@mijorus.it                    # Emoji
+    app-hider@lynith.dev                          # App hider
     workspace-switcher-manager@G-dH.github.com    # Workspace switcher
     compact-quick-settings@gnome-shell-extensions.mariospr.org # Compact qs
     Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
     Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery
     caffeine@patapon.info                         # Caffeine
-    logomenu@aryan_k                  # (left) Logo
-    window-title-is-back@fthx              # (left) Window title
-    mediacontrols@cliffniff.github.com          # (center) Media player
+    logomenu@aryan_k                              # (left) Logo
+    window-title-is-back@fthx                     # (left) Window title
+    mediacontrols@cliffniff.github.com            # (center) Media player
     clipboard-indicator@tudmotu.com               # (right) Clipboard
-    just-another-search-bar@xelad0m          # (right) Search
-    IP-Finder@linxgem33.com              # (right) IP
-    arch-update@RaphaelRochet              # (right) Updates
-    extension-list@tu.berry              # (right) Extension list
+    just-another-search-bar@xelad0m               # (right) Search
+    IP-Finder@linxgem33.com                       # (right) IP
+    arch-update@RaphaelRochet                     # (right) Updates
+    extension-list@tu.berry                       # (right) Extension list
     openweather-extension@penguin-teal.github.io  # (right) Weather
-    tophat@fflewddur.github.io              # (right) Resource usage
+    tophat@fflewddur.github.io                    # (right) Resource usage
     appindicatorsupport@rgcjonas.gmail.com        # (right) Sys tray
   )
 
