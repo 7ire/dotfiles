@@ -53,6 +53,7 @@ sudo systemctl enable bluetooth
 ```
 ### Enable SSH daemon
 Enable the **SSH** daemon to open the SSH service at the start of the system at connect it remotely.
+
 [Arch Linux wiki - Secure SHell](https://wiki.archlinux.org/title/Secure_Shell)
 ``` bash
 # Enable sshd daemon
@@ -60,6 +61,7 @@ sudo systemctl enable sshd
 ```
 ### AUR Helper
 Install an AUR helper binary to let the system be able to download the package in the *AUR repository*. The AUR helper of choice is **PARU**.
+
 [GitHub repository - paru](https://github.com/Morganamilo/paru)
 ``` bash
 # Download the AUR helper bin
@@ -73,6 +75,7 @@ cd .. && rm -rf paru
 ```
 ### Flatpak configuration
 **Flatpak** in a linux software provide that ship cross platform linux application running in sandbox environment.
+
 [Flatpak - setup](https://flatpak.org/setup/Arch)
 ``` bash
 # Install the package
@@ -80,6 +83,7 @@ sudo pacman -S --noconfirm flatpak
 ```
 ### Chaotic AUR repostiory server
 **Chaotic AUR**, automated building repo for [AUR](https://aur.archlinux.org/) packages.
+
 [Chaotic AUR - How to use it](https://aur.chaotic.cx/)
 ``` bash
 # Import the key of the repo and the sign
@@ -128,6 +132,7 @@ sudo systemctl enable power-profiles-daemon.service
 ```
 ### NVIDIA + GDM
 ...
+
 [Arch Linux wiki - NVIDIA](https://wiki.archlinux.org/title/NVIDIA)
 [NVIDIA and Wayland setup](https://linuxiac.com/nvidia-with-wayland-on-arch-setup-guide/)
 [Arch Linux wiki - GDM troubleshooting](https://wiki.archlinux.org/title/GDM#Troubleshooting)
@@ -151,6 +156,7 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 ### Windows dualboot
 ...
+
 [r/archlinux - My easy method for setting up Secure Boot with GRUB](https://www.reddit.com/r/archlinux/comments/10pq74e/my_easy_method_for_setting_up_secure_boot_with/)
 ``` bash
 # Install required packages
@@ -166,4 +172,22 @@ sudo sbctl status
 sudo sbctl create-keys && sudo sbctl enroll-keys -m
 # Sign the necessary efi files and kernel
 sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi && sudo sbctl sign -s /boot/grub/x86_64-efi/core.efi && sudo sbctl sign -s /boot/grub/x86_64-efi/grub.efi && sudo sbctl sign -s /boot/vmlinuz-linux-zen
+```
+### SSH key
+> *You can access and write data in repositories on GitHub.com using SSH (Secure Shell Protocol). When you connect via SSH, you authenticate using a private key file on your local machine.*
+
+[GitHub - Generating SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+[GitHub - Adding SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+``` bash
+# Ensure the .ssh directory exists
+mkdir -p ~/.ssh/keychain/github && chmod 700 ~/.ssh/keychain/github
+
+# Generate the key for my identity "ta.tirelliandrea@gmail.com"
+ssh-keygen -t ed25519 -C "ta.tirelliandrea@gmail.com" -f ~/.ssh/keychain/github/github
+
+# Output the public key
+cat ~/.ssh/keychain/github/github.pub
+# Add to ssh-agent
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/keychain/github/github
 ```
