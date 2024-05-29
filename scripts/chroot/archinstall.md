@@ -12,7 +12,7 @@
 	2. (optional) Bluetooth configuration
 	3. Enable the SSH daemon
 	4. Install AUR helper - PARU
-	5. Configurate `flatpak`
+	5. Configure `flatpak`
 	6. Setup Chaotic AUR repository server
 	7. Update mirrorlist
 	8. (optional) Power plan
@@ -30,7 +30,7 @@ iwctl --passphrase=PASSPHRASE station DEVICE connect SSID
 ```
 ## CHROOT
 ### Package manager configuration
-Configure the package manager cache clean using `paccache.timer` daemon provide in the `pacman-contrib` and improve the readability of the progress bar of it by adding **Color** and **ILoveCandy** tag in the configuration file.
+Configure the package manager cache clean using `paccache.timer` daemon provided in the `pacman-contrib` and improve the readability of the progress bar by adding **Color** and **ILoveCandy** tags in the configuration file.
 ``` bash
 # Path of the configuration file
 pacman_conf="/etc/pacman.conf"
@@ -45,22 +45,22 @@ fi
 sudo pacman -Syy
 # Install pacman-contrib package
 sudo pacman -S --noconfirm pacman-contrib
-# Enable cronjob that time 7 days to clean the cache
+# Enable cronjob that runs every 7 days to clean the cache
 sudo systemctl enable paccache.timer
 ```
 ### Bluetooth configuration
-> Do this step only if the system support the Bluetooth module.
+> Do this step only if the system supports the Bluetooth module.
 
 [Arch Linux wiki - Bluetooth](https://wiki.archlinux.org/title/Bluetooth)
-Install `bluez` and `bluez-utils` package to support the *bluetooth* module.
+Install `bluez` and `bluez-utils` packages to support the Bluetooth module.
 ``` bash
 # Install the required packages => { bluez, bluez-utils}
 sudo pacman -S --noconfirm bluez bluez-utils
-# Enable bluetooth daemon
+# Enable Bluetooth daemon
 sudo systemctl enable bluetooth
 ```
 ### Enable SSH daemon
-Enable the **SSH** daemon to open the SSH service at the start of the system at connect it remotely.
+Enable the **SSH** daemon to open the SSH service at the start of the system to connect it remotely.
 
 [Arch Linux wiki - Secure SHell](https://wiki.archlinux.org/title/Secure_Shell)
 ``` bash
@@ -68,7 +68,7 @@ Enable the **SSH** daemon to open the SSH service at the start of the system at 
 sudo systemctl enable sshd
 ```
 ### AUR Helper
-Install an AUR helper binary to let the system be able to download the package in the *AUR repository*. The AUR helper of choice is **PARU**.
+Install an AUR helper binary to allow the system to download packages from the AUR repository. The AUR helper of choice is **PARU**.
 
 [GitHub repository - paru](https://github.com/Morganamilo/paru)
 ``` bash
@@ -82,14 +82,14 @@ sudo pacman -Syy && paru -Syu
 cd .. && rm -rf paru
 ```
 ### Flatpak configuration
-**Flatpak** in a linux software provide that ship cross platform linux application running in sandbox environment.
+**Flatpak** is a software utility that provides a cross-platform application sandbox environment.
 
 [Flatpak - setup](https://flatpak.org/setup/Arch)
 ``` bash
 # Install the package
 sudo pacman -S --noconfirm flatpak
 ```
-### Chaotic AUR repostiory server
+### Chaotic AUR repository server
 **Chaotic AUR**, automated building repo for [AUR](https://aur.archlinux.org/) packages.
 
 [Chaotic AUR - How to use it](https://aur.chaotic.cx/)
@@ -109,16 +109,16 @@ chaotic_repo=$(cat <<EOF
 Include = /etc/pacman.d/chaotic-mirrorlist
 EOF
   )
-# Add the entry only if not exist
+# Add the entry only if it does not exist
 if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
   echo "$chaotic_repo" | sudo tee -a /etc/pacman.conf > /dev/null
 fi
 
-# Update the repository of package manager
+# Update the repository of the package manager
 sudo pacman -Syy
 ```
 ### Mirrorlist updating
-> *Maintaining up-to-date mirror list in your Arch Linux gives some major benefits. If you use updated mirrorlist, you could easily avoid slow download rate, and timed-out error messages while installing, and updating packages.*
+> *Maintaining an up-to-date mirror list in your Arch Linux gives some major benefits. If you use an updated mirrorlist, you could easily avoid slow download rates and timed-out error messages while installing and updating packages.*
 
 [Retrieve Latest Mirror List Using Reflector In Arch Linux](https://ostechnix.com/retrieve-latest-mirror-list-using-reflector-arch-linux/)
 ``` bash
@@ -158,7 +158,7 @@ sudo sed -i 's/^#WaylandEnable=false/WaylandEnable=true/' /etc/gdm/custom.conf
 # Fix NVIDIA suspension
 sudo bash -c 'echo "options nvidia NVreg_PreserveVideoMemoryAllocations=1" > /etc/modprobe.d/nvidia-power-mgmt.conf'
 
-# Regenerate all configuration
+# Regenerate all configurations
 sudo mkinitcpio -P
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
@@ -178,8 +178,13 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 sudo sbctl status
 # Create new keypair and enroll it
 sudo sbctl create-keys && sudo sbctl enroll-keys -m
-# Sign the necessary efi files and kernel
-sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi && sudo sbctl sign -s /boot/grub/x86_64-efi/core.efi && sudo sbctl sign -s /boot/grub/x86_64-efi/grub.efi && sudo sbctl sign -s /boot/vmlinuz-linux-zen
+
+
+# Sign the necessary EFI files and kernel
+sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi
+sudo sbctl sign -s /boot/grub/x86_64-efi/core.efi
+sudo sbctl sign -s /boot/grub/x86_64-efi/grub.efi
+sudo sbctl sign -s /boot/vmlinuz-linux-zen
 ```
 ### SSH key
 > *You can access and write data in repositories on GitHub.com using SSH (Secure Shell Protocol). When you connect via SSH, you authenticate using a private key file on your local machine.*
@@ -188,14 +193,14 @@ sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi && sudo sbctl sign -s /boot/grub/x
 [GitHub - Adding SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 ``` bash
 # Ensure the .ssh directory exists
-mkdir -p ~/.ssh/keychain/github && chmod 700 ~/.ssh/keychain/github
+mkdir -p ~/.ssh/keyring/github && chmod 700 ~/.ssh/keyring/github
 
-# Generate the key for my identity "ta.tirelliandrea@gmail.com"
-ssh-keygen -t ed25519 -C "ta.tirelliandrea@gmail.com" -f ~/.ssh/keychain/github/github
+# Generate the key for the identity "ta.tirelliandrea@gmail.com"
+ssh-keygen -t ed25519 -C "ta.tirelliandrea@gmail.com" -f ~/.ssh/keyring/github/id_ed25519
 
 # Output the public key
-cat ~/.ssh/keychain/github/github.pub
+cat ~/.ssh/keyring/github/id_ed25519.pub
 # Add to ssh-agent
 eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/keychain/github/github
+ssh-add ~/.ssh/keyring/github/id_ed25519
 ```
