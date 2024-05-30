@@ -44,16 +44,16 @@ while true; do
     case $choice in
         1)
             echo "Running the chroot script..."
-            if [ -f "$SCRIPT_DIR/../chroot/chroot.sh" ]; then
-                bash "$SCRIPT_DIR/../chroot/chroot.sh"
+            if [ -f "$SCRIPT_DIR/chroot/chroot.sh" ]; then
+                bash "$SCRIPT_DIR/chroot/chroot.sh"
             else
                 echo "The chroot script was not found."
             fi
             ;;
         2)
             echo "Running the GNOME setup script..."
-            if [ -f "$SCRIPT_DIR/../gnome/gnome.sh" ]; then
-                bash "$SCRIPT_DIR/../gnome/gnome.sh"
+            if [ -f "$SCRIPT_DIR/gnome/gnome.sh" ]; then
+                bash "$SCRIPT_DIR/gnome/gnome.sh"
             else
                 echo "The GNOME setup script was not found."
             fi
