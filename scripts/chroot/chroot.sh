@@ -49,7 +49,6 @@ installer() {
   paru -Syy &> /dev/null
 
   for package in "${packages[@]}"; do
-    # print_info "[*] Installing $package ..."
     # Install the package without confirmation
     if paru -S --noconfirm "$package" &> /dev/null; then
       print_success "[+] $package installed successfully!"
@@ -65,7 +64,6 @@ installer() {
 
 # AUR Helper Installation
 install_aur() {
-  # print_info "[*] Installing an AUR helper ..."
   if [ -d "paru" ]; then
     # Remove the 'paru' directory if it exists
     rm -rf paru
@@ -85,7 +83,6 @@ install_aur() {
 
 # Bluetooth Configuration
 conf_bluetooth() {
-  # print_info "[*] Configuring Bluetooth ..."
   # Install bluez and bluez-utils packages, and enable Bluetooth service
   if ! installer bluez bluez-utils || ! sudo systemctl enable bluetooth &> /dev/null; then
     print_error "[-] Failed to configure Bluetooth!"
@@ -96,7 +93,6 @@ conf_bluetooth() {
 
 # Chaotic AUR Configuration
 conf_chaoticaur() {
-  # print_info "[*] Configuring Chaotic AUR repository ..."
   # Add the Chaotic AUR key and install the repository
   if ! sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com &> /dev/null ||
      ! sudo pacman-key --lsign-key 3056513887B78AEB &> /dev/null ||
@@ -125,7 +121,6 @@ EOF
 
 # Mirrorlist Configuration
 gen_mirrorilist() {
-  # print_info "[*] Updating mirrorlist ..."
   # Install necessary packages and update the mirrorlist using reflector
   if ! installer reflector rsync curl || ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ||
      ! sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
@@ -137,7 +132,6 @@ gen_mirrorilist() {
 
 # Pacman Configuration
 conf_pacman() {
-  # print_info "[*] Configuring pacman ..."
   local pacman_conf="/etc/pacman.conf"
   # Enable color in pacman output
   if ! sudo sed -i 's/^#Color/Color/' "$pacman_conf" ||
@@ -153,7 +147,6 @@ conf_pacman() {
 
 # SSH Configuration
 activate_ssh() {
-  # print_info "[*] Enabling SSH ..."
   # Enable SSH service
   if ! sudo systemctl enable sshd &> /dev/null; then
     print_error "[-] Failed to enable SSH!"
@@ -164,7 +157,6 @@ activate_ssh() {
 
 # Power Plan Configuration
 conf_powerprofiles() {
-  # print_info "[*] Configuring power plan ..."
   # Install power-profiles-daemon package and enable the service
   if ! installer power-profiles-daemon || ! sudo systemctl enable power-profiles-daemon.service &> /dev/null; then
     print_error "[-] Failed to configure power plan!"
@@ -175,7 +167,6 @@ conf_powerprofiles() {
 
 # Nvidia, NVENC and GDM Configuration
 conf_nvidia() {
-  # print_info "[*] Configuring NVIDIA, NVENC and GDM ..."
   # Add necessary modules to mkinitcpio.conf and update GRUB configuration
   if ! sudo sed -i 's/^MODULES=(.*)$/& nvidia nvidia_modeset nvidia_uvm nvidia_drm/' /etc/mkinitcpio.conf ||
      ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
@@ -198,7 +189,6 @@ conf_nvidia() {
 
 # Windows Dualboot Configuration
 windows_tpm_config() {
-  # print_info "[*] Configuring Windows Dualboot with TPM ..."
   # Install necessary packages and configure GRUB for TPM
   if ! installer sbctl os-prober ntfs-3g ||
      ! sudo grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock &> /dev/null ||
@@ -218,7 +208,7 @@ windows_tpm_config() {
 ssh_key_config() {
   local email="$1"
   local key_name="$2"
-  # print_info "[*] Generating SSH key for $email ..."
+  print_info "[*] Generating SSH key for $email ..."
   local key_dir="$HOME/.ssh/keyring/$key_name"
   mkdir -p "$key_dir"
 
@@ -229,6 +219,30 @@ ssh_key_config() {
     print_error "[-] Failed to generate SSH key!"
     return 1
   fi
+}
+
+# SSH Key import
+ssh_key_import() {
+  local import_path="$1"
+  print_info "[*] Importing SSH keys from $import_path ..."
+  local target_dir="$HOME/.ssh/keyring"
+  mkdir -p "$target_dir"
+  if cp -r "$import_path"/* "$target_dir" && chmod -R 700 "$target_dir"; then
+    print_success "[+] SSH keys imported successfully!"
+  else
+    print_error "[-] Failed to import SSH keys!"
+    return 1
+  fi
+}
+
+# VPN import
+vpn_import() {
+  local vpn_dir="$HOME/.vpn"
+  if ! git clone git@github.com:andreatirelli3/vpn.git "$vpn_dir" &> /dev/null; then
+    print_error "[-] Failed to import VPN configuration!"
+    return 1
+  fi
+  print_success "[+] VPN configuration imported!"
 }
 
 #============================
@@ -310,6 +324,19 @@ if [[ "$sshkey_choice" == "y" || "$sshkey_choice" == "Y" ]]; then
   read -p "Enter the email for the SSH key: " ssh_email
   read -p "Enter the name for the SSH key: " ssh_key_name
   ssh_key_config "$ssh_email" "$ssh_key_name" || print_error "[-] Failed to generate SSH key. Continuing..."
+fi
+
+# Prompt user to import SSH keys
+read -p "Do you want to import SSH keys? (y/n): " sshkey_import_choice
+if [[ "$sshkey_import_choice" == "y" || "$sshkey_import_choice" == "Y" ]]; then
+  read -p "Enter the path to import SSH keys from: " ssh_import_path
+  ssh_key_import "$ssh_import_path" || print_error "[-] Failed to import SSH keys. Continuing..."
+fi
+
+# Prompt user to import VPN configuration
+read -p "Do you want to import VPN configuration? (y/n): " vpn_import_choice
+if [[ "$vpn_import_choice" == "y" || "$vpn_import_choice" == "Y" ]]; then
+  vpn_import || print_error "[-] Failed to import VPN configuration. Continuing..."
 fi
 
 print_success "All selected configurations are completed!"
