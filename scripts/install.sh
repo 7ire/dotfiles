@@ -14,8 +14,8 @@ show_ascii_art() {
     echo -e "${c4}    /      \\"
     echo -e "${c4}   /   ,,   \\"
     echo -e "${c4}  /   |  |  -\\"
-    echo -e "${c4} /_-''    ''-_\\${reset}"
-    echo -e "@andreatirelli3 dotfiles${reset}"
+    echo -e "${c4} /_-''    ''-_\\"
+    echo -e "${reset}@andreatirelli3 dotfiles"
 }
 
 #============================
