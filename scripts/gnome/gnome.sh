@@ -6,23 +6,57 @@
 
 # Output debug - success
 print_success() {
-    local message="$1"
-    # Format message with green text.
-    echo -e "\e[32m$message\e[0m"
+  local message="$1"
+  # Format message with green text.
+  echo -e "\e[32m$message\e[0m"
 }
 
 # Output debug - error
 print_error() {
-    local message="$1"
-    # Format message with red text.
-    echo -e "\e[31m$message\e[0m"
+  local message="$1"
+  # Format message with red text.
+  echo -e "\e[31m$message\e[0m"
 }
 
 # Output debug - info
 print_info() {
-    local message="$1"
-    # Format message with cyan text.
-    echo -e "\e[36m$message\e[0m"
+  local message="$1"
+  # Format message with cyan text.
+  echo -e "\e[36m$message\e[0m"
+}
+
+#============================
+# UTILITY FUNCTIONS
+#============================
+
+# Package installation
+# It is an abstraction to not over duplicate the command 'paru -S --noconfirm'.
+installer() {
+  if [ "$#" -eq 0 ]; then
+    print_error "No packages specified to install!"
+    return 1  # Do nothing and exit the function
+  fi
+
+  # Check if 'paru' is installed
+  if ! command -v paru &> /dev/null; then
+    print_error "paru is not installed! Please install it first."
+    return 1
+  fi
+
+  local packages=("$@")
+
+  # Update the mirror server
+  paru -Syy &> /dev/null
+
+  for package in "${packages[@]}"; do
+    # print_info "[*] Installing $package ..."
+    # Install the package without confirmation
+    if paru -S --noconfirm "$package" &> /dev/null; then
+      print_success "[+] $package installed successfully!"
+    else
+      print_error "[-] $package failed to install."
+    fi
+  done
 }
 
 #============================
@@ -38,13 +72,11 @@ conf_audio() {
 
 # Debloat
 debloat_gnome() {
-  # Check if there are any packages passed as arguments.
   if [ "$#" -eq 0 ]; then
     print_error "No packages specified to uninstall!"
     return 1  # Do nothing and exit the function.
   fi
 
-  # Use the passed packages list or fallback to the predefined list.
   local packages=("$@")
 
   # Iterate over the packages and attempt to remove them.
@@ -59,118 +91,75 @@ debloat_gnome() {
 }
 
 # Default application
-gnome_app() {
-  # Flatpak list
-  flatpaks=(
-    com.raggesilver.BlackBox           # Terminal
-    com.mattjakeman.ExtensionManager   # Extension manager
-    com.github.tchx84.Flatseal         # Flatpaks manager
-    com.brave.Browser                  # Browser
-    org.mozilla.Thunderbird            # Email client
-    md.obsidian.Obsidian               # Notes
-    org.libreoffice.LibreOffice        # Document office
-    net.xmind.XMind                    # Mind maps
-    com.obsproject.Studio              # Video recorder
-    com.spotify.Client                 # Spotify
-    io.github.spacingbat3.webcord      # Discord
-    org.kde.kdenlive                   # Video editor
-    org.gnome.Loupe                    # Image visualizer
-    com.github.rafostar.Clapper        # Video player
-    org.telegram.desktop               # Telegram
-    org.signal.Signal                  # Signal
-    it.mijorus.smile                   # Emoji picker
-    org.gnome.Calculator               # Calculator
-  )
-  
-  print_info "Installing flatpaks ..."
-  # Install flatpaks
-  flatpak install --user -y flathub "${flatpaks[@]}"
-  # Clean the installations
-  flatpak remove --unused
-  print_success "Flatpaks installed!"
-  
-  # [TODO] - Fedora support
-  # [TODO] - Debian support
-
+default_app() {  
   # Packages list
   packages=(
-    noto-fonts-emoji
-    nerd-fonts
-
-    blackbox-terminal
-    extension-manager
-    brave-bin
-    obsidian
-    thunderbird
+    # Fonts and Emoji
+    noto-fonts-emoji  # Noto Emoji
+    nerd-fonts        # Nerd Fonts
+    # Base
+    blackbox-terminal  # Terminal
+    extension-manager  # GNOME Extension manager
+    brave-bin          # Browser - Brave
+    spotify            # Music - Spotify
+    # Office
+    obsidian           # Notes - Obsidian
+    thunderbird        # Mail client - Thunderbird
+    # Libreoffice + LaTeX support
     libreoffice-fresh
     libreoffice-extension-texmaths
     libreoffice-extension-writer2latex
-    xmind
-    obs-studio
+    # Other
+    xmind       # Mind maps - XMind
+    obs-studio  # Video recorder - OBS
+    kdenlive    # Video editor - KDEnlive
+    clapper     # Video player - Clapper
+    smile       # Emoji picker - Smile
+    # Social
+    webcord             # WebCord
+    telegram-desktop    # Telegram
+    # Signal
+    whatsapp-for-linux  # WhatsApp
   )
   
-  print_info "Installing packages"
-  # Install packages
-  paru -S --noconfirm "${packages[@]}"
-  print_success "Packages installed!"
+  installer "${packages[@]}"
 }
 
 # theming
 gnome_theming() {
-  # [TODO] - Fedora support
-  # [TODO] - Debian support
-
-  # Install the following packages:
-  #
-  # - morewaita
-  # - flat remix
-  # - adw-gtk3
-  # - bibata cursor
-  # - thunderbird libwaita theme
-  paru -S --noconfirm morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin
-  # Also theme flatpak
-  flatpak install --user -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
+  installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin
+  # flatpak install --user -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
+  # flatpak remove --unused
   git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme
-  # Clean the installation
-  flatpak remove --unused
-
+  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper
+  
   # Enable all the themes
-  # gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
-  gsettings set org.gnome.desktop.interface icon-theme "Flat-Remix-Blue-Light"
+  gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
+  # gsettings set org.gnome.desktop.interface icon-theme "Flat-Remix-Blue-Light"
   gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' && gsettings set org.gnome.desktop.interface color-scheme 'default'
 
   print_info "Thunderbird is not installed or neither execture for atleast 1 time, I cloned the repo but install it manually."
-
-  # Clone wallpaper repository
-  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper
+  print_success "[+] GTK4/3 Libwaita theme consistency done!"
 }
 
 # Extensions
 gnome_ext() {
-  # [TODO] - Fedora support
-  # [TODO] - Debian support
-
-  # Install the required packages
-  sudo pacman -S --noconfirm jq unzip wget curl
+  installer jq unzip wget curl
 
   # Rounded window
-  sudo pacman -S --noconfirm nodejs npm gettext just
+  installer nodejs npm gettext just
   git clone https://github.com/flexagoon/rounded-window-corners
   cd rounded-window-corners
   just install
   cd .. && rm -rf rounded-window-corners
 
   # Unite
-  # URL of the zip file
   url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
-  # Directory to extract the extension
   extension_dir="$HOME/.local/share/gnome-shell/extensions"
-
-  # Create the directory if it doesn't exist
   mkdir -p "$extension_dir"
 
   # Download the zip file
-  curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "Download failed"; exit 1; }
+  curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "[-] Download failed"; exit 1; }
 
   # Extract the zip file
   unzip -qo /tmp/unite-shell-v78.zip -d "$extension_dir" || { print_error "Extraction failed"; exit 1; }
@@ -233,8 +222,6 @@ gnome_ext() {
       print_warning "No valid version found for extension: ${i}"
     fi
   done
-
-  print_warning "Gnome 4x UI is bugged - Install it manually!"
 }
 
 #============================
@@ -272,8 +259,6 @@ default_packages=(
   gnome-text-editor
   gnome-remote-desktop
   gnome-console
-  loupe
-  gnome-calculator
   gnome-weather
   gnome-clocks
   flatpak
@@ -281,7 +266,12 @@ default_packages=(
 
 read -p "Do you want to remove useless packages? (y/n): " debloat_choice
 if [[ "$debloat_choice" == "y" || "$debloat_choice" == "Y" ]]; then
-  debloat_gnome || print_error "[-] Failed to remove useless packages!"
+  debloat_gnome "${default_packages[@]}" || print_error "[-] Failed to remove useless packages!"
+fi
+
+read -p "Do you want to install the default applications? (y/n): " app_choice
+if [[ "$app_choice" == "y" || "$app_choice" == "Y" ]]; then
+  default_app || print_error "[-] Failed to install default applications!"
 fi
 
 
