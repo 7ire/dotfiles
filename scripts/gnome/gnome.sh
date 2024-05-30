@@ -1,95 +1,61 @@
 #!/bin/bash
 
-set -e  # Interrompe lo script se un qualsiasi comando restituisce un codice di uscita diverso da zero
+#============================
+# DEBUG FUNCTIONS
+#============================
 
-# Debug function
-# -------
-
-# Print Functions
-print_message() {
-    local color="$1"
-    local marker="$2"
-    local message="$3"
-    echo -e "\e[1;${color}m[${marker}] \e[0m$message\e[0m"
-}
-## errors
-print_error() {
-    print_message 31 "ERROR" "$1"  # Red color for errors (31)
-}
-## warnings
-print_warning() {
-    print_message 33 "WARNING" "$1"  # Yellow color for warnings (33)
-}
-## success
+# Output debug - success
 print_success() {
-    print_message 32 "SUCCESS" "$1"  # Green color for successes (32)
+    local message="$1"
+    # Format message with green text.
+    echo -e "\e[32m$message\e[0m"
 }
-## general 
+
+# Output debug - error
+print_error() {
+    local message="$1"
+    # Format message with red text.
+    echo -e "\e[31m$message\e[0m"
+}
+
+# Output debug - info
 print_info() {
-    print_message 36 "INFO" "$1"  # Cyan color for general messages (36)
+    local message="$1"
+    # Format message with cyan text.
+    echo -e "\e[36m$message\e[0m"
 }
 
-# Useful function
-# -------
-
-# Configure Flatpak
-flatpak_setup() {
-  # Add the flatpak repo to current user
-  flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-}
+#============================
+# CONFIGURATION FUNCTIONS
+#============================
 
 # Audio step
-gnome_audio() {
+conf_audio() {
   # Change the audio mix step from 5 to 2
   gsettings set org.gnome.settings-daemon.plugins.media-keys volume-step 2
+  print_success "[+] Audio step changed from 5 to 2!"
 }
 
 # Debloat
-gnome_debloat() {
-  # List of packages to be removed
-  packages=(
-    totem
-    yelp
-    gnome-software
-    gnome-tour
-    gnome-music
-    epiphany
-    gnome-maps
-    gnome-contacts
-    gnome-logs
-    gnome-font-viewer
-    simple-scan
-    orca
-    gnome-system-monitor
-    gnome-connections
-    gnome-characters
-    snapshot
-    baobab
-    gnome-disk-utility
-    gnome-text-editor
-    gnome-remote-desktop
-    gnome-console
-    loupe
-    gnome-calculator
-    gnome-weather
-  )
-
-  print_warning "The following packages will be removed:"
-  for package in "${packages[@]}"; do
-    print_warning "- $package"
-  done
-
-  # [TODO] - Fedora support
-  # [TODO] - Debian support
-
-  # Remove the packages
-  sudo pacman -Rcns "${packages[@]}"
-
-  if [ $? -eq 0 ]; then
-    print_success "Packages removed successfully."
-  else
-    print_error "An error occurred while removing the packages."
+debloat_gnome() {
+  # Check if there are any packages passed as arguments.
+  if [ "$#" -eq 0 ]; then
+    print_error "No packages specified to uninstall!"
+    return 1  # Do nothing and exit the function.
   fi
+
+  # Use the passed packages list or fallback to the predefined list.
+  local packages=("$@")
+
+  # Iterate over the packages and attempt to remove them.
+  for package in "${packages[@]}"; do
+    print_info "[*] Removing $package ..."
+    if sudo pacman -Rcns --noconfirm "$package" &> /dev/null; then
+      print_success "[+] $package removed successfully!"
+    else
+      print_error "[-] $package failed to remove."
+    fi
+  done
 }
 
 # Default application
@@ -130,6 +96,17 @@ gnome_app() {
   packages=(
     noto-fonts-emoji
     nerd-fonts
+
+    blackbox-terminal
+    extension-manager
+    brave-bin
+    obsidian
+    thunderbird
+    libreoffice-fresh
+    libreoffice-extension-texmaths
+    libreoffice-extension-writer2latex
+    xmind
+    obs-studio
   )
   
   print_info "Installing packages"
@@ -168,7 +145,6 @@ gnome_theming() {
   git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper
 }
 
-# Extensions
 # Extensions
 gnome_ext() {
   # [TODO] - Fedora support
@@ -261,18 +237,65 @@ gnome_ext() {
   print_warning "Gnome 4x UI is bugged - Install it manually!"
 }
 
-
-# Main
-# -------
-# 1. Flatpak configure
-# 2. Audio step
-# 3. Debloat
-# 4. Default application
-# 5. Personalizzation
-# 6. Extensions
+#============================
+# MAIN BODY
+#============================
 
 # Move to the home directory
 cd $HOME
+
+read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
+if [[ "$aur_choice" == "y" || "$aur_choice" == "Y" ]]; then
+  conf_audio || print_error "[-] Failed to configure audio step!"
+fi
+
+# List of packages to be removed
+default_packages=(
+  totem
+  yelp
+  gnome-software
+  gnome-tour
+  gnome-music
+  epiphany
+  gnome-maps
+  gnome-contacts
+  gnome-logs
+  gnome-font-viewer
+  simple-scan
+  orca
+  gnome-system-monitor
+  gnome-connections
+  gnome-characters
+  snapshot
+  baobab
+  gnome-disk-utility
+  gnome-text-editor
+  gnome-remote-desktop
+  gnome-console
+  loupe
+  gnome-calculator
+  gnome-weather
+  gnome-clocks
+  flatpak
+)
+
+read -p "Do you want to remove useless packages? (y/n): " debloat_choice
+if [[ "$debloat_choice" == "y" || "$debloat_choice" == "Y" ]]; then
+  debloat_gnome || print_error "[-] Failed to remove useless packages!"
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 1. Flatpak configure
 read -p "Do you want to configure Flatpak? (y/n): " flatconfig_choice
