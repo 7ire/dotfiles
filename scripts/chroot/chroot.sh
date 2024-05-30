@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Check if sudo password is cached, if not ask for it
+sudo -v || exit 1
+
 #============================
 # DEBUG FUNCTIONS
 #============================
@@ -49,6 +52,9 @@ installer() {
     print_error "paru is not installed! Please install it first."
     return 1
   fi
+
+  # Check if sudo password is cached, if not ask for it
+  sudo -v || exit 1
 
   local packages=("$@")
 
@@ -215,22 +221,39 @@ windows_tpm_config() {
   print_success "[+] Windows Dualboot configured!"
 }
 
-# SSH Key Configuration
-ssh_key_config() {
+# SSH Key Generation
+ssh_key_gen() {
   local email="$1"
   local key_name="$2"
   print_info "[*] Generating SSH key for $email ..."
   local key_dir="$HOME/.ssh/keyring/$key_name"
   mkdir -p "$key_dir"
 
+  # Set permissions to 700 for keyring and SSH key directory
+  chmod 700 "$HOME/.ssh/keyring"
+  chmod 700 "$key_dir"
+
   # Generate SSH key using ed25519 algorithm
-  if ssh-keygen -t ed25519 -C "$email" -f "$key_dir/id_ed25519" -N ""; then
+  if ssh-keygen -t ed25519 -C "$email" -f "$key_dir/$key_name" -N ""; then
     print_success "[+] SSH key generated successfully in $key_dir!"
+    eval "$(ssh-agent -s)"
+    ssh-add "$key_dir/$key_name"
+
+    # Add the SSH key to the config file
+    cat <<EOF >> ~/.ssh/config
+Host github.com
+  HostName github.com
+  IdentityFile "$key_dir/$key_name"
+  IdentitiesOnly yes
+EOF
+
+    print_success "[+] SSH key added to ~/.ssh/config!"
   else
     print_error "[-] Failed to generate SSH key!"
     return 1
   fi
 }
+
 
 # SSH Key import
 ssh_key_import() {
@@ -268,9 +291,6 @@ fi
 
 # Move to the home directory
 cd "$HOME"
-
-# Check if sudo password is cached, if not ask for it
-sudo -v || exit 1
 
 # Prompt user to install an AUR helper
 read -p "Do you want to install an AUR helper? (y/n): " aur_choice
@@ -337,7 +357,7 @@ read -p "Do you want to generate a new SSH key? (y/n): " sshkey_choice
 if [[ "$sshkey_choice" == "y" || "$sshkey_choice" == "Y" ]]; then
   read -p "Enter the email for the SSH key: " ssh_email
   read -p "Enter the name for the SSH key: " ssh_key_name
-  ssh_key_config "$ssh_email" "$ssh_key_name" || print_error "[-] Failed to generate SSH key. Continuing..."
+  ssh_key_gen "$ssh_email" "$ssh_key_name" || print_error "[-] Failed to generate SSH key. Continuing..."
 fi
 
 # Prompt user to import SSH keys

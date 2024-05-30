@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Check if sudo password is cached, if not ask for it
+sudo -v || exit 1
+
 #============================
 # DEBUG FUNCTIONS
 #============================
@@ -49,6 +52,9 @@ installer() {
     print_error "paru is not installed! Please install it first."
     return 1
   fi
+
+  # Check if sudo password is cached, if not ask for it
+  sudo -v || exit 1
 
   local packages=("$@")
 
@@ -218,9 +224,6 @@ gnome_ext() {
 
 # Move to the home directory
 cd $HOME
-
-# Check if sudo password is cached, if not ask for it
-sudo -v || exit 1
 
 read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
 if [[ "$audio_choice" == "y" || "$audio_choice" == "Y" ]]; then

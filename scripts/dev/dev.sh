@@ -1,36 +1,75 @@
 #!/bin/bash
 
-set -e  # Interrompe lo script se un qualsiasi comando restituisce un codice di uscita diverso da zero
+# Check if sudo password is cached, if not ask for it
+sudo -v || exit 1
 
-# Debug function
-# -------
+#============================
+# DEBUG FUNCTIONS
+#============================
 
-# Print Functions
-print_message() {
-    local color="$1"
-    local marker="$2"
-    local message="$3"
-    echo -e "\e[1;${color}m[${marker}] \e[0m$message\e[0m"
-}
-## errors
-print_error() {
-    print_message 31 "ERROR" "$1"  # Red color for errors (31)
-}
-## warnings
-print_warning() {
-    print_message 33 "WARNING" "$1"  # Yellow color for warnings (33)
-}
-## success
+# Output debug - success
 print_success() {
-    print_message 32 "SUCCESS" "$1"  # Green color for successes (32)
-}
-## general 
-print_info() {
-    print_message 36 "INFO" "$1"  # Cyan color for general messages (36)
+  local message="$1"
+  # Format message with green text.
+  echo -e "\e[32m$message\e[0m"
 }
 
-# Useful function
-# -------
+# Output debug - error
+print_error() {
+  local message="$1"
+  # Format message with red text.
+  echo -e "\e[31m$message\e[0m"
+}
+
+# Output debug - info
+print_info() {
+  local message="$1"
+  # Format message with cyan text.
+  echo -e "\e[36m$message\e[0m"
+}
+
+# Output debug - warning
+print_warning() {
+  local message="$1"
+  # Format message with yellow text.
+  echo -e "\e[33m$message\e[0m"
+}
+
+#============================
+# UTILITY FUNCTIONS
+#============================
+
+# Package installation
+# It is an abstraction to not over duplicate the command 'paru -S --noconfirm'.
+installer() {
+  if [ "$#" -eq 0 ]; then
+    print_error "No packages specified to install!"
+    return 1  # Do nothing and exit the function
+  fi
+
+  # Check if 'paru' is installed
+  if ! command -v paru &> /dev/null; then
+    print_error "paru is not installed! Please install it first."
+    return 1
+  fi
+
+  # Check if sudo password is cached, if not ask for it
+  sudo -v || exit 1
+
+  local packages=("$@")
+
+  # Update the mirror server
+  paru -Syy &> /dev/null
+
+  for package in "${packages[@]}"; do
+    # Install the package without confirmation
+    if paru -S --noconfirm "$package" &> /dev/null; then
+      print_success "[+] $package installed successfully!"
+    else
+      print_error "[-] $package failed to install."
+    fi
+  done
+}
 
 # Install base dev tools
 dev_tools() {
