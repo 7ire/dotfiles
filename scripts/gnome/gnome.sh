@@ -25,6 +25,13 @@ print_info() {
   echo -e "\e[36m$message\e[0m"
 }
 
+# Output debug - warning
+print_warning() {
+  local message="$1"
+  # Format message with yellow text.
+  echo -e "\e[33m$message\e[0m"
+}
+
 #============================
 # UTILITY FUNCTIONS
 #============================
@@ -71,6 +78,7 @@ conf_audio() {
 
 # Debloat
 debloat_gnome() {
+  print_warning "[*] Removing useless packages..."
   if [ "$#" -eq 0 ]; then
     print_error "No packages specified to uninstall!"
     return 1  # Do nothing and exit the function.
@@ -85,10 +93,12 @@ debloat_gnome() {
       print_error "[-] $package failed to remove."
     fi
   done
+  print_success "[+] Useless packages removed successfully!"
 }
 
 # Default application
-default_app() {  
+default_app() {
+  print_warning "[*] Installing default applications..."
   # Packages list
   packages=(
     # Fonts and Emoji
@@ -122,6 +132,8 @@ default_app() {
 
   # Clone my Obsidian vault in Documents
   git clone git@github.com:andreatirelli3/vault.git $HOME/Documents/Obsidian &> /dev/null
+
+  print_success "[+] Default applications installed successfully!"
 }
 
 # Theming
@@ -143,14 +155,15 @@ theming_gnome() {
 
 # Extensions
 gnome_ext() {
-  installer jq unzip wget curl
+  installer jq unzip wget curl &> /dev/null
 
   # Rounded window
-  installer nodejs npm gettext just
+  installer nodejs npm gettext just &> /dev/null
   git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null
   cd rounded-window-corners
   just install
   cd .. && rm -rf rounded-window-corners
+  print_success "[+] Rounded window corners installed successfully!"
 
   # Unite
   url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
@@ -159,14 +172,16 @@ gnome_ext() {
   curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "[-] Download failed"; exit 1; }
   unzip -qo /tmp/unite-shell-v78.zip -d "$extension_dir" || { print_error "Extraction failed"; exit 1; }
   rm /tmp/unite-shell-v78.zip
+  print_success "[+] Unite installed successfully!"
 
   # Pop shell
-  installer typescript
+  installer typescript &> /dev/null
   git clone https://github.com/pop-os/shell.git &> /dev/null
   cd shell
   make local-install || true
   cd ..
   rm -rf shell
+  print_success "[+] Pop shell installed successfully!"
 
   local EXT_LIST=("$@")
   

@@ -25,6 +25,13 @@ print_info() {
   echo -e "\e[36m$message\e[0m"
 }
 
+# Output debug - warning
+print_warning() {
+  local message="$1"
+  # Format message with yellow text.
+  echo -e "\e[33m$message\e[0m"
+}
+
 #============================
 # UTILITY FUNCTIONS
 #============================
@@ -64,19 +71,17 @@ installer() {
 
 # AUR Helper Installation
 install_aur() {
+  print_warning "[*] Installing AUR helper ..."
   if [ -d "paru" ]; then
     # Remove the 'paru' directory if it exists
     rm -rf paru
   fi
 
   # Clone the 'paru' repository and install it
-  # if ! git clone https://aur.archlinux.org/paru.git &> /dev/null || ! cd paru || ! makepkg -si &> /dev/null; then
-  #   print_error "[-] Failed to install AUR helper!"
-  #   return 1
-  # fi
-  git clone https://aur.archlinux.org/paru.git &> /dev/null
-  cd paru
-  makepkg -si
+  if ! git clone https://aur.archlinux.org/paru.git &> /dev/null || ! cd paru || ! makepkg -si; then
+    print_error "[-] Failed to install AUR helper!"
+    return 1
+  fi
 
   # Update the package database
   sudo pacman -Syy &> /dev/null && paru -Syy &> /dev/null
@@ -87,18 +92,24 @@ install_aur() {
 # Bluetooth Configuration
 conf_bluetooth() {
   # Install bluez and bluez-utils packages, and enable Bluetooth service
-  installer bluez bluez-utils
-  sudo systemctl enable bluetooth
+  if ! installer bluez bluez-utils || ! sudo systemctl enable bluetooth &> /dev/null; then
+    print_error "[-] Failed to configure Bluetooth!"
+    return 1
+  fi
   print_success "[+] Bluetooth configured!"
 }
 
 # Chaotic AUR Configuration
 conf_chaoticaur() {
+  print_warning "[*] Configuring Chaotic AUR repository ..."
   # Add the Chaotic AUR key and install the repository
-  sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-  sudo pacman-key --lsign-key 3056513887B78AEB
-  sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' &> /dev/null
-  sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' &> /dev/null
+  if ! sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com &> /dev/null ||
+     ! sudo pacman-key --lsign-key 3056513887B78AEB &> /dev/null ||
+     ! sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' &> /dev/null ||
+     ! sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' &> /dev/null; then
+    print_error "[-] Failed to configure Chaotic AUR repository!"
+    return 1
+  fi
 
   local chaotic_repo=$(cat <<EOF
 
@@ -120,9 +131,11 @@ EOF
 # Mirrorlist Configuration
 gen_mirrorilist() {
   # Install necessary packages and update the mirrorlist using reflector
-  installer reflector rsync curl
-  sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
-  sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+  if ! installer reflector rsync curl || ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ||
+     ! sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
+    print_error "[-] Failed to update mirrorlist!"
+    return 1
+  fi
   print_success "[+] Mirrorlist updated!"
 }
 
@@ -163,6 +176,7 @@ conf_powerprofiles() {
 
 # Nvidia, NVENC and GDM Configuration
 conf_nvidia() {
+  print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
   # Add necessary modules to mkinitcpio.conf and update GRUB configuration
   if ! sudo sed -i 's/^MODULES=(.*)$/& nvidia nvidia_modeset nvidia_uvm nvidia_drm/' /etc/mkinitcpio.conf ||
      ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
@@ -185,6 +199,7 @@ conf_nvidia() {
 
 # Windows Dualboot Configuration
 windows_tpm_config() {
+  print_warning "[*] Configuring Windows Dualboot ..."
   # Install necessary packages and configure GRUB for TPM
   if ! installer sbctl os-prober ntfs-3g ||
      ! sudo grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock &> /dev/null ||
