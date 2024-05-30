@@ -15,7 +15,7 @@ show_ascii_art() {
     echo -e "${c4}   /   ,,   \\"
     echo -e "${c4}  /   |  |  -\\"
     echo -e "${c4} /_-''    ''-_\\${reset}"
-    echo -e "@andreatirelli3 dotfiles"
+    echo -e "@andreatirelli3 dotfiles${reset}"
 }
 
 #============================
@@ -35,22 +35,25 @@ show_menu() {
 # MAIN LOGIC
 #============================
 
+# Get the directory of the current script
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
 while true; do
     show_menu
     read -r choice
     case $choice in
         1)
             echo "Running the chroot script..."
-            if [ -f "chroot/chroot.sh" ]; then
-                bash chroot/chroot.sh
+            if [ -f "$SCRIPT_DIR/../chroot/chroot.sh" ]; then
+                bash "$SCRIPT_DIR/../chroot/chroot.sh"
             else
                 echo "The chroot script was not found."
             fi
             ;;
         2)
             echo "Running the GNOME setup script..."
-            if [ -f "gnome/gnome.sh" ]; then
-                bash gnome/gnome.sh
+            if [ -f "$SCRIPT_DIR/../gnome/gnome.sh" ]; then
+                bash "$SCRIPT_DIR/../gnome/gnome.sh"
             else
                 echo "The GNOME setup script was not found."
             fi
