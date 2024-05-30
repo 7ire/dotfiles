@@ -1,345 +1,163 @@
 #!/bin/bash
 
-#============================
 # DEBUG FUNCTIONS
-#============================
+print_success() { echo -e "\e[32m$1\e[0m"; }
+print_error() { echo -e "\e[31m$1\e[0m"; }
+print_info() { echo -e "\e[36m$1\e[0m"; }
 
-# Output debug - success
-print_success() {
-  local message="$1"
-  # Format message with green text.
-  echo -e "\e[32m$message\e[0m"
-}
-
-# Output debug - error
-print_error() {
-  local message="$1"
-  # Format message with red text.
-  echo -e "\e[31m$message\e[0m"
-}
-
-# Output debug - info
-print_info() {
-  local message="$1"
-  # Format message with cyan text.
-  echo -e "\e[36m$message\e[0m"
-}
-
-#============================
 # UTILITY FUNCTIONS
-#============================
-
-# Package installation
-# It is an abstraction to not over duplicate the command 'paru -S --noconfirm'.
 installer() {
-  if [ "$#" -eq 0 ]; then
-    print_error "No packages specified to install!"
-    return 1  # Do nothing and exit the function
-  fi
-
-  # Check if 'paru' is installed
-  if ! command -v paru &> /dev/null; then
-    print_error "paru is not installed! Please install it first."
-    return 1
-  fi
-
-  local packages=("$@")
-
-  # Update the mirror server
+  [ "$#" -eq 0 ] && { print_error "No packages specified!"; return 1; }
+  command -v paru &> /dev/null || { print_error "paru is not installed!"; return 1; }
   paru -Syy &> /dev/null
-
-  for package in "${packages[@]}"; do
-    # Install the package without confirmation
+  for package in "$@"; do
     if paru -S --noconfirm "$package" &> /dev/null; then
-      print_success "[+] $package installed successfully!"
+      print_success "[+] $package installed!"
     else
       print_error "[-] $package failed to install."
     fi
   done
 }
 
-#============================
 # CONFIGURATION FUNCTIONS
-#============================
-
-# AUR Helper Installation
 install_aur() {
-  if [ -d "paru" ]; then
-    # Remove the 'paru' directory if it exists
-    rm -rf paru
-  fi
-
-  # Clone the 'paru' repository and install it
-  # if ! git clone https://aur.archlinux.org/paru.git &> /dev/null || ! cd paru || ! makepkg -si &> /dev/null; then
-  #   print_error "[-] Failed to install AUR helper!"
-  #   return 1
-  # fi
+  [ -d "paru" ] && rm -rf paru
   git clone https://aur.archlinux.org/paru.git &> /dev/null
-  cd paru
-  makepkg -si
-
-  # Update the package database
+  (cd paru && makepkg -si)
   sudo pacman -Syy &> /dev/null && paru -Syy &> /dev/null
-  cd .. && rm -rf paru
-  print_success "[+] AUR helper installed!"
+  rm -rf paru && print_success "[+] AUR helper installed!"
 }
 
-# Bluetooth Configuration
 conf_bluetooth() {
-  # Install bluez and bluez-utils packages, and enable Bluetooth service
-  if ! installer bluez bluez-utils || ! sudo systemctl enable bluetooth &> /dev/null; then
-    print_error "[-] Failed to configure Bluetooth!"
-    return 1
-  fi
+  installer bluez bluez-utils && sudo systemctl enable bluetooth &> /dev/null
   print_success "[+] Bluetooth configured!"
 }
 
-# Chaotic AUR Configuration
 conf_chaoticaur() {
-  # Add the Chaotic AUR key and install the repository
-  if ! sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com &> /dev/null ||
-     ! sudo pacman-key --lsign-key 3056513887B78AEB &> /dev/null ||
-     ! sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' &> /dev/null ||
-     ! sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' &> /dev/null; then
-    print_error "[-] Failed to configure Chaotic AUR repository!"
-    return 1
-  fi
-
-  local chaotic_repo=$(cat <<EOF
-
-[chaotic-aur]
-Include = /etc/pacman.d/chaotic-mirrorlist
-EOF
-  )
-
-  # Add the Chaotic AUR repository to pacman configuration if not already present
-  if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
-    echo "$chaotic_repo" | sudo tee -a /etc/pacman.conf > /dev/null
-  fi
-
-  # Update the package database
+  sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com &> /dev/null &&
+  sudo pacman-key --lsign-key 3056513887B78AEB &> /dev/null &&
+  sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' &> /dev/null &&
+  sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' &> /dev/null
+  local chaotic_repo="[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist"
+  ! grep -q "\[chaotic-aur\]" /etc/pacman.conf && echo -e "$chaotic_repo" | sudo tee -a /etc/pacman.conf > /dev/null
   sudo pacman -Syy &> /dev/null && paru -Syy &> /dev/null
-  print_success "[+] Chaotic AUR repository configured!"
+  print_success "[+] Chaotic AUR configured!"
 }
 
-# Mirrorlist Configuration
 gen_mirrorilist() {
-  # Install necessary packages and update the mirrorlist using reflector
-  if ! installer reflector rsync curl || ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ||
-     ! sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
-    print_error "[-] Failed to update mirrorlist!"
-    return 1
-  fi
+  installer reflector rsync curl &&
+  sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak &&
+  sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null
   print_success "[+] Mirrorlist updated!"
 }
 
-# Pacman Configuration
 conf_pacman() {
   local pacman_conf="/etc/pacman.conf"
-  # Enable color in pacman output
-  if ! sudo sed -i 's/^#Color/Color/' "$pacman_conf" ||
-     # Add 'ILoveCandy' option to pacman configuration
-     ! grep -q '^ILoveCandy' "$pacman_conf" && ! sudo sed -i '/^Color/a ILoveCandy' "$pacman_conf" ||
-     # Install pacman-contrib package and enable paccache.timer
-     ! installer pacman-contrib || ! sudo systemctl enable paccache.timer &> /dev/null; then
-    print_error "[-] Failed to configure pacman!"
-    return 1
-  fi
+  sudo sed -i 's/^#Color/Color/' "$pacman_conf" &&
+  sudo sed -i '/^Color/a ILoveCandy' "$pacman_conf" &&
+  installer pacman-contrib && sudo systemctl enable paccache.timer &> /dev/null
   print_success "[+] Pacman configured!"
 }
 
-# SSH Configuration
 activate_ssh() {
-  # Enable SSH service
-  if ! sudo systemctl enable sshd &> /dev/null; then
-    print_error "[-] Failed to enable SSH!"
-    return 1
-  fi
-  print_success "[+] SSH enabled!"
+  sudo systemctl enable sshd &> /dev/null && print_success "[+] SSH enabled!"
 }
 
-# Power Plan Configuration
 conf_powerprofiles() {
-  # Install power-profiles-daemon package and enable the service
-  if ! installer power-profiles-daemon || ! sudo systemctl enable power-profiles-daemon.service &> /dev/null; then
-    print_error "[-] Failed to configure power plan!"
-    return 1
-  fi
+  installer power-profiles-daemon && sudo systemctl enable power-profiles-daemon.service &> /dev/null
   print_success "[+] Power plan configured!"
 }
 
-# Nvidia, NVENC and GDM Configuration
 conf_nvidia() {
-  # Add necessary modules to mkinitcpio.conf and update GRUB configuration
-  if ! sudo sed -i 's/^MODULES=(.*)$/& nvidia nvidia_modeset nvidia_uvm nvidia_drm/' /etc/mkinitcpio.conf ||
-     ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
-     # Create udev rule for NVIDIA
-     ! sudo bash -c 'echo "ACTION==\"add\", DEVPATH==\"/bus/pci/drivers/nvidia\", RUN+=\"/usr/bin/nvidia-modprobe -c 0 -u\"" > /etc/udev/rules.d/70-nvidia.rules' ||
-     # Disable GDM rule
-     ! sudo ln -sf /dev/null /etc/udev/rules.d/61-gdm.rules ||
-     # Enable Wayland in GDM
-     ! sudo sed -i 's/^#WaylandEnable=false/WaylandEnable=true/' /etc/gdm/custom.conf ||
-     # Add NVIDIA power management option
-     ! sudo bash -c 'echo "options nvidia NVreg_PreserveVideoMemoryAllocations=1" > /etc/modprobe.d/nvidia-power-mgmt.conf' ||
-     # Regenerate initramfs and update GRUB configuration
-     ! sudo mkinitcpio -P &> /dev/null ||
-     ! sudo grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null; then
-    print_error "[-] Failed to configure NVIDIA, NVENC and GDM!"
-    return 1
-  fi
+  sudo sed -i 's/^MODULES=(.*)$/& nvidia nvidia_modeset nvidia_uvm nvidia_drm/' /etc/mkinitcpio.conf &&
+  sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub &&
+  sudo bash -c 'echo "ACTION==\"add\", DEVPATH==\"/bus/pci/drivers/nvidia\", RUN+=\"/usr/bin/nvidia-modprobe -c 0 -u\"" > /etc/udev/rules.d/70-nvidia.rules' &&
+  sudo ln -sf /dev/null /etc/udev/rules.d/61-gdm.rules &&
+  sudo sed -i 's/^#WaylandEnable=false/WaylandEnable=true/' /etc/gdm/custom.conf &&
+  sudo bash -c 'echo "options nvidia NVreg_PreserveVideoMemoryAllocations=1" > /etc/modprobe.d/nvidia-power-mgmt.conf' &&
+  sudo mkinitcpio -P &> /dev/null && sudo grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
   print_success "[+] NVIDIA, NVENC and GDM configured!"
 }
 
-# Windows Dualboot Configuration
 windows_tpm_config() {
-  # Install necessary packages and configure GRUB for TPM
-  if ! installer sbctl os-prober ntfs-3g ||
-     ! sudo grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock &> /dev/null ||
-     ! sudo grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null ||
-     # Setup Secure Boot with sbctl
-     ! sudo sbctl status &> /dev/null ||
-     ! sudo sbctl create-keys &> /dev/null ||
-     ! sudo sbctl enroll-keys --microsoft &> /dev/null ||
-     ! sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi &> /dev/null; then
-    print_error "[-] Failed to configure Windows Dualboot!"
-    return 1
-  fi
+  installer sbctl os-prober ntfs-3g &&
+  sudo grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock &> /dev/null &&
+  sudo grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null &&
+  sudo sbctl status &> /dev/null &&
+  sudo sbctl create-keys &> /dev/null &&
+  sudo sbctl enroll-keys --microsoft &> /dev/null &&
+  sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi &> /dev/null
   print_success "[+] Windows Dualboot configured!"
 }
 
-# SSH Key Configuration
 ssh_key_config() {
-  local email="$1"
-  local key_name="$2"
-  print_info "[*] Generating SSH key for $email ..."
-  local key_dir="$HOME/.ssh/keyring/$key_name"
-  mkdir -p "$key_dir"
-
-  # Generate SSH key using ed25519 algorithm
-  if ssh-keygen -t ed25519 -C "$email" -f "$key_dir/id_ed25519" -N ""; then
-    print_success "[+] SSH key generated successfully in $key_dir!"
-  else
-    print_error "[-] Failed to generate SSH key!"
-    return 1
-  fi
+  local email="$1" key_name="$2" key_dir="$HOME/.ssh/keyring/$key_name"
+  mkdir -p "$key_dir" &&
+  ssh-keygen -t ed25519 -C "$email" -f "$key_dir/id_ed25519" -N "" &&
+  print_success "[+] SSH key generated in $key_dir!"
 }
 
-# SSH Key import
 ssh_key_import() {
-  local import_path="$1"
-  print_info "[*] Importing SSH keys from $import_path ..."
-  local target_dir="$HOME/.ssh/keyring"
-  mkdir -p "$target_dir"
-  if cp -r "$import_path"/* "$target_dir" && chmod -R 700 "$target_dir"; then
-    print_success "[+] SSH keys imported successfully!"
-  else
-    print_error "[-] Failed to import SSH keys!"
-    return 1
-  fi
+  local import_path="$1" target_dir="$HOME/.ssh/keyring"
+  mkdir -p "$target_dir" &&
+  cp -r "$import_path"/* "$target_dir" && chmod -R 700 "$target_dir" &&
+  print_success "[+] SSH keys imported successfully!"
 }
 
-# VPN import
 vpn_import() {
   local vpn_dir="$HOME/.vpn"
-  if ! git clone git@github.com:andreatirelli3/vpn.git "$vpn_dir" &> /dev/null; then
-    print_error "[-] Failed to import VPN configuration!"
-    return 1
-  fi
+  git clone git@github.com:andreatirelli3/vpn.git "$vpn_dir" &> /dev/null &&
   print_success "[+] VPN configuration imported!"
 }
 
-#============================
 # MAIN BODY
-#============================
-
-# Ensure the script is not run as root
-if [ "$EUID" -eq 0 ]; then
-  print_error "Please do not run this script as root."
-  exit 1
-fi
-
-# Move to the home directory
+[ "$EUID" -eq 0 ] && { print_error "Please do not run as root."; exit 1; }
 cd "$HOME"
 
-# Prompt user to install an AUR helper
-read -p "Do you want to install an AUR helper? (y/n): " aur_choice
-if [[ "$aur_choice" == "y" || "$aur_choice" == "Y" ]]; then
-  install_aur || print_error "[-] Failed to install AUR helper. Continuing..."
+read -p "Install AUR helper? (y/n): " aur_choice
+[[ "$aur_choice" =~ ^[Yy]$ ]] && install_aur || :
+
+read -p "Configure pacman? (y/n): " pacman_choice
+[[ "$pacman_choice" =~ ^[Yy]$ ]] && conf_pacman || :
+
+read - p "Configure Bluetooth? (y/n): " bluetooth_choice
+[[ "$bluetooth_choice" =~ ^[Yy]$ ]] && conf_bluetooth || :
+
+read -p "Configure SSH? (y/n): " ssh_choice
+[[ "$ssh_choice" =~ ^[Yy]$ ]] && activate_ssh || :
+
+read -p "Install Flatpak? (y/n): " flatpak_choice
+[[ "$flatpak_choice" =~ ^[Yy]$ ]] && installer flatpak || :
+
+read -p "Configure Chaotic AUR repository? (y/n): " chaotic_choice
+[[ "$chaotic_choice" =~ ^[Yy]$ ]] && conf_chaoticaur || :
+
+read -p "Update mirrorlist? (y/n): " mirrorlist_choice
+[[ "$mirrorlist_choice" =~ ^[Yy]$ ]] && gen_mirrorilist || :
+
+read -p "Configure Power Plan? (y/n): " powerplan_choice
+[[ "$powerplan_choice" =~ ^[Yy]$ ]] && conf_powerprofiles || :
+
+read -p "Configure Nvidia and GDM? (y/n): " nvidia_choice
+[[ "$nvidia_choice" =~ ^[Yy]$ ]] && conf_nvidia || :
+
+read -p "Configure Windows Dualboot? (y/n): " dualboot_choice
+[[ "$dualboot_choice" =~ ^[Yy]$ ]] && windows_tpm_config || :
+
+read -p "Generate new SSH key? (y/n): " sshkey_choice
+if [[ "$sshkey_choice" =~ ^[Yy]$ ]]; then
+read -p "Enter email for SSH key: " ssh_email
+read -p "Enter name for SSH key: " ssh_key_name
+ssh_key_config "$ssh_email" "$ssh_key_name" || :
 fi
 
-# Prompt user to configure pacman
-read -p "Do you want to configure pacman? (y/n): " pacman_choice
-if [[ "$pacman_choice" == "y" || "$pacman_choice" == "Y" ]]; then
-  conf_pacman || print_error "[-] Failed to configure pacman. Continuing..."
+read -p "Import SSH keys? (y/n): " sshkey_import_choice
+if [[ "$sshkey_import_choice" =~ ^[Yy]$ ]]; then
+read -p "Enter path to import SSH keys from: " ssh_import_path
+ssh_key_import "$ssh_import_path" || :
 fi
 
-# Prompt user to configure Bluetooth
-read -p "Do you want to configure Bluetooth? (y/n): " bluetooth_choice
-if [[ "$bluetooth_choice" == "y" || "$bluetooth_choice" == "Y" ]]; then
-  conf_bluetooth || print_error "[-] Failed to configure Bluetooth. Continuing..."
-fi
+read -p "Import VPN configuration? (y/n): " vpn_import_choice
+[[ "$vpn_import_choice" =~ ^[Yy]$ ]] && vpn_import || :
 
-# Prompt user to configure SSH
-read -p "Do you want to configure SSH? (y/n): " ssh_choice
-if [[ "$ssh_choice" == "y" || "$ssh_choice" == "Y" ]]; then
-  activate_ssh || print_error "[-] Failed to enable SSH. Continuing..."
-fi
-
-# Prompt user to install Flatpak
-read -p "Do you want to install Flatpak? (y/n): " flatpak_choice
-if [[ "$flatpak_choice" == "y" || "$flatpak_choice" == "Y" ]]; then
-  installer flatpak || print_error "[-] Failed to install Flatpak. Continuing..."
-fi
-
-# Prompt user to configure Chaotic AUR repository
-read -p "Do you want to configure the Chaotic AUR repository? (y/n): " chaotic_choice
-if [[ "$chaotic_choice" == "y" || "$chaotic_choice" == "Y" ]]; then
-  conf_chaoticaur || print_error "[-] Failed to configure Chaotic AUR repository. Continuing..."
-fi
-
-# Prompt user to update the mirrorlist
-read -p "Do you want to update the mirrorlist? (y/n): " mirrorlist_choice
-if [[ "$mirrorlist_choice" == "y" || "$mirrorlist_choice" == "Y" ]]; then
-  gen_mirrorilist || print_error "[-] Failed to update mirrorlist. Continuing..."
-fi
-
-# Prompt user to configure Power Plan
-read -p "Do you want to configure Power Plan? (y/n): " powerplan_choice
-if [[ "$powerplan_choice" == "y" || "$powerplan_choice" == "Y" ]]; then
-  conf_powerprofiles || print_error "[-] Failed to configure power plan. Continuing..."
-fi
-
-# Prompt user to configure Nvidia and GDM
-read -p "Do you want to configure Nvidia and GDM? (y/n): " nvidia_choice
-if [[ "$nvidia_choice" == "y" || "$nvidia_choice" == "Y" ]]; then
-  conf_nvidia || print_error "[-] Failed to configure NVIDIA, NVENC and GDM. Continuing..."
-fi
-
-# Prompt user to configure Windows Dualboot
-read -p "Do you want to configure Windows Dualboot? (y/n): " dualboot_choice
-if [[ "$dualboot_choice" == "y" || "$dualboot_choice" == "Y" ]]; then
-  windows_tpm_config || print_error "[-] Failed to configure Windows Dualboot. Continuing..."
-fi
-
-# Prompt user to generate a new SSH key
-read -p "Do you want to generate a new SSH key? (y/n): " sshkey_choice
-if [[ "$sshkey_choice" == "y" || "$sshkey_choice" == "Y" ]]; then
-  read -p "Enter the email for the SSH key: " ssh_email
-  read -p "Enter the name for the SSH key: " ssh_key_name
-  ssh_key_config "$ssh_email" "$ssh_key_name" || print_error "[-] Failed to generate SSH key. Continuing..."
-fi
-
-# Prompt user to import SSH keys
-read -p "Do you want to import SSH keys? (y/n): " sshkey_import_choice
-if [[ "$sshkey_import_choice" == "y" || "$sshkey_import_choice" == "Y" ]]; then
-  read -p "Enter the path to import SSH keys from: " ssh_import_path
-  ssh_key_import "$ssh_import_path" || print_error "[-] Failed to import SSH keys. Continuing..."
-fi
-
-# Prompt user to import VPN configuration
-read -p "Do you want to import VPN configuration? (y/n): " vpn_import_choice
-if [[ "$vpn_import_choice" == "y" || "$vpn_import_choice" == "Y" ]]; then
-  vpn_import || print_error "[-] Failed to import VPN configuration. Continuing..."
-fi
-
-print_success "All selected configurations are completed!"
+print_success "All configurations completed!"
