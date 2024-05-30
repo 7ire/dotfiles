@@ -143,13 +143,13 @@ theming_gnome() {
 
 # Extensions
 gnome_ext() {
-  installer jq unzip wget curl &> /dev/null
+  installer jq unzip wget curl
 
   # Rounded window
-  installer nodejs npm gettext just &> /dev/null
+  installer nodejs npm gettext just
   git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null
   cd rounded-window-corners
-  just install &> /dev/null
+  just install
   cd .. && rm -rf rounded-window-corners
 
   # Unite
@@ -161,10 +161,10 @@ gnome_ext() {
   rm /tmp/unite-shell-v78.zip
 
   # Pop shell
-  installer typescript &> /dev/null
+  installer typescript
   git clone https://github.com/pop-os/shell.git &> /dev/null
   cd shell
-  make local-install &> /dev/null || true
+  make local-install || true
   cd ..
   rm -rf shell
 
