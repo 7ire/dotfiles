@@ -269,6 +269,9 @@ fi
 # Move to the home directory
 cd "$HOME"
 
+# Check if sudo password is cached, if not ask for it
+sudo -v || exit 1
+
 # Prompt user to install an AUR helper
 read -p "Do you want to install an AUR helper? (y/n): " aur_choice
 if [[ "$aur_choice" == "y" || "$aur_choice" == "Y" ]]; then

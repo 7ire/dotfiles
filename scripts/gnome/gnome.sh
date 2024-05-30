@@ -219,6 +219,9 @@ gnome_ext() {
 # Move to the home directory
 cd $HOME
 
+# Check if sudo password is cached, if not ask for it
+sudo -v || exit 1
+
 read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
 if [[ "$audio_choice" == "y" || "$audio_choice" == "Y" ]]; then
   conf_audio || print_error "[-] Failed to configure audio step!"
