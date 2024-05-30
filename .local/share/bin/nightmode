@@ -2,4 +2,5 @@
 
 gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
 gnome-extensions enable custom-accent-colors@demiskp
-gsettings set org.gnome.desktop.interface icon-theme "Flat-Remix-Red-Dark"
+papirus-folders -C red --theme Papirus-Dark
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'

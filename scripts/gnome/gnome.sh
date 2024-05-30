@@ -49,7 +49,6 @@ installer() {
   paru -Syy &> /dev/null
 
   for package in "${packages[@]}"; do
-    # print_info "[*] Installing $package ..."
     # Install the package without confirmation
     if paru -S --noconfirm "$package" &> /dev/null; then
       print_success "[+] $package installed successfully!"
@@ -66,7 +65,7 @@ installer() {
 # Audio step
 conf_audio() {
   # Change the audio mix step from 5 to 2
-  gsettings set org.gnome.settings-daemon.plugins.media-keys volume-step 2
+  gsettings set org.gnome.settings-daemon.plugins.media-keys volume-step 2 &> /dev/null
   print_success "[+] Audio step changed from 5 to 2!"
 }
 
@@ -78,10 +77,8 @@ debloat_gnome() {
   fi
 
   local packages=("$@")
-
   # Iterate over the packages and attempt to remove them.
   for package in "${packages[@]}"; do
-    print_info "[*] Removing $package ..."
     if sudo pacman -Rcns --noconfirm "$package" &> /dev/null; then
       print_success "[+] $package removed successfully!"
     else
@@ -118,90 +115,65 @@ default_app() {
     # Social
     webcord             # WebCord
     telegram-desktop    # Telegram
-    # Signal
     whatsapp-for-linux  # WhatsApp
   )
   
   installer "${packages[@]}"
+
+  # Clone my Obsidian vault in Documents
+  git clone git@github.com:andreatirelli3/vault.git $HOME/Documents/Obsidian &> /dev/null
 }
 
-# theming
-gnome_theming() {
-  installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin
-  # flatpak install --user -y org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
-  # flatpak remove --unused
-  git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme
-  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper
+# Theming
+theming_gnome() {
+  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null
+  git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null
+  installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null
   
   # Enable all the themes
-  gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
-  # gsettings set org.gnome.desktop.interface icon-theme "Flat-Remix-Blue-Light"
-  gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' && gsettings set org.gnome.desktop.interface color-scheme 'default'
+  papirus-folders -C adwaita --theme Papirus &> /dev/null
+  gsettings set org.gnome.desktop.interface icon-theme 'Papirus' &> /dev/null
+  gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null
+  gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null
 
-  print_info "Thunderbird is not installed or neither execture for atleast 1 time, I cloned the repo but install it manually."
+  print_info "Thunderbird is not installed or neither executed for at least one time, I cloned the repo but install it manually."
+  print_info "Please copy the .local folder inside the cloned repo to the Thunderbird profile directory."
   print_success "[+] GTK4/3 Libwaita theme consistency done!"
 }
 
 # Extensions
 gnome_ext() {
-  installer jq unzip wget curl
+  installer jq unzip wget curl &> /dev/null
 
   # Rounded window
-  installer nodejs npm gettext just
-  git clone https://github.com/flexagoon/rounded-window-corners
+  installer nodejs npm gettext just &> /dev/null
+  git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null
   cd rounded-window-corners
-  just install
+  just install &> /dev/null
   cd .. && rm -rf rounded-window-corners
 
   # Unite
   url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
   extension_dir="$HOME/.local/share/gnome-shell/extensions"
   mkdir -p "$extension_dir"
-
-  # Download the zip file
   curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "[-] Download failed"; exit 1; }
-
-  # Extract the zip file
   unzip -qo /tmp/unite-shell-v78.zip -d "$extension_dir" || { print_error "Extraction failed"; exit 1; }
-
-  # Clean up
   rm /tmp/unite-shell-v78.zip
 
   # Pop shell
-  sudo pacman -S --noconfirm typescript
-  git clone https://github.com/pop-os/shell.git
+  installer typescript &> /dev/null
+  git clone https://github.com/pop-os/shell.git &> /dev/null
   cd shell
-  make local-install || true
+  make local-install &> /dev/null || true
   cd ..
   rm -rf shell
 
-  EXT_LIST=(
-    blur-my-shell@aunetx                          # Blur
-    just-perfection-desktop@just-perfection       # Perfection
-    osd-volume-number@deminder                    # OSD Volume
-    quick-settings-tweaks@qwreey                  # QS Tweak
-    quick-settings-avatar@d-go                    # Avatar qs
-    nightthemeswitcher@romainvigier.fr            # Night theme
-    custom-accent-colors@demiskp                  # Accent color
-    smile-extension@mijorus.it                    # Emoji
-    app-hider@lynith.dev                          # App hider
-    workspace-switcher-manager@G-dH.github.com    # Workspace switcher
-    compact-quick-settings@gnome-shell-extensions.mariospr.org # Compact qs
-    Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
-    Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery
-    caffeine@patapon.info                         # Caffeine
-    logomenu@aryan_k                              # (left) Logo
-    window-title-is-back@fthx                     # (left) Window title
-    mediacontrols@cliffniff.github.com            # (center) Media player
-    clipboard-indicator@tudmotu.com               # (right) Clipboard
-    just-another-search-bar@xelad0m               # (right) Search
-    IP-Finder@linxgem33.com                       # (right) IP
-    arch-update@RaphaelRochet                     # (right) Updates
-    extension-list@tu.berry                       # (right) Extension list
-    openweather-extension@penguin-teal.github.io  # (right) Weather
-    tophat@fflewddur.github.io                    # (right) Resource usage
-    appindicatorsupport@rgcjonas.gmail.com        # (right) Sys tray
-  )
+  local EXT_LIST=("$@")
+  
+  if [ ${#EXT_LIST[@]} -eq 0 ]; then
+    print_error "No extensions specified to install!"
+    return 1
+  fi
 
   GN_CMD_OUTPUT=$(gnome-shell --version)
   GN_SHELL=${GN_CMD_OUTPUT:12:2}
@@ -213,13 +185,14 @@ gnome_ext() {
     if [ -n "$VERSION_TAG" ]; then
       wget -qO "${i}.zip" "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
       if [ $? -eq 0 ]; then
-        gnome-extensions install --force "${i}.zip"
+        gnome-extensions install --force "${i}.zip" &> /dev/null
         rm "${i}.zip"
+        print_success "[+] ${i} installed successfully!"
       else
-        print_error "Failed to download extension: ${i}"
+        print_error "[-] ${i} failed to install."
       fi
     else
-      print_warning "No valid version found for extension: ${i}"
+      print_error "[-] ${i} failed to install."
     fi
   done
 }
@@ -232,7 +205,7 @@ gnome_ext() {
 cd $HOME
 
 read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
-if [[ "$aur_choice" == "y" || "$aur_choice" == "Y" ]]; then
+if [[ "$audio_choice" == "y" || "$audio_choice" == "Y" ]]; then
   conf_audio || print_error "[-] Failed to configure audio step!"
 fi
 
@@ -274,63 +247,41 @@ if [[ "$app_choice" == "y" || "$app_choice" == "Y" ]]; then
   default_app || print_error "[-] Failed to install default applications!"
 fi
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 1. Flatpak configure
-read -p "Do you want to configure Flatpak? (y/n): " flatconfig_choice
-if [[ "$flatconfig_choice" == "y" || "$flatconfig_choice" == "Y" ]]; then
-  print_info "Configuring the Flathub repo for current user ..."
-  flatpak_setup
-  print_success "Flathub configured correctly!"
-fi
-
-# 2. Audio step
-read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
-if [[ "$audio_choice" == "y" || "$audio_choice" == "Y" ]]; then
-  print_info "Changing audio step from 5 => 2 ..."
-  gnome_audio
-  print_success "Audio step changed successfully!"
-fi
-
-# 3. Debloating
-read -p "Do you want to debloat the system? (y/n): " debloat_choice
-if [[ "$debloat_choice" == "y" || "$debloat_choice" == "Y" ]]; then
-  print_info "Debloating the system ..."
-  gnome_debloat
-  print_success "System debloated!"
-fi
-
-# 4. Default application
-read -p "Do you want to install the default applications? (y/n): " app_choice
-if [[ "$app_choice" == "y" || "$app_choice" == "Y" ]]; then
-  print_info "Installing default application ..."
-  gnome_app
-  print_success "Default application installed!"
-fi
-
-# 5. Personalization
-read -p "Do you want theme the system (GTK4/3 Libwaita friendly)? (y/n): " theme_choice
+read -p "Do you want to theme the system (GTK4/3 Libwaita friendly)? (y/n): " theme_choice
 if [[ "$theme_choice" == "y" || "$theme_choice" == "Y" ]]; then
-  print_info "Theming the system ..."
-  gnome_theming
-  print_success "System themed!"
+  theming_gnome || print_error "[-] Failed to theme GNOME!"
 fi
 
-# 6. Extension
-read -p "Do you want to install the gnome extensions? (y/n): " ext_choice
+# List of GNOME extensions to install
+EXT_LIST=(
+  blur-my-shell@aunetx                          # Blur
+  just-perfection-desktop@just-perfection       # Perfection
+  osd-volume-number@deminder                    # OSD Volume
+  quick-settings-tweaks@qwreey                  # QS Tweak
+  quick-settings-avatar@d-go                    # Avatar qs
+  nightthemeswitcher@romainvigier.fr            # Night theme
+  custom-accent-colors@demiskp                  # Accent color
+  smile-extension@mijorus.it                    # Emoji
+  app-hider@lynith.dev                          # App hider
+  workspace-switcher-manager@G-dH.github.com    # Workspace switcher
+  compact-quick-settings@gnome-shell-extensions.mariospr.org # Compact qs
+  Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
+  Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery
+  caffeine@patapon.info                         # Caffeine
+  logomenu@aryan_k                              # (left) Logo
+  window-title-is-back@fthx                     # (left) Window title
+  mediacontrols@cliffniff.github.com            # (center) Media player
+  clipboard-indicator@tudmotu.com               # (right) Clipboard
+  just-another-search-bar@xelad0m               # (right) Search
+  IP-Finder@linxgem33.com                       # (right) IP
+  arch-update@RaphaelRochet                     # (right) Updates
+  extension-list@tu.berry                       # (right) Extension list
+  openweather-extension@penguin-teal.github.io  # (right) Weather
+  tophat@fflewddur.github.io                    # (right) Resource usage
+  appindicatorsupport@rgcjonas.gmail.com        # (right) Sys tray
+)
+
+read -p "Do you want to install the GNOME extensions? (y/n): " ext_choice
 if [[ "$ext_choice" == "y" || "$ext_choice" == "Y" ]]; then
-  print_info "Installing extensions ..."
-  gnome_ext
-  print_success "Extensions installed!"
+  gnome_ext "${EXT_LIST[@]}" || print_error "[-] Failed to install GNOME extensions!"
 fi
