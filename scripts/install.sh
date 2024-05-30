@@ -35,8 +35,8 @@ show_menu() {
 # MAIN LOGIC
 #============================
 
-# Get the directory of the current script
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
+# Get the absolute directory of the current script
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 while true; do
     show_menu
