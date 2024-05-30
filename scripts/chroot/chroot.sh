@@ -70,10 +70,13 @@ install_aur() {
   fi
 
   # Clone the 'paru' repository and install it
-  if ! git clone https://aur.archlinux.org/paru.git &> /dev/null || ! cd paru || ! makepkg -si &> /dev/null; then
-    print_error "[-] Failed to install AUR helper!"
-    return 1
-  fi
+  # if ! git clone https://aur.archlinux.org/paru.git &> /dev/null || ! cd paru || ! makepkg -si &> /dev/null; then
+  #   print_error "[-] Failed to install AUR helper!"
+  #   return 1
+  # fi
+  git clone https://aur.archlinux.org/paru.git &> /dev/null
+  cd paru
+  makepkg -si
 
   # Update the package database
   sudo pacman -Syy &> /dev/null && paru -Syy &> /dev/null
