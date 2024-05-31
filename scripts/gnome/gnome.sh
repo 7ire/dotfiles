@@ -138,7 +138,7 @@ default_app() {
   installer "${packages[@]}"
 
   # Clone my Obsidian vault in Documents
-  git clone git@github.com:andreatirelli3/vault.git $HOME/Documents/Obsidian &> /dev/null
+  git clone git@github.com:andreatirelli3/vault.git $HOME/Documenti/Obsidian &> /dev/null
 
   print_success "[+] Default applications installed successfully!"
 }
@@ -289,6 +289,7 @@ EXT_LIST=(
   compact-quick-settings@gnome-shell-extensions.mariospr.org # Compact qs
   Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
   Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery
+  gnome-ui-tune@itstime.tech                    # GNOME UI improved
   caffeine@patapon.info                         # Caffeine
   logomenu@aryan_k                              # (left) Logo
   window-title-is-back@fthx                     # (left) Window title
