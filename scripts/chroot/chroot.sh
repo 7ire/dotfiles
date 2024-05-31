@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# Check if sudo password is cached, if not ask for it
-sudo -v || exit 1
-
-# Keep-alive: update existing `sudo` time stamp until the script has finished
-# Create a background job to renew the `sudo` timestamp every minute
-# and stop this background job when the script exits
-(while true; do sudo -v; sleep 60; done) &
-# Get the PID of the background job so it can be killed when the script exits
-KEEP_ALIVE_PID=$!
-# Ensure the background job is stopped when the script exits
-trap 'kill $KEEP_ALIVE_PID' EXIT
-
 #============================
 # DEBUG FUNCTIONS
 #============================
@@ -98,6 +86,8 @@ install_aur() {
     return 1
   fi
 
+  sudo -v
+
   # Update the package database
   sudo pacman -Syy &> /dev/null && paru -Syy &> /dev/null
   cd .. && rm -rf paru
@@ -106,6 +96,7 @@ install_aur() {
 
 # Bluetooth Configuration
 conf_bluetooth() {
+  sudo -v
   # Install bluez and bluez-utils packages, and enable Bluetooth service
   if ! installer bluez bluez-utils || ! sudo systemctl enable bluetooth &> /dev/null; then
     print_error "[-] Failed to configure Bluetooth!"
@@ -116,6 +107,7 @@ conf_bluetooth() {
 
 # Chaotic AUR Configuration
 conf_chaoticaur() {
+  sudo -v
   print_warning "[*] Configuring Chaotic AUR repository ..."
   # Add the Chaotic AUR key and install the repository
   if ! sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com &> /dev/null ||
@@ -145,6 +137,7 @@ EOF
 
 # Mirrorlist Configuration
 gen_mirrorilist() {
+  sudo -v
   # Install necessary packages and update the mirrorlist using reflector
   if ! installer reflector rsync curl || ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ||
      ! sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
@@ -156,6 +149,7 @@ gen_mirrorilist() {
 
 # Pacman Configuration
 conf_pacman() {
+  sudo -v
   local pacman_conf="/etc/pacman.conf"
   # Enable color in pacman output
   if ! sudo sed -i 's/^#Color/Color/' "$pacman_conf" ||
@@ -171,6 +165,7 @@ conf_pacman() {
 
 # SSH Configuration
 activate_ssh() {
+  sudo -v
   # Enable SSH service
   if ! sudo systemctl enable sshd &> /dev/null; then
     print_error "[-] Failed to enable SSH!"
@@ -181,6 +176,7 @@ activate_ssh() {
 
 # Power Plan Configuration
 conf_powerprofiles() {
+  sudo -v
   # Install power-profiles-daemon package and enable the service
   if ! installer power-profiles-daemon || ! sudo systemctl enable power-profiles-daemon.service &> /dev/null; then
     print_error "[-] Failed to configure power plan!"
@@ -191,6 +187,7 @@ conf_powerprofiles() {
 
 # Nvidia, NVENC and GDM Configuration
 conf_nvidia() {
+  sudo -v
   print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
   # Add necessary modules to mkinitcpio.conf and update GRUB configuration
   if ! sudo sed -i 's/^MODULES=(.*)$/& nvidia nvidia_modeset nvidia_uvm nvidia_drm/' /etc/mkinitcpio.conf ||
@@ -214,6 +211,7 @@ conf_nvidia() {
 
 # Windows Dualboot Configuration
 windows_tpm_config() {
+  sudo -v
   print_warning "[*] Configuring Windows Dualboot ..."
   # Install necessary packages and configure GRUB for TPM
   if ! installer sbctl os-prober ntfs-3g ||
