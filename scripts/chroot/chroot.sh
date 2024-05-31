@@ -3,6 +3,15 @@
 # Check if sudo password is cached, if not ask for it
 sudo -v || exit 1
 
+# Keep-alive: update existing `sudo` time stamp until the script has finished
+# Create a background job to renew the `sudo` timestamp every minute
+# and stop this background job when the script exits
+(while true; do sudo -v; sleep 60; done) &
+# Get the PID of the background job so it can be killed when the script exits
+KEEP_ALIVE_PID=$!
+# Ensure the background job is stopped when the script exits
+trap 'kill $KEEP_ALIVE_PID' EXIT
+
 #============================
 # DEBUG FUNCTIONS
 #============================
