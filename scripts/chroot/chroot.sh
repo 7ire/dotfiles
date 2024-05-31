@@ -395,7 +395,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
 fi
 
 # Prompt user to install Flatpak
-read -p "Do you want to install Flatpak? [y/n]: " choice
+read -p "Do you want to install Flatpak? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   installer flatpak || print_error "[-] Failed to install Flatpak. Continuing..."
 fi
