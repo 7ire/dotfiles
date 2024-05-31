@@ -71,70 +71,83 @@ installer() {
   done
 }
 
-# Install base dev tools
+#============================
+# CONFIGURATION FUNCTIONS
+#============================
+
+# Development tools
 dev_tools() {
-  # [TODO] Fedora support
-  # [TODO] Debian support
-
-  # Flatpak list
-  flatpaks=(
-    com.vscodium.codium     	# VS Codium
-    com.getpostman.Postman  	# Postman
-    io.github.shiftey.Desktop   # Git
+  mkdir -p "$HOME/Sviluppi"
+  
+  print_warning "[*] Installing dev tools ..."
+  packages=(
+    tmux                    # tmux
+    neovim                  # neovim
+    postman-bin             # Postman
+    docker                  # Docker
+    networkmanager-openvpn  # OpenVPN
+    # QEMU and KVM
+    qemu-full
+    virt-manager
+    virt-viewer
+    dnsmasq
+    vde2
+    bridge-utils
+    openbsd-netcat
+    # Pyenv
+    pyenv
+    pyenv-virtualenv
+    eza   # Better ls
   )
 
-  flatpak install flathub -y "${flatpaks[@]}"
-  
-  # [TODO] tmux install and conf
-  # [TODO] neovim install and conf
+  installer "${packages[@]}"
 
-  # OpenVPN
-  sudo pacman -S networkmanager-openvpn
+  # Full zsh setup
+  if [ -f "$HOME/dotfiles/.zshrc" ]; then
+    cp $HOME/dotfiles/.zshrc $HOME/
+    print_success "[+] Zsh configured!"
+  else
+    print_error "[-] Failed to configure Zsh!"
+  fi
 
-  # Install docker
-  sudo pacman -S docker
-  # Enable the services
-  sudo systemctl enable docker.service
-  sudo systemctl enable docker.socket
-  # Add the usergroup
-  sudo usermod -aG docker $USER
+  # TMUX setup
+  if [ -d "$HOME/dotfiles/.config/tmux" ]; then
+    mkdir -p $HOME/.config/
+    cp -r $HOME/dotfiles/.config/tmux $HOME/.config/
+    print_success "[+] TMUX configured!"
+  else
+    print_error "[-] Failed to configure TMUX!"
+  fi
 
-  # QEMU and KVM
-  sudo pacman -S --noconfirm qemu-full virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat
-  sudo systemctl enable --now libvirtd
+  # Docker setup
+  if sudo systemctl enable docker.service &> /dev/null && sudo systemctl enable docker.socket && sudo usermod -aG docker $USER; then
+    print_success "[+] Docker configured!"
+  else
+    print_error "[-] Failed to configure Docker!"
+  fi
 
-  sudo sed -i 's/#unix_sock_group = "libvirt"/unix_sock_group = "libvirt"/' /etc/libvirt/libvirtd.conf
-  sudo sed -i 's/#unix_sock_ro_perms = "0777"/unix_sock_ro_perms = "0777"/' /etc/libvirt/libvirtd.conf
-  sudo sed -i 's/#unix_sock_rw_perms = "0770"/unix_sock_rw_perms = "0770"/' /etc/libvirt/libvirtd.conf
+  # QEMU and KVM setup
+  if sudo systemctl enable --now libvirtd &> /dev/null && \
+     sudo sed -i 's/#unix_sock_group = "libvirt"/unix_sock_group = "libvirt"/' /etc/libvirt/libvirtd.conf &> /dev/null && \
+     sudo sed -i 's/#unix_sock_ro_perms = "0777"/unix_sock_ro_perms = "0777"/' /etc/libvirt/libvirtd.conf &> /dev/null && \
+     sudo sed -i 's/#unix_sock_rw_perms = "0770"/unix_sock_rw_perms = "0770"/' /etc/libvirt/libvirtd.conf &> /dev/null && \
+     sudo systemctl restart libvirtd &> /dev/null && \
+     sudo usermod -aG libvirt "$USER"; then
+    print_success "[+] QEMU and KVM configured!"
+  else
+    print_error "[-] Failed to configure QEMU and KVM!"
+  fi
+}
 
-  sudo systemctl restart libvirtd
-  sudo usermod -aG libvirt $USER
-  
-  # Configure ZSH
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions 
-  git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
-  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && sudo pacman -S fd && ~/.fzf/install
-
-  # Install eza
-  sudo pacman -S eza
-
-  # Install pyenv and pyenv-virtualenv
-  paru -S --noconfirm pyenv pyenv-virtualenv
-
-  # [TODO] Move .zshrc file
-} 
-
-# Hacking tools
 hack_tools() {
-  flatpaks=(
-    org.ghidra_sre.Ghidra    # Ghidra
-    org.wireshark.Wireshark  # Wireshark
-    org.radare.iaito	     # Radare
+  print_warning "[*] Installing hacking tools ..."
+  packages=(
+    ghidra
+    wireshark-qt
+    termshark-git
   )
+  installer "${packages[@]}"
 
-  flatpak install flathub -y "${flatpaks[@]}"
-  
   # [TODO] - Nebula container
   # [TODO] - Protostar container
   # [TODO] - web4pentest container
@@ -142,3 +155,28 @@ hack_tools() {
   # [TODO] - ParrotOS tools
   # [TODO] - pwn virtualenv
 }
+
+#============================
+# MAIN BODY
+#============================
+
+# Ensure the script is not run as root
+if [ "$EUID" -eq 0 ]; then
+  print_error "Please do not run this script as root."
+  exit 1
+fi
+
+# Move to the home directory
+cd $HOME
+
+# Prompt user to install development tools
+read -p "Do you want to install the development tools? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  dev_tools || print_error "[-] Failed to install development tools. Continuing..."
+fi
+
+# Prompt user to install hacking tools
+read -p "Do you want to install the hacking tools? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  hack_tools || print_error "[-] Failed to install hacking tools. Continuing..."
+fi

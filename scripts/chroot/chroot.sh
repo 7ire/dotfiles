@@ -302,7 +302,7 @@ EOF
 
 # ZSH config
 conf_zsh() {
-  print_info "[*] Configuring Zsh ..."
+  print_warning "[*] Configuring Zsh ..."
   
   # Install zsh and set it as default shell
   if ! installer zsh &> /dev/null || ! chsh -s /bin/zsh; then

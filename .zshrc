@@ -18,7 +18,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="robbyrussell"
 
 # Powerlevel10k theme
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+# source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -89,7 +89,7 @@ plugins=(
     tmux
     zsh-autosuggestions
     zsh-syntax-highlighting
-    zsh-z
+    z
 )
 
 # TMUX autostart
