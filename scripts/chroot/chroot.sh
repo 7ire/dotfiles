@@ -242,7 +242,7 @@ ssh_key_gen() {
   chmod 700 "$key_dir"
 
   # Generate SSH key using ed25519 algorithm
-  if ssh-keygen -t ed25519 -C "$email" -f "$key_dir/$key_name" -N ""; then
+  if ssh-keygen -t ed25519 -C "$email" -f "$key_dir/$key_name"; then
     print_success "[+] SSH key generated successfully in $key_dir!"
     eval "$(ssh-agent -s)"
     ssh-add "$key_dir/$key_name"
@@ -254,7 +254,6 @@ ssh_key_gen() {
     return 1
   fi
 }
-
 
 # SSH Key import
 ssh_key_import() {

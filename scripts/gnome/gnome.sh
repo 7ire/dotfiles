@@ -116,6 +116,7 @@ default_app() {
     brave-bin          # Browser - Brave
     spotify            # Music - Spotify
     # Office
+    vscodium-bin       # Text editor - VSCodium
     obsidian           # Notes - Obsidian
     thunderbird        # Mail client - Thunderbird
     # Libreoffice + LaTeX support
