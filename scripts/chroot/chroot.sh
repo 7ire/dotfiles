@@ -245,6 +245,7 @@ ssh_key_gen() {
     print_success "[+] SSH key generated successfully in $key_dir!"
     eval "$(ssh-agent -s)"
     ssh-add "$key_dir/$key_name"
+    cat "$key_dir/$key_name.pub"
 
     # Add the SSH key to the config file
     cat <<EOF >> ~/.ssh/config
