@@ -148,13 +148,68 @@ hack_tools() {
   )
   installer "${packages[@]}"
 
-  # [TODO] - Nebula container
-  # [TODO] - Protostar container
-  # [TODO] - web4pentest container
+  # Nebula container
+  NEBULA_DIR="$HOME/Sviluppi/containers/vuln_machines/nebula"
+  mkdir -p "$NEBULA_DIR"
+  cd "$NEBULA_DIR" || { print_error "[-] Failed navigating to nebula directory!"; exit 1; }
+
+  if [[ ! -d .git ]]; then
+    git clone https://github.com/packetgeek/nebula-docker . &> /dev/null
+  fi
+
+  if wget -O exploit-exercises-nebula.iso https://github.com/ExploitEducation/Nebula/releases/download/v5.0.0/exploit-exercises-nebula-5.iso &> /dev/null && \
+     chmod +x build build-image &> /dev/null && \
+     ./build-image &> /dev/null && \
+     ./build &> /dev/null; then
+    print_success "[+] Nebula machine installed!"
+  else
+    print_error "[-] Failed to install Nebula machine!"
+  fi
+  cd - &> /dev/null
+
+  # Protostar container
+  PROTOSTAR_DIR="$HOME/Sviluppi/containers/vuln_machines/protostar"
+  mkdir -p "$PROTOSTAR_DIR"
+  cd "$PROTOSTAR_DIR" || { print_error "[-] Failed navigating to protostar directory!"; exit 1; }
+
+  if [[ ! -d .git ]]; then
+    git clone https://github.com/th3happybit/protostar-docker.git . &> /dev/null
+  fi
+
+  if chmod u+x protostar.sh &> /dev/null && \
+     ./protostar.sh build &> /dev/null && \
+     ./protostar.sh run &> /dev/null; then
+    print_success "[+] Protostar machine installed!"
+  else
+    print_error "[-] Failed to install Protostar machine!"
+  fi
+  cd - &> /dev/null
+
+  # web4pentest container
+  if docker pull justhumanz/web_for_pentest &> /dev/null && \
+     docker run -itd --name pentest -p 8888:80 justhumanz/web_for_pentest &> /dev/null; then
+    print_success "[+] Web4Pentest machine installed!"
+  else
+    print_error "[-] Failed to install Web4Pentest machine!"
+  fi
+
   # [TODO] - Kali container
   # [TODO] - ParrotOS tools
-  # [TODO] - pwn virtualenv
+
+  # PWN virtualenv
+  if pyenv virtualenv pwn &> /dev/null && \
+     pyenv activate pwn &> /dev/null && \
+     pip install ropper ROPgadget pwntools &> /dev/null && \
+     git clone https://github.com/radareorg/radare2 $HOME/.radare2 &> /dev/null && \
+     $HOME/.radare2/sys/install.sh &> /dev/null && \
+     git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg &> /dev/null && \
+     $HOME/.pwndbg/setup.sh &> /dev/null; then
+    print_success "[+] PWN environment configured!"
+  else
+    print_error "[-] Failed to configure PWN environment!"
+  fi
 }
+
 
 #============================
 # MAIN BODY
