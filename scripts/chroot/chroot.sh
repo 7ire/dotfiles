@@ -237,6 +237,7 @@ ssh_key_gen() {
   mkdir -p "$key_dir"
 
   # Set permissions to 700 for keyring and SSH key directory
+  chmod 700 "$HOME/.ssh"
   chmod 700 "$HOME/.ssh/keyring"
   chmod 700 "$key_dir"
 
@@ -246,14 +247,6 @@ ssh_key_gen() {
     eval "$(ssh-agent -s)"
     ssh-add "$key_dir/$key_name"
     cat "$key_dir/$key_name.pub"
-
-    # Add the SSH key to the config file
-    cat <<EOF >> ~/.ssh/config
-Host github.com
-  HostName github.com
-  IdentityFile "$key_dir/$key_name"
-  IdentitiesOnly yes
-EOF
 
     print_success "[+] SSH key added to ~/.ssh/config!"
   else
@@ -287,6 +280,61 @@ vpn_import() {
   print_success "[+] VPN configuration imported!"
 }
 
+# Git config
+conf_git() {
+  local email="$1"
+  local name="$2"
+
+  git config --global user.email "$email"
+  git config --global user.name "$name"
+
+  # Add the SSH key to the config file
+  cat <<EOF >> ~/.ssh/config
+Host github.com
+  HostName github.com
+  IdentityFile "$HOME/keyring/github/github"
+  IdentitiesOnly yes
+EOF
+  print_success "[+] git configured and its key added to ~/.ssh/config"
+}
+
+# ZSH config
+conf_zsh() {
+  print_info "[*] Configuring Zsh ..."
+  if ! installer zsh || ! chsh -s /bin/zsh; then
+    print_error "[-] Failed to install and set Zsh as default shell!"
+    return 1
+  fi
+
+  # Install Oh My Zsh
+  if ! sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; then
+    print_error "[-] Failed to install Oh My Zsh!"
+    return 1
+  fi
+
+  # Install Powerlevel10k theme
+  if ! git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &> /dev/nul; then
+    print_error "[-] Failed to install Powerlevel10k theme!"
+    return 1
+  fi
+
+  sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' $HOME/.zshrc
+
+  # Install Plugins
+  local plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-completions)
+  for plugin in "${plugins[@]}"; do
+    if ! git clone "https://github.com/zsh-users/$plugin" ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin &> /dev/null; then
+      print_error "[-] Failed to install $plugin!"
+      return 1
+    fi
+  done
+
+  sed -i 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-completions)|' $HOME/.zshrc
+
+  print_success "[+] Zsh and plugins configured!"
+}
+
+
 #============================
 # MAIN BODY
 #============================
@@ -301,84 +349,98 @@ fi
 cd "$HOME"
 
 # Prompt user to install an AUR helper
-read -p "Do you want to install an AUR helper? (y/n): " aur_choice
-if [[ "$aur_choice" == "y" || "$aur_choice" == "Y" ]]; then
+read -p "Do you want to install the AUR helper? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   install_aur || print_error "[-] Failed to install AUR helper. Continuing..."
 fi
 
 # Prompt user to configure pacman
-read -p "Do you want to configure pacman? (y/n): " pacman_choice
-if [[ "$pacman_choice" == "y" || "$pacman_choice" == "Y" ]]; then
+read -p "Do you want to configure pacman? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_pacman || print_error "[-] Failed to configure pacman. Continuing..."
 fi
 
-# Prompt user to configure Bluetooth
-read -p "Do you want to configure Bluetooth? (y/n): " bluetooth_choice
-if [[ "$bluetooth_choice" == "y" || "$bluetooth_choice" == "Y" ]]; then
-  conf_bluetooth || print_error "[-] Failed to configure Bluetooth. Continuing..."
-fi
-
-# Prompt user to configure SSH
-read -p "Do you want to configure SSH? (y/n): " ssh_choice
-if [[ "$ssh_choice" == "y" || "$ssh_choice" == "Y" ]]; then
-  activate_ssh || print_error "[-] Failed to enable SSH. Continuing..."
-fi
-
-# Prompt user to install Flatpak
-read -p "Do you want to install Flatpak? (y/n): " flatpak_choice
-if [[ "$flatpak_choice" == "y" || "$flatpak_choice" == "Y" ]]; then
-  installer flatpak || print_error "[-] Failed to install Flatpak. Continuing..."
-fi
-
 # Prompt user to configure Chaotic AUR repository
-read -p "Do you want to configure the Chaotic AUR repository? (y/n): " chaotic_choice
-if [[ "$chaotic_choice" == "y" || "$chaotic_choice" == "Y" ]]; then
+read -p "Do you want to configure Chaotic AUR? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_chaoticaur || print_error "[-] Failed to configure Chaotic AUR repository. Continuing..."
 fi
 
 # Prompt user to update the mirrorlist
-read -p "Do you want to update the mirrorlist? (y/n): " mirrorlist_choice
-if [[ "$mirrorlist_choice" == "y" || "$mirrorlist_choice" == "Y" ]]; then
+read -p "Do you want to update the mirrorlist? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   gen_mirrorilist || print_error "[-] Failed to update mirrorlist. Continuing..."
 fi
 
+# Prompt user to configure SSH
+read -p "Do you want to enable SSH? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  activate_ssh || print_error "[-] Failed to enable SSH. Continuing..."
+fi
+
+# Prompt user to configure Bluetooth
+read -p "Do you want to configure Bluetooth? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  conf_bluetooth || print_error "[-] Failed to configure Bluetooth. Continuing..."
+fi
+
+# Prompt user to install Flatpak
+read -p "Do you want to install Flatpak? [y/n]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  installer flatpak || print_error "[-] Failed to install Flatpak. Continuing..."
+fi
+
 # Prompt user to configure Power Plan
-read -p "Do you want to configure Power Plan? (y/n): " powerplan_choice
-if [[ "$powerplan_choice" == "y" || "$powerplan_choice" == "Y" ]]; then
+read -p "Do you want to configure power plan? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_powerprofiles || print_error "[-] Failed to configure power plan. Continuing..."
 fi
 
 # Prompt user to configure Nvidia and GDM
-read -p "Do you want to configure Nvidia and GDM? (y/n): " nvidia_choice
-if [[ "$nvidia_choice" == "y" || "$nvidia_choice" == "Y" ]]; then
+read -p "Do you want to configure NVIDIA, NVENC and GDM? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_nvidia || print_error "[-] Failed to configure NVIDIA, NVENC and GDM. Continuing..."
 fi
 
 # Prompt user to configure Windows Dualboot
-read -p "Do you want to configure Windows Dualboot? (y/n): " dualboot_choice
-if [[ "$dualboot_choice" == "y" || "$dualboot_choice" == "Y" ]]; then
+read -p "Do you want to configure Windows dualboot? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   windows_tpm_config || print_error "[-] Failed to configure Windows Dualboot. Continuing..."
 fi
 
 # Prompt user to generate a new SSH key
-read -p "Do you want to generate a new SSH key? (y/n): " sshkey_choice
-if [[ "$sshkey_choice" == "y" || "$sshkey_choice" == "Y" ]]; then
+read -p "Do you want to generate a new SSH key? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   read -p "Enter the email for the SSH key: " ssh_email
   read -p "Enter the name for the SSH key: " ssh_key_name
   ssh_key_gen "$ssh_email" "$ssh_key_name" || print_error "[-] Failed to generate SSH key. Continuing..."
 fi
 
 # Prompt user to import SSH keys
-read -p "Do you want to import SSH keys? (y/n): " sshkey_import_choice
-if [[ "$sshkey_import_choice" == "y" || "$sshkey_import_choice" == "Y" ]]; then
+read -p "Do you want to import SSH keys? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   read -p "Enter the path to import SSH keys from: " ssh_import_path
   ssh_key_import "$ssh_import_path" || print_error "[-] Failed to import SSH keys. Continuing..."
 fi
 
+# Pront user to cofigure Git
+read -p "Do you want to configure Git? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  read -p "Enter the email for the Git config: " git_email
+  read -p "Enter the name for the Git config: " git_name
+  conf_git "$git_email" "$git_name" || print_error "[-] Failed to configure Git. Continuing..."
+fi
+
 # Prompt user to import VPN configuration
-read -p "Do you want to import VPN configuration? (y/n): " vpn_import_choice
-if [[ "$vpn_import_choice" == "y" || "$vpn_import_choice" == "Y" ]]; then
+read -p "Do you want to import a VPN configuration? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
   vpn_import || print_error "[-] Failed to import VPN configuration. Continuing..."
+fi
+
+# Promt user to configure Zsh
+read -p "Do you want to configure Zsh and Oh My Zsh? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  conf_zsh || print_error "[-] Failed to configure Zsh. Continuing ..."
 fi
 
 print_success "All selected configurations are completed!"

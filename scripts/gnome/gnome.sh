@@ -161,7 +161,7 @@ theming_gnome() {
 
 # Extensions
 gnome_ext() {
-  installer jq unzip wget curl &> /dev/null
+  installer jq unzip wget curl clutter &> /dev/null
 
   # Rounded window
   installer nodejs npm gettext just &> /dev/null
