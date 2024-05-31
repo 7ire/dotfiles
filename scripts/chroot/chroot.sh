@@ -287,11 +287,14 @@ conf_git() {
   git config --global user.email "$email"
   git config --global user.name "$name"
 
+  # Create ~/.ssh directory if it doesn't exist
+  mkdir -p "$HOME/.ssh"
+
   # Add the SSH key to the config file
   cat <<EOF >> ~/.ssh/config
 Host github.com
   HostName github.com
-  IdentityFile "$HOME/keyring/github/github"
+  IdentityFile "$HOME/.ssh/keyring/github/github"
   IdentitiesOnly yes
 EOF
   print_success "[+] git configured and its key added to ~/.ssh/config"
@@ -300,19 +303,21 @@ EOF
 # ZSH config
 conf_zsh() {
   print_info "[*] Configuring Zsh ..."
-  if ! installer zsh || ! chsh -s /bin/zsh; then
+  
+  # Install zsh and set it as default shell
+  if ! installer zsh &> /dev/null || ! chsh -s /bin/zsh; then
     print_error "[-] Failed to install and set Zsh as default shell!"
     return 1
   fi
 
   # Install Oh My Zsh
-  if ! sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; then
+  if ! sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended; then
     print_error "[-] Failed to install Oh My Zsh!"
     return 1
   fi
 
   # Install Powerlevel10k theme
-  if ! git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &> /dev/nul; then
+  if ! git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &> /dev/null; then
     print_error "[-] Failed to install Powerlevel10k theme!"
     return 1
   fi
@@ -320,7 +325,7 @@ conf_zsh() {
   sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' $HOME/.zshrc
 
   # Install Plugins
-  local plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-completions)
+  local plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-completions)
   for plugin in "${plugins[@]}"; do
     if ! git clone "https://github.com/zsh-users/$plugin" ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin &> /dev/null; then
       print_error "[-] Failed to install $plugin!"
@@ -330,7 +335,13 @@ conf_zsh() {
 
   sed -i 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-completions)|' $HOME/.zshrc
 
-  print_success "[+] Zsh and plugins configured!"
+  # Install fzf (fuzzy finder)
+  if ! git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &> /dev/null || ! ~/.fzf/install --all &> /dev/null; then
+    print_error "[-] Failed to install fzf!"
+    return 1
+  fi
+
+  print_success "[+] Zsh, Oh My Zsh, themes, plugins, and fzf configured!"
 }
 
 
@@ -422,7 +433,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   ssh_key_import "$ssh_import_path" || print_error "[-] Failed to import SSH keys. Continuing..."
 fi
 
-# Pront user to cofigure Git
+# Prompt user to configure Git
 read -p "Do you want to configure Git? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   read -p "Enter the email for the Git config: " git_email
@@ -436,10 +447,10 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   vpn_import || print_error "[-] Failed to import VPN configuration. Continuing..."
 fi
 
-# Promt user to configure Zsh
-read -p "Do you want to configure Zsh and Oh My Zsh? [y/N]: " choice
+# Prompt user to configure Zsh
+read -p "Do you want to configure Zsh? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  conf_zsh || print_error "[-] Failed to configure Zsh. Continuing ..."
+  conf_zsh || print_error "[-] Failed to configure Zsh. Continuing..."
 fi
 
 print_success "All selected configurations are completed!"
