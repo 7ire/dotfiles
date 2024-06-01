@@ -240,14 +240,23 @@ conf_powerprofiles() {
 
 # Nvidia, NVENC and GDM Configuration
 conf_nvidia() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
+  sudo -v
   print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
 
   # Add necessary modules to mkinitcpio.conf
-  if ! sudo sed -i '/^MODULES=/ s/(\(.*\))/(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf ||
-     # Update GRUB configuration
-     ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
+  print_info "[DEBUG] Before modification:"
+  cat /etc/mkinitcpio.conf
+  
+  if ! sudo sed -i '/^MODULES=/ s/(\(.*\))/(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf; then
+    print_error "[-] Failed to update mkinitcpio.conf!"
+    return 1
+  fi
+  
+  print_info "[DEBUG] After modification:"
+  cat /etc/mkinitcpio.conf
+
+  # Update GRUB configuration
+  if ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
      # Create udev rule for NVIDIA
      ! sudo bash -c 'echo "ACTION==\"add\", DEVPATH==\"/bus/pci/drivers/nvidia\", RUN+=\"/usr/bin/nvidia-modprobe -c 0 -u\"" > /etc/udev/rules.d/70-nvidia.rules' ||
      # Disable GDM rule
@@ -262,8 +271,10 @@ conf_nvidia() {
     print_error "[-] Failed to configure NVIDIA, NVENC and GDM!"
     return 1
   fi
+
   print_success "[+] NVIDIA, NVENC and GDM configured!"
 }
+
 
 
 # Windows Dualboot Configuration
