@@ -157,7 +157,7 @@ hack_tools() {
     git clone https://github.com/packetgeek/nebula-docker . &> /dev/null
   fi
 
-  if wget -O exploit-exercises-nebula.iso https://github.com/ExploitEducation/Nebula/releases/download/v5.0.0/exploit-exercises-nebula-5.iso &> /dev/null && \
+  if wget -O exploit-exercises-nebula-5.iso https://github.com/ExploitEducation/Nebula/releases/download/v5.0.0/exploit-exercises-nebula-5.iso &> /dev/null && \
      chmod +x build build-image &> /dev/null && \
      ./build-image &> /dev/null && \
      ./build &> /dev/null; then
@@ -203,7 +203,8 @@ hack_tools() {
      git clone https://github.com/radareorg/radare2 $HOME/.radare2 &> /dev/null && \
      $HOME/.radare2/sys/install.sh &> /dev/null && \
      git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg &> /dev/null && \
-     $HOME/.pwndbg/setup.sh &> /dev/null; then
+     cd $HOME/.pwndbg &> /dev/null && \
+     ./setup.sh; then
     print_success "[+] PWN environment configured!"
   else
     print_error "[-] Failed to configure PWN environment!"
