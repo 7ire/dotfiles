@@ -102,7 +102,50 @@ conf_bluetooth() {
     print_error "[-] Failed to configure Bluetooth!"
     return 1
   fi
-  print_success "[+] Bluetooth configured!"
+
+  # Update Bluetooth configuration
+  BLUETOOTH_CONF="/etc/bluetooth/main.conf"
+  
+  # Update ControllerMode to dual
+  if grep -q "^ControllerMode = bredr" "$BLUETOOTH_CONF"; then
+    if ! sudo sed -i 's/^ControllerMode = bredr/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
+      print_error "[-] Failed to update ControllerMode in Bluetooth configuration!"
+      return 1
+    fi
+  else
+    if ! echo "ControllerMode = dual" | sudo tee -a "$BLUETOOTH_CONF" > /dev/null; then
+      print_error "[-] Failed to add ControllerMode to Bluetooth configuration!"
+      return 1
+    fi
+  fi
+
+  # Enable Experimental feature
+  if grep -q "^\[General\]" "$BLUETOOTH_CONF"; then
+    if grep -q "^Experimental = false" "$BLUETOOTH_CONF"; then
+      if ! sudo sed -i 's/^Experimental = false/Experimental = true/' "$BLUETOOTH_CONF"; then
+        print_error "[-] Failed to update Experimental feature in Bluetooth configuration!"
+        return 1
+      fi
+    elif ! grep -q "^Experimental = true" "$BLUETOOTH_CONF"; then
+      if ! sudo sed -i '/^\[General\]/a Experimental = true' "$BLUETOOTH_CONF"; then
+        print_error "[-] Failed to add Experimental feature to Bluetooth configuration!"
+        return 1
+      fi
+    fi
+  else
+    if ! echo -e "\n[General]\nExperimental = true" | sudo tee -a "$BLUETOOTH_CONF" > /dev/null; then
+      print_error "[-] Failed to add [General] section and Experimental feature to Bluetooth configuration!"
+      return 1
+    fi
+  fi
+
+  # Restart Bluetooth service
+  if ! sudo systemctl restart bluetooth &> /dev/null; then
+    print_error "[-] Failed to restart Bluetooth service!"
+    return 1
+  fi
+
+  print_success "[+] Bluetooth configured and Experimental feature enabled!"
 }
 
 # Chaotic AUR Configuration
@@ -453,4 +496,4 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_zsh || print_error "[-] Failed to configure Zsh. Continuing..."
 fi
 
-print_success "All selected configurations are completed!"
+print_info "All selected configurations are completed!"

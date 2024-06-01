@@ -28,6 +28,7 @@ show_menu() {
     echo "1) Run chroot script"
     echo "2) Run GNOME setup script"
     echo "3) Run Development setup script"
+    echo "4) Run Tweak setup script"
     echo "q) Quit"
     echo -n "Choose an option: "
 }
@@ -65,6 +66,14 @@ while true; do
                 bash "$SCRIPT_DIR/dev/dev.sh"
             else
                 echo "The Development setup script was not found."
+            fi
+            ;;
+        4)
+            echo "Running the Tweak setup script..."
+            if [ -f "$SCRIPT_DIR/tweak/tweak.sh" ]; then
+                bash "$SCRIPT_DIR/tweak/tweak.sh"
+            else
+                echo "The Tweak setup script was not found."
             fi
             ;;
         q|Q)
