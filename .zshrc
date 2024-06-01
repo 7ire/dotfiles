@@ -136,8 +136,15 @@ alias .3='cd ../../..'
 alias .4='cd ../../../..'
 alias .5='cd ../../../../..'
 
+# Clear dns
+alias flshdns='$HOME/.local/share/bin/flushdns'
+
 # Always mkdir a path (this doesn't inhibit functionality to make a single dir)
 alias mkdir='mkdir -p'
+
+# Switch from day/night
+alias   day='$HOME/.local/share/bin/daymode'
+alias night='$HOME/.local/share/bin/nightmode'
 
 # Fuzzy finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

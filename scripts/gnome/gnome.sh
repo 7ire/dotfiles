@@ -150,8 +150,7 @@ theming_gnome() {
   installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null
   
   # Enable all the themes
-  papirus-folders -C adwaita --theme Papirus &> /dev/null
-  gsettings set org.gnome.desktop.interface icon-theme 'Papirus' &> /dev/null
+  gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita' &> /dev/null
   gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null
   gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null
 
@@ -286,6 +285,8 @@ EXT_LIST=(
   smile-extension@mijorus.it                    # Emoji
   app-hider@lynith.dev                          # App hider
   workspace-switcher-manager@G-dH.github.com    # Workspace switcher
+  dash-to-dock@micxgx.gmail.com                 # Dock
+  order-extensions@wa4557.github.com            # Top bar icon organizer
   compact-quick-settings@gnome-shell-extensions.mariospr.org # Compact qs
   Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
   Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery

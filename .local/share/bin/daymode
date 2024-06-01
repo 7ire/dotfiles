@@ -2,5 +2,6 @@
 
 gnome-extensions disable custom-accent-colors@demiskp
 gnome-extensions disable user-theme@gnome-shell-extensions.gcampax.github.com
-papirus-folders -C adwaita --theme Papirus
-gsettings set org.gnome.desktop.interface icon-theme 'Papirus'
+# papirus-folders -C adwaita --theme Papirus
+# gsettings set org.gnome.desktop.interface icon-theme 'Papirus'
+gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'
