@@ -27,6 +27,7 @@ show_menu() {
     show_ascii_art
     echo "1) Run chroot script"
     echo "2) Run GNOME setup script"
+    echo "3) Run Development setup script"
     echo "q) Quit"
     echo -n "Choose an option: "
 }
@@ -56,6 +57,14 @@ while true; do
                 bash "$SCRIPT_DIR/gnome/gnome.sh"
             else
                 echo "The GNOME setup script was not found."
+            fi
+            ;;
+        2)
+            echo "Running the Development setup script..."
+            if [ -f "$SCRIPT_DIR/dev/dev.sh" ]; then
+                bash "$SCRIPT_DIR/dev/dev.sh"
+            else
+                echo "The Development setup script was not found."
             fi
             ;;
         q|Q)
