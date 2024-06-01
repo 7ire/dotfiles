@@ -232,8 +232,10 @@ conf_powerprofiles() {
 conf_nvidia() {
   sudo -v
   print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
-  # Add necessary modules to mkinitcpio.conf and update GRUB configuration
-  if ! sudo sed -i 's/^MODULES=(.*)$/& nvidia nvidia_modeset nvidia_uvm nvidia_drm/' /etc/mkinitcpio.conf ||
+
+  # Add necessary modules to mkinitcpio.conf
+  if ! sudo sed -i '/^MODULES=/ s/(\(.*\))/(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf ||
+     # Update GRUB configuration
      ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
      # Create udev rule for NVIDIA
      ! sudo bash -c 'echo "ACTION==\"add\", DEVPATH==\"/bus/pci/drivers/nvidia\", RUN+=\"/usr/bin/nvidia-modprobe -c 0 -u\"" > /etc/udev/rules.d/70-nvidia.rules' ||
@@ -251,6 +253,7 @@ conf_nvidia() {
   fi
   print_success "[+] NVIDIA, NVENC and GDM configured!"
 }
+
 
 # Windows Dualboot Configuration
 windows_tpm_config() {
