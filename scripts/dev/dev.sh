@@ -120,7 +120,7 @@ dev_tools() {
   fi
 
   # Docker setup
-  if sudo systemctl enable docker.service &> /dev/null && sudo systemctl enable docker.socket && sudo usermod -aG docker $USER; then
+  if sudo systemctl enable docker.service &> /dev/null && sudo systemctl enable docker.socket &> /dev/null && sudo usermod -aG docker $USER; then
     print_success "[+] Docker configured!"
   else
     print_error "[-] Failed to configure Docker!"
