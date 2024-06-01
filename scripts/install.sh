@@ -59,7 +59,7 @@ while true; do
                 echo "The GNOME setup script was not found."
             fi
             ;;
-        2)
+        3)
             echo "Running the Development setup script..."
             if [ -f "$SCRIPT_DIR/dev/dev.sh" ]; then
                 bash "$SCRIPT_DIR/dev/dev.sh"
