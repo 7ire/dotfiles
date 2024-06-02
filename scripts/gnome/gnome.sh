@@ -216,6 +216,12 @@ gnome_ext() {
       print_error "[-] ${i} failed to install."
     fi
   done
+
+  # Extension adaptation: https://github.com/jamespo/gnome-extensions
+
+  # Top Bar Organizer
+  wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip
+  gnome-extensions install -f top-bar-*.zip
 }
 
 #============================
