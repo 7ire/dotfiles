@@ -238,25 +238,15 @@ conf_powerprofiles() {
   print_success "[+] Power plan configured!"
 }
 
-# Nvidia, NVENC and GDM Configuration
+# Configurazione NVIDIA, NVENC e GDM
 conf_nvidia() {
   sudo -v
   print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
-
+  
   # Add necessary modules to mkinitcpio.conf
-  print_info "[DEBUG] Before modification:"
-  cat /etc/mkinitcpio.conf
-  
-  if ! sudo sed -i '/^MODULES=/ s/(\(.*\))/(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf; then
-    print_error "[-] Failed to update mkinitcpio.conf!"
-    return 1
-  fi
-  
-  print_info "[DEBUG] After modification:"
-  cat /etc/mkinitcpio.conf
-
-  # Update GRUB configuration
-  if ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
+  if ! sudo sed -i '/^MODULES=/ s/(\(.*\))/(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf ||
+     # Update GRUB configuration
+     ! sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 nvidia_drm.modeset=1"/' /etc/default/grub ||
      # Create udev rule for NVIDIA
      ! sudo bash -c 'echo "ACTION==\"add\", DEVPATH==\"/bus/pci/drivers/nvidia\", RUN+=\"/usr/bin/nvidia-modprobe -c 0 -u\"" > /etc/udev/rules.d/70-nvidia.rules' ||
      # Disable GDM rule
@@ -271,11 +261,8 @@ conf_nvidia() {
     print_error "[-] Failed to configure NVIDIA, NVENC and GDM!"
     return 1
   fi
-
   print_success "[+] NVIDIA, NVENC and GDM configured!"
 }
-
-
 
 # Windows Dualboot Configuration
 windows_tpm_config() {
@@ -290,7 +277,10 @@ windows_tpm_config() {
      ! sudo sbctl status &> /dev/null ||
      ! sudo sbctl create-keys &> /dev/null ||
      ! sudo sbctl enroll-keys --microsoft &> /dev/null ||
-     ! sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi &> /dev/null; then
+     ! sudo sbctl sign -s /boot/EFI/GRUB/grubx64.efi ||
+     ! sudo sbctl sign -s /boot/grub/x86_64-efi/core.efi ||
+     ! sudo sbctl sign -s /boot/grub/x86_64-efi/grub.efi ||
+     ! sudo sbctl sign -s /boot/vmlinuz-linux-zen; then
     print_error "[-] Failed to configure Windows Dualboot!"
     return 1
   fi
