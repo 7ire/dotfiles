@@ -118,6 +118,30 @@ tweak_bluez() {
   print_success "[+] BlueZ tweaks applied and Bluetooth service restarted!"
 }
 
+# GNOME Workspace
+tweak_workspace() {
+  # Reset useless keybinds
+  if ! dconf write /org/gnome/shell/keybindings/switch-to-application-5 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-6 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-7 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-8 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-9 "@as []" &> /dev/null; then
+    print_error "[-] Failed to reset useless keybinds!"
+    return 1
+  fi
+
+  print_success "[+] Reseted useless keybinds!"
+
+  if ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-5 "['<Super>5']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-6 "['<Super>6']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-6 "['<Super>7']" &> /dev/null; then
+    print_success "[-]  Failed to bind keybinds for workspaces"
+    return 1
+  fi
+
+  print_success "[+] Workspaces keybinds assigned!"
+}
+
 
 #============================
 # MAIN BODY
@@ -132,10 +156,16 @@ fi
 # Move to the home directory
 cd "$HOME"
 
-# Prompt user to install an AUR helper
+# Prompt user to tweak BlueZ
 read -p "Do you want to tweak Bluez with the new features? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   tweak_bluez || print_error "[-] Failed to tweak BlueZ. Continuing..."
+fi
+
+# Prompt user to tweak keybinds
+read -p "Do you want to tweak GNOME workspaces keybinds? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  tweak_bluez || print_error "[-] Failed to tweak GNOME workspaces keybinds. Continuing..."
 fi
 
 print_info "All selected configurations are completed!"
