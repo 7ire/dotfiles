@@ -121,7 +121,11 @@ tweak_bluez() {
 # GNOME Workspace
 tweak_workspace() {
   # Reset useless keybinds
-  if ! dconf write /org/gnome/shell/keybindings/switch-to-application-5 "@as []" &> /dev/null ||
+  if ! dconf write /org/gnome/shell/keybindings/switch-to-application-1 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-2 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-3 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-4 "@as []" &> /dev/null ||
+     ! dconf write /org/gnome/shell/keybindings/switch-to-application-5 "@as []" &> /dev/null ||
      ! dconf write /org/gnome/shell/keybindings/switch-to-application-6 "@as []" &> /dev/null ||
      ! dconf write /org/gnome/shell/keybindings/switch-to-application-7 "@as []" &> /dev/null ||
      ! dconf write /org/gnome/shell/keybindings/switch-to-application-8 "@as []" &> /dev/null ||
@@ -132,14 +136,27 @@ tweak_workspace() {
 
   print_success "[+] Reseted useless keybinds!"
 
-  if ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-5 "['<Super>5']" &> /dev/null ||
+  if ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-1 "['<Super>1']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-2 "['<Super>2']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-3 "['<Super>3']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-4 "['<Super>4']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-5 "['<Super>5']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-6 "['<Super>6']" &> /dev/null ||
-     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-7 "['<Super>7']" &> /dev/null; then
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-7 "['<Super>7']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-8 "['<Super>8']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-9 "['<Super>9']" &> /dev/null; then
     print_success "[-]  Failed to bind keybinds for workspaces"
     return 1
   fi
 
   print_success "[+] Workspaces keybinds assigned!"
+}
+
+# GNOME Extensions
+tweak_ext() {
+  # Top Bar Organizer
+  wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip
+  gnome-extensions install -f top-bar-*.zip
 }
 
 
@@ -166,6 +183,12 @@ fi
 read -p "Do you want to tweak GNOME workspaces keybinds? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   tweak_workspace || print_error "[-] Failed to tweak GNOME workspaces keybinds. Continuing..."
+fi
+
+# Prompt user to tweak keybinds
+read -p "Do you want to tweak GNOME extensions? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  tweak_ext || print_error "[-] Failed to tweak GNOME extensions. Continuing..."
 fi
 
 print_info "All selected configurations are completed!"
