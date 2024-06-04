@@ -165,7 +165,7 @@ fi
 # Prompt user to tweak keybinds
 read -p "Do you want to tweak GNOME workspaces keybinds? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  tweak_bluez || print_error "[-] Failed to tweak GNOME workspaces keybinds. Continuing..."
+  tweak_workspace || print_error "[-] Failed to tweak GNOME workspaces keybinds. Continuing..."
 fi
 
 print_info "All selected configurations are completed!"
