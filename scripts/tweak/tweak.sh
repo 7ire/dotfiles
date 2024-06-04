@@ -134,7 +134,7 @@ tweak_workspace() {
 
   if ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-5 "['<Super>5']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-6 "['<Super>6']" &> /dev/null ||
-     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-6 "['<Super>7']" &> /dev/null; then
+     ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-7 "['<Super>7']" &> /dev/null; then
     print_success "[-]  Failed to bind keybinds for workspaces"
     return 1
   fi
