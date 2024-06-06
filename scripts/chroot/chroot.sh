@@ -214,6 +214,69 @@ conf_pacman() {
   print_success "[+] Pacman configured!"
 }
 
+# System snapshot configuration
+configure_snapper() {
+  sudo -v || exit 1
+  print_warning "[*] Installing and configuring Snapper ..."
+
+  # Installare Snapper
+  if ! installer snapper; then
+    print_error "[-] Failed to install Snapper!"
+    return 1
+  fi
+
+  # Check if the subvolume @.snapshots is mount
+  if mount | grep -q 'on /.snapshots type btrfs'; then
+    print_info "[*] Unmounting the @.snapshots subvolume ..."
+    
+    # Unmount the subvolume @.snapshots
+    if ! sudo umount /.snapshots; then
+      print_error "[-] Failed to unmount /.snapshots!"
+      return 1
+    fi
+
+    # Delete the existing mountpoint
+    if ! sudo rmdir /.snapshots; then
+      print_error "[-] Failed to delete the /.snapshots mountpoint!"
+      return 1
+    fi
+  else
+    print_info "[*] No existing @.snapshots subvolume mount found."
+  fi
+
+  # Create Snapper configuration
+  if ! sudo snapper -c root create-config /; then
+    print_error "[-] Failed to create Snapper config!"
+    return 1
+  fi
+
+  # Delete the subvolume created by Snapper
+  if ! sudo btrfs subvolume delete /.snapshots; then
+    print_error "[-] Failed to delete the Snapper-created subvolume!"
+    return 1
+  fi
+
+  # Recreate the mountpoint /.snapshots
+  if ! sudo mkdir /.snapshots; then
+    print_error "[-] Failed to re-create the /.snapshots mountpoint!"
+    return 1
+  fi
+
+  # Remount the subvolume @.snapshots
+  if ! sudo mount -o subvol=@.snapshots /dev/mapper/root /.snapshots; then
+    print_error "[-] Failed to re-mount the @.snapshots subvolume!"
+    return 1
+  fi
+
+  if ! sudo systemctl enable snapper-timeline.timer &> /dev/null ||
+     ! sudo systemctl enable snapper-cleanup.timer &> /dev/null; then
+    print_error "[-] Failed to activate snapper service!"
+    return 1
+  fi
+
+  print_success "[+] Snapper configured successfully!"
+}
+
 # SSH Configuration
 activate_ssh() {
   # Check if sudo password is cached, if not ask for it
@@ -463,6 +526,12 @@ fi
 read -p "Do you want to configure power plan? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_powerprofiles || print_error "[-] Failed to configure power plan. Continuing..."
+fi
+
+# Prompt user to configure system snapshot
+read -p "Do you want to configure system snapshot? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  configure_snapper || print_error "[-] Failed to configure system snapshot. Continuing..."
 fi
 
 # Prompt user to configure Nvidia and GDM
