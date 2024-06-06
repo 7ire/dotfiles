@@ -155,8 +155,13 @@ tweak_workspace() {
 # GNOME Extensions
 tweak_ext() {
   # Top Bar Organizer
-  wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip
-  gnome-extensions install -f top-bar-*.zip
+  if ! wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip &> /dev/null ||
+     ! gnome-extensions install -f top-bar-*.zip &> /dev/null; then
+    print_error "[-] Failed to install Top Bar Organizer!"
+    return 1
+  fi
+
+  print_success "[+] Extensions installed!"
 }
 
 
@@ -185,7 +190,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   tweak_workspace || print_error "[-] Failed to tweak GNOME workspaces keybinds. Continuing..."
 fi
 
-# Prompt user to tweak keybinds
+# Prompt user to tweak extensions
 read -p "Do you want to tweak GNOME extensions? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   tweak_ext || print_error "[-] Failed to tweak GNOME extensions. Continuing..."
