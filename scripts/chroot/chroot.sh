@@ -89,9 +89,6 @@ install_aur() {
     return 1
   fi
 
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
-
   # Update the package database
   sudo pacman -Syy &> /dev/null && paru -Syy &> /dev/null
   cd .. && rm -rf paru
@@ -100,8 +97,9 @@ install_aur() {
 
 # Bluetooth Configuration
 conf_bluetooth() {
-  # Check if sudo password is cached, if not ask for it
   sudo -v || exit 1
+  print_warning "[*] Configuring Bluetooth ..."
+
   # Install bluez and bluez-utils packages, and enable Bluetooth service
   if ! installer bluez bluez-utils || ! sudo systemctl enable bluetooth &> /dev/null; then
     print_error "[-] Failed to configure Bluetooth!"
@@ -112,8 +110,8 @@ conf_bluetooth() {
   BLUETOOTH_CONF="/etc/bluetooth/main.conf"
   
   # Update ControllerMode to dual
-  if grep -q "^ControllerMode = bredr" "$BLUETOOTH_CONF"; then
-    if ! sudo sed -i 's/^ControllerMode = bredr/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
+  if grep -q "^#*ControllerMode = bredr" "$BLUETOOTH_CONF"; then
+    if ! sudo sed -i 's/^#*ControllerMode = bredr/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
       print_error "[-] Failed to update ControllerMode in Bluetooth configuration!"
       return 1
     fi
@@ -126,8 +124,8 @@ conf_bluetooth() {
 
   # Enable Experimental feature
   if grep -q "^\[General\]" "$BLUETOOTH_CONF"; then
-    if grep -q "^Experimental = false" "$BLUETOOTH_CONF"; then
-      if ! sudo sed -i 's/^Experimental = false/Experimental = true/' "$BLUETOOTH_CONF"; then
+    if grep -q "^#*Experimental = false" "$BLUETOOTH_CONF"; then
+      if ! sudo sed -i 's/^#*Experimental = false/Experimental = true/' "$BLUETOOTH_CONF"; then
         print_error "[-] Failed to update Experimental feature in Bluetooth configuration!"
         return 1
       fi
@@ -153,10 +151,9 @@ conf_bluetooth() {
   print_success "[+] Bluetooth configured and Experimental feature enabled!"
 }
 
+
 # Chaotic AUR Configuration
 conf_chaoticaur() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
   print_warning "[*] Configuring Chaotic AUR repository ..."
   # Add the Chaotic AUR key and install the repository
   if ! sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com &> /dev/null ||
@@ -216,16 +213,33 @@ conf_pacman() {
 
 # System snapshot configuration
 configure_snapper() {
-  sudo -v || exit 1
+  local device=$1
+  
+  if [[ -z "$device" ]]; then
+    print_error "[-] No device specified!"
+    return 1
+  fi
+
+  if [ ! -b "$device" ]; then
+    print_error "[-] The specified device does not exist!"
+    return 1
+  fi
+
+  # Verify that file system is Btrfs
+  if ! sudo blkid "$device" | grep -q 'TYPE="btrfs"'; then
+    print_error "[-] The specified device is not a Btrfs file system!"
+    return 1
+  fi
+
   print_warning "[*] Installing and configuring Snapper ..."
 
-  # Installare Snapper
+  # Install Snapper
   if ! installer snapper; then
     print_error "[-] Failed to install Snapper!"
     return 1
   fi
 
-  # Check if the subvolume @.snapshots is mount
+  # Check if the subvolume @.snapshots is mounted
   if mount | grep -q 'on /.snapshots type btrfs'; then
     print_info "[*] Unmounting the @.snapshots subvolume ..."
     
@@ -263,11 +277,12 @@ configure_snapper() {
   fi
 
   # Remount the subvolume @.snapshots
-  if ! sudo mount -o subvol=@.snapshots /dev/mapper/root /.snapshots; then
+  if ! sudo mount -o subvol=@.snapshots "$device" /.snapshots; then
     print_error "[-] Failed to re-mount the @.snapshots subvolume!"
     return 1
   fi
 
+  # Enable Snapper timers
   if ! sudo systemctl enable snapper-timeline.timer &> /dev/null ||
      ! sudo systemctl enable snapper-cleanup.timer &> /dev/null; then
     print_error "[-] Failed to activate snapper service!"
@@ -505,9 +520,15 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
 fi
 
 # Prompt user to configure system snapshot
+# Crypto disk
+# configure_snapper /dev/mapper/root
+#
+# Non crypto disk
+# configure_snapper /dev/nvme0n1p2
 read -p "Do you want to configure system snapshot? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  configure_snapper || print_error "[-] Failed to configure system snapshot. Continuing..."
+  read -rp "Enter the device (e.g., /dev/mapper/root or /dev/nvme0n1p2): " device
+  configure_snapper "$device" || print_error "[-] Failed to configure system snapshot. Continuing..."
 fi
 
 # Prompt user to configure SSH

@@ -265,6 +265,12 @@ gnome_workspace_keymap() {
 # MAIN BODY
 #============================
 
+# Ensure the script is not run as root
+if [ "$EUID" -eq 0 ]; then
+  print_error "Please do not run this script as root."
+  exit 1
+fi
+
 # Move to the home directory
 cd $HOME
 

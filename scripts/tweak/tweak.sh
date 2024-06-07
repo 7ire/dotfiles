@@ -74,11 +74,12 @@ installer() {
 
 # BlueZ Configuration Tweaks
 tweak_bluez() {
+  # Update Bluetooth configuration
   BLUETOOTH_CONF="/etc/bluetooth/main.conf"
   
   # Update ControllerMode to dual
-  if grep -q "^ControllerMode = bredr" "$BLUETOOTH_CONF"; then
-    if ! sudo sed -i 's/^ControllerMode = bredr/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
+  if grep -q "^#*ControllerMode = bredr" "$BLUETOOTH_CONF"; then
+    if ! sudo sed -i 's/^#*ControllerMode = bredr/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
       print_error "[-] Failed to update ControllerMode in Bluetooth configuration!"
       return 1
     fi
@@ -91,8 +92,8 @@ tweak_bluez() {
 
   # Enable Experimental feature
   if grep -q "^\[General\]" "$BLUETOOTH_CONF"; then
-    if grep -q "^Experimental = false" "$BLUETOOTH_CONF"; then
-      if ! sudo sed -i 's/^Experimental = false/Experimental = true/' "$BLUETOOTH_CONF"; then
+    if grep -q "^#*Experimental = false" "$BLUETOOTH_CONF"; then
+      if ! sudo sed -i 's/^#*Experimental = false/Experimental = true/' "$BLUETOOTH_CONF"; then
         print_error "[-] Failed to update Experimental feature in Bluetooth configuration!"
         return 1
       fi
