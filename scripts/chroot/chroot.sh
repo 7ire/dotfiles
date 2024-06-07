@@ -504,6 +504,12 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   gen_mirrorilist || print_error "[-] Failed to update mirrorlist. Continuing..."
 fi
 
+# Prompt user to configure system snapshot
+read -p "Do you want to configure system snapshot? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  configure_snapper || print_error "[-] Failed to configure system snapshot. Continuing..."
+fi
+
 # Prompt user to configure SSH
 read -p "Do you want to enable SSH? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
@@ -526,12 +532,6 @@ fi
 read -p "Do you want to configure power plan? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   conf_powerprofiles || print_error "[-] Failed to configure power plan. Continuing..."
-fi
-
-# Prompt user to configure system snapshot
-read -p "Do you want to configure system snapshot? [y/N]: " choice
-if [[ "$choice" =~ ^[Yy]$ ]]; then
-  configure_snapper || print_error "[-] Failed to configure system snapshot. Continuing..."
 fi
 
 # Prompt user to configure Nvidia and GDM

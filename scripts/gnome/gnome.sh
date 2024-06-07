@@ -218,10 +218,14 @@ gnome_ext() {
   done
 
   # Extension adaptation: https://github.com/jamespo/gnome-extensions
-
   # Top Bar Organizer
-  wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip
-  gnome-extensions install -f top-bar-*.zip
+  if ! wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip &> /dev/null ||
+     ! gnome-extensions install -f top-bar-*.zip; then
+    print_error "[-] Tob Bar Organizer failed to install."
+    return 1
+  fi
+
+  print_success "[+] Tob Bar Organizer installed successfully!"
 }
 
 gnome_workspace_keymap() {
@@ -264,9 +268,10 @@ gnome_workspace_keymap() {
 # Move to the home directory
 cd $HOME
 
-read -p "Do you want to change the audio step from 5 to 2? (y/n): " audio_choice
-if [[ "$audio_choice" == "y" || "$audio_choice" == "Y" ]]; then
-  conf_audio || print_error "[-] Failed to configure audio step!"
+# Prompt user to change the audio step from 5 to 2
+read -p "Do you want to change the audio step from 5 to 2? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  conf_audio || print_error "[-] Failed to configure audio step! Continuing..."
 fi
 
 # List of packages to be removed
@@ -289,27 +294,28 @@ default_packages=(
   snapshot
   baobab
   gnome-disk-utility
-  gnome-text-editor
   gnome-remote-desktop
   gnome-console
-  gnome-weather
   gnome-clocks
   flatpak
 )
 
-read -p "Do you want to remove useless packages? (y/n): " debloat_choice
-if [[ "$debloat_choice" == "y" || "$debloat_choice" == "Y" ]]; then
-  debloat_gnome "${default_packages[@]}" || print_error "[-] Failed to remove useless packages!"
+# Prompt user to debloat GNOME system
+read -p "Do you want to remove useless packages? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  debloat_gnome "${default_packages[@]}" || print_error "[-] Failed to remove useless packages! Continuing..."
 fi
 
-read -p "Do you want to install the default applications? (y/n): " app_choice
-if [[ "$app_choice" == "y" || "$app_choice" == "Y" ]]; then
-  default_app || print_error "[-] Failed to install default applications!"
+# Prompt user to install default applications
+read -p "Do you want to install the default applications? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  default_app || print_error "[-] Failed to install default applications! Continuing..."
 fi
 
-read -p "Do you want to theme the system (GTK4/3 Libwaita friendly)? (y/n): " theme_choice
-if [[ "$theme_choice" == "y" || "$theme_choice" == "Y" ]]; then
-  theming_gnome || print_error "[-] Failed to theme GNOME!"
+# Prompt user to theme GNOME
+read -p "Do you want to theme the system (GTK4/3 Libwaita friendly)? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  theming_gnome || print_error "[-] Failed to theme GNOME! Continuing..."
 fi
 
 # List of GNOME extensions to install
@@ -325,23 +331,19 @@ EXT_LIST=(
   app-hider@lynith.dev                          # App hider
   workspace-switcher-manager@G-dH.github.com    # Workspace switcher
   dash-to-dock@micxgx.gmail.com                 # Dock
-  order-extensions@wa4557.github.com            # Top bar icon organizer
-  compact-quick-settings@gnome-shell-extensions.mariospr.org # Compact qs
   Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
   Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery
   gnome-ui-tune@itstime.tech                    # GNOME UI improved
   caffeine@patapon.info                         # Caffeine
-  logomenu@aryan_k                              # (left) Logo
-  window-title-is-back@fthx                     # (left) Window title
-  mediacontrols@cliffniff.github.com            # (center) Media player
-  clipboard-indicator@tudmotu.com               # (right) Clipboard
-  just-another-search-bar@xelad0m               # (right) Search
-  IP-Finder@linxgem33.com                       # (right) IP
-  arch-update@RaphaelRochet                     # (right) Updates
-  extension-list@tu.berry                       # (right) Extension list
-  openweather-extension@penguin-teal.github.io  # (right) Weather
-  tophat@fflewddur.github.io                    # (right) Resource usage
-  appindicatorsupport@rgcjonas.gmail.com        # (right) Sys tray
+  logomenu@aryan_k                              # Logo
+  mediacontrols@cliffniff.github.com            # Media player
+  clipboard-indicator@tudmotu.com               # Clipboard
+  IP-Finder@linxgem33.com                       # IP
+  arch-update@RaphaelRochet                     # Updates
+  extension-list@tu.berry                       # Extension list
+  monitor@astraext.github.io                    # Resource usage
+  appindicatorsupport@rgcjonas.gmail.com        # Sys tray
+  weatheroclock@CleoMenezesJr.github.io         # Weather
 )
 
 read -p "Do you want to install the GNOME extensions? (y/n): " ext_choice
