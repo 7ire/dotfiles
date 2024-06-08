@@ -97,7 +97,6 @@ install_aur() {
 
 # Bluetooth Configuration
 conf_bluetooth() {
-  sudo -v || exit 1
   print_warning "[*] Configuring Bluetooth ..."
 
   # Install bluez and bluez-utils packages, and enable Bluetooth service
@@ -183,8 +182,6 @@ EOF
 
 # Mirrorlist Configuration
 gen_mirrorilist() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
   # Install necessary packages and update the mirrorlist using reflector
   if ! installer reflector rsync curl || ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ||
      ! sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
@@ -196,8 +193,6 @@ gen_mirrorilist() {
 
 # Pacman Configuration
 conf_pacman() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
   local pacman_conf="/etc/pacman.conf"
   # Enable color in pacman output
   if ! sudo sed -i 's/^#Color/Color/' "$pacman_conf" ||
@@ -294,8 +289,6 @@ configure_snapper() {
 
 # SSH Configuration
 activate_ssh() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
   # Enable SSH service
   if ! sudo systemctl enable sshd &> /dev/null; then
     print_error "[-] Failed to enable SSH!"
@@ -306,8 +299,6 @@ activate_ssh() {
 
 # Power Plan Configuration
 conf_powerprofiles() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
   # Install power-profiles-daemon package and enable the service
   if ! installer power-profiles-daemon || ! sudo systemctl enable power-profiles-daemon.service &> /dev/null; then
     print_error "[-] Failed to configure power plan!"
@@ -318,7 +309,6 @@ conf_powerprofiles() {
 
 # Configurazione NVIDIA, NVENC e GDM
 conf_nvidia() {
-  sudo -v
   print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
   
   # Add necessary modules to mkinitcpio.conf
@@ -344,8 +334,6 @@ conf_nvidia() {
 
 # Windows Dualboot Configuration
 windows_tpm_config() {
-  # Check if sudo password is cached, if not ask for it
-  sudo -v || exit 1
   print_warning "[*] Configuring Windows Dualboot ..."
   # Install necessary packages and configure GRUB for TPM
   if ! installer sbctl os-prober ntfs-3g ||
