@@ -114,6 +114,7 @@ default_app() {
     blackbox-terminal  # Terminal
     extension-manager  # GNOME Extension manager
     brave-bin          # Browser - Brave
+    firefox            # Browser - Firefox
     spotify            # Music - Spotify
     # Office
     vscodium-bin       # Text editor - VSCodium
@@ -146,6 +147,7 @@ default_app() {
 # Theming
 theming_gnome() {
   git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null
+  git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/nulls
   git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null
   installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null
   
@@ -154,7 +156,7 @@ theming_gnome() {
   gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null
   gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null
 
-  print_info "Thunderbird is not installed or neither executed for at least one time, I cloned the repo but install it manually."
+  print_info "Thunderbird and Firefox is not installed or neither executed for at least one time, I cloned the repo but install it manually."
   print_info "Please copy the .local folder inside the cloned repo to the Thunderbird profile directory."
   print_success "[+] GTK4/3 Libwaita theme consistency done!"
 }
@@ -189,6 +191,24 @@ gnome_ext() {
   rm -rf shell
   print_success "[+] Pop shell installed successfully!"
 
+  # Extension adaptation: https://github.com/jamespo/gnome-extensions
+  # Top Bar Organizer
+  if ! wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip &> /dev/null ||
+     ! gnome-extensions install -f top-bar-*.zip; then
+    print_error "[-] Tob Bar Organizer failed to install."
+    return 1
+  fi
+
+  # Hanabi
+  if ! git clone https://github.com/jeffshee/gnome-ext-hanabi.git &> /dev/null ||
+     ! cd gnome-ext-hanabi &> /dev/null ||
+     ! ./run.sh install &> /dev/null; then
+    print_error "[-] Hanabi failed to install!"
+    return 1
+  fi
+  cd .. && rm -rf gnome-ext-hanabi
+  print_success "[+] Hanabi installed successfully!"
+
   local EXT_LIST=("$@")
   
   if [ ${#EXT_LIST[@]} -eq 0 ]; then
@@ -216,14 +236,6 @@ gnome_ext() {
       print_error "[-] ${i} failed to install."
     fi
   done
-
-  # Extension adaptation: https://github.com/jamespo/gnome-extensions
-  # Top Bar Organizer
-  if ! wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip &> /dev/null ||
-     ! gnome-extensions install -f top-bar-*.zip; then
-    print_error "[-] Tob Bar Organizer failed to install."
-    return 1
-  fi
 
   print_success "[+] Tob Bar Organizer installed successfully!"
 }
@@ -326,30 +338,37 @@ fi
 
 # List of GNOME extensions to install
 EXT_LIST=(
-  blur-my-shell@aunetx                          # Blur
-  just-perfection-desktop@just-perfection       # Perfection
-  osd-volume-number@deminder                    # OSD Volume
-  quick-settings-tweaks@qwreey                  # QS Tweak
-  quick-settings-avatar@d-go                    # Avatar qs
-  nightthemeswitcher@romainvigier.fr            # Night theme
-  custom-accent-colors@demiskp                  # Accent color
-  smile-extension@mijorus.it                    # Emoji
-  app-hider@lynith.dev                          # App hider
-  workspace-switcher-manager@G-dH.github.com    # Workspace switcher
-  dash-to-dock@micxgx.gmail.com                 # Dock
-  Airpod-Battery-Monitor@maniacx.github.com     # AirPods battery
-  Bluetooth-Battery-Meter@maniacx.github.com    # Bluetooth battery
-  gnome-ui-tune@itstime.tech                    # GNOME UI improved
-  caffeine@patapon.info                         # Caffeine
-  logomenu@aryan_k                              # Logo
-  mediacontrols@cliffniff.github.com            # Media player
-  clipboard-indicator@tudmotu.com               # Clipboard
-  IP-Finder@linxgem33.com                       # IP
-  arch-update@RaphaelRochet                     # Updates
-  extension-list@tu.berry                       # Extension list
-  monitor@astraext.github.io                    # Resource usage
-  appindicatorsupport@rgcjonas.gmail.com        # Sys tray
-  weatheroclock@CleoMenezesJr.github.io         # Weather
+  blur-my-shell@aunetx                         # Blur my Shell
+  just-perfection-desktop@just-perfection      # Just Perfection
+  nightthemeswitcher@romainvigier.fr           # Night Theme Switcher
+  custom-accent-colors@demiskp                 # Custom Accent Colors
+  osd-volume-number@deminder                   # OSD Volume Number
+  workspace-switcher-manager@G-dH.github.com   # WSM
+  smile-extension@mijorus.it                   # Smile
+  burn-my-windows@schneegans.github.com        # Burn my Windows
+  dash-to-dock@micxgx.gmail.com                # Dash to Dock
+  logomenu@aryan_k                             # Logo Menu
+  aztaskbar@aztaskbar.gitlab.com               # App Icon Taskbar (optional)
+  mediacontrols@cliffniff.github.com           # Media Controls
+  weatheroclock@CleoMenezesJr.github.io        # Weather O'Clock
+  media-progress@krypion17                     # Media Progress (optional)
+  appindicatorsupport@rgcjonas.gmail.com       # AppIndicator and KStatusNotifierItem (optional)
+  monitor@astraext.github.io                   # Astra Monitor
+  netspeed@alynx.one                           # Net Speed (optional)
+  tophat@fflewddur.github.io                   # TopHat (optional)
+  arch-update@RaphaelRochet                    # Arch Linux Updates Indicator
+  extension-list@tu.berry                      # Extension List
+  clipboard-indicator@tudmotu.com              # Clipboard Indicator
+  IP-Finder@linxgem33.com                      # IP Finder (optional)
+  caffeine@patapon.info                        # Caffeine
+  Airpod-Battery-Monitor@maniacx.github.com    # Airpod Battery Monitor
+  Bluetooth-Battery-Meter@maniacx.github.com   # Bluetooth Battery Meter
+  quick-settings-avatar@d-go                   # User Avatar In Quick Settings
+  PrivacyMenu@stuarthayhurst                   # Privacy Quick Settings
+  quick-settings-audio-panel@rayzeq.github.io  # Quick Settings Audio Panel
+  gnome-ui-tune@itstime.tech                  # GNOME 4x UI Improvements
+  app-hider@lynith.dev                        # App Hider
+  AlphabeticalAppGrid@stuarthayhurst          # Alphabetical App Grid
 )
 
 read -p "Do you want to install the GNOME extensions? (y/n): " ext_choice
