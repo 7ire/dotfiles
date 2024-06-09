@@ -180,16 +180,75 @@ EOF
   print_success "[+] Chaotic AUR repository configured!"
 }
 
+
+
 # Mirrorlist Configuration
-gen_mirrorilist() {
-  # Install necessary packages and update the mirrorlist using reflector
-  if ! installer reflector rsync curl || ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ||
-     ! sudo reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
+gen_mirrorlist() {
+  sudo -v || exit 1
+  print_warning "[*] Installing and configuring Reflector ..."
+
+  # Install necessary packages
+  if ! installer reflector rsync curl; then
+    print_error "[-] Failed to install necessary packages!"
+    return 1
+  fi
+
+  # Backup existing mirrorlist
+  if ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak; then
+    print_error "[-] Failed to backup existing mirrorlist!"
+    return 1
+  fi
+
+  # Update the mirrorlist using reflector
+  if ! sudo reflector -n 20 -p https --sort rate --save /etc/pacman.d/mirrorlist --country 'Italy,Germany,France' --latest 20 &> /dev/null; then
     print_error "[-] Failed to update mirrorlist!"
     return 1
   fi
-  print_success "[+] Mirrorlist updated!"
+
+  # Create Reflector configuration for systemd service
+  if ! sudo tee /etc/xdg/reflector/reflector.conf > /dev/null <<EOL
+# Reflector configuration file for the systemd service.
+#
+# Empty lines and lines beginning with "#" are ignored.  All other lines should
+# contain valid reflector command-line arguments. The lines are parsed with
+# Python's shlex modules so standard shell syntax should work. All arguments are
+# collected into a single argument list.
+#
+# See "reflector --help" for details.
+
+# Recommended Options
+
+# Set the output path where the mirrorlist will be saved (--save).
+--save /etc/pacman.d/mirrorlist
+
+# Select the transfer protocol (--protocol).
+--protocol https
+
+# Select the country (--country).
+# Consult the list of available countries with "reflector --list-countries" and
+# select the countries nearest to you or the ones that you trust. For example:
+--country Italy,Germany,France
+
+# Use only the most recently synchronized mirrors (--latest).
+--latest 20
+
+# Sort the mirrors by download speed (--sort).
+--sort rate
+EOL
+  then
+    print_error "[-] Failed to create Reflector config!"
+    return 1
+  fi
+
+  # Restart and enable Reflector service
+  if ! sudo systemctl enable reflector.service &> /dev/null; then
+    print_error "[-] Failed to restart and enable Reflector service!"
+    return 1
+  fi
+
+  print_success "[+] Mirrorlist updated and Reflector service configured successfully!"
 }
+
 
 # Pacman Configuration
 conf_pacman() {

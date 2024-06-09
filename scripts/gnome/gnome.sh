@@ -132,7 +132,7 @@ default_app() {
     # Social
     webcord             # WebCord
     telegram-desktop    # Telegram
-    whatsapp-for-linux  # WhatsApp
+    signal-desktop      # Signal
   )
   
   installer "${packages[@]}"
