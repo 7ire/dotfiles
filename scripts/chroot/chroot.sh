@@ -563,7 +563,7 @@ fi
 # Prompt user to update the mirrorlist
 read -p "Do you want to update the mirrorlist? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  gen_mirrorilist || print_error "[-] Failed to update mirrorlist. Continuing..."
+  gen_mirrorlist || print_error "[-] Failed to update mirrorlist. Continuing..."
 fi
 
 # Prompt user to configure system snapshot
