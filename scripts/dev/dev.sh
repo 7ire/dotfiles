@@ -104,7 +104,7 @@ dev_tools() {
 
   # Full zsh setup
   if [ -f "$HOME/dotfiles/.zshrc" ]; then
-    cp $HOME/dotfiles/.zshrc $HOME/
+    cp "$HOME/dotfiles/.zshrc" "$HOME/"
     print_success "[+] Zsh configured!"
   else
     print_error "[-] Failed to configure Zsh!"
@@ -112,15 +112,15 @@ dev_tools() {
 
   # TMUX setup
   if [ -d "$HOME/dotfiles/.config/tmux" ]; then
-    mkdir -p $HOME/.config/
-    cp -r $HOME/dotfiles/.config/tmux $HOME/.config/
+    mkdir -p "$HOME/.config/"
+    cp -r "$HOME/dotfiles/.config/tmux" "$HOME/.config/"
     print_success "[+] TMUX configured!"
   else
     print_error "[-] Failed to configure TMUX!"
   fi
 
   # Docker setup
-  if sudo systemctl enable docker.service &> /dev/null && sudo systemctl enable docker.socket &> /dev/null && sudo usermod -aG docker $USER; then
+  if sudo systemctl enable docker.service &> /dev/null && sudo systemctl enable docker.socket &> /dev/null && sudo usermod -aG docker "$USER"; then
     print_success "[+] Docker configured!"
   else
     print_error "[-] Failed to configure Docker!"
@@ -137,6 +137,44 @@ dev_tools() {
   else
     print_error "[-] Failed to configure QEMU and KVM!"
   fi
+
+  # Configure Codium
+  EXT_LIST=(
+    pkief.material-icon-theme                   # Material Icon Themes
+    catppuccin.catppuccin-vsc                   # Catppuccin for VSCode
+    jeanp413.open-remote-ssh                    # Open Remote - SSH
+    mhutchie.git-graph                          # Git Graph
+    rust-lang.rust-analyzer                     # [Rust] rust-analyzer
+    vadimcn.vscode-lldb                         # [Rust] CodeLLDB
+    bungcip.better-toml                         # [Rust] Better TOML
+    13xforever.language-x86-64-assembly         # [C/C++] x86 and x86_64 Assembly
+    bbenoist.doxygen                            # [C/C++] Doxygen
+    cschlosser.doxdocgen                        # [C/C++] Doxygen Documentation Generator
+    cheshirekow.cmake-format                    # [C/C++] cmake-format
+    twxs.cmake                                  # [C/C++] CMake
+    franneck94.c-cpp-runner                     # [C/C++] C/C++ Runner
+    franneck94.vscode-c-cpp-config              # [C/C++] C/C++ Config
+    jeff-hykin.better-cpp-syntax                # [C/C++] Better C++ Syntax
+    franneck94.vscode-c-cpp-dev-extension-pack  # [C/C++] C/C++ Extension Pack
+    ms-python.python                            # [Python] Python
+    ms-python.debugpy                           # [Python] Python Debugger
+    donjayamanne.python-environment-manager     # [Python] Python Environment Manager
+    ms-toolsai.jupyter                          # [Python] Jupyter
+    ms-toolsai.jupyter-keymap                   # [Python] Jupyter Keymap
+    ms-toolsai.jupyter-renderers                # [Python] Jupyter Notebook Renderers
+    ms-toolsai.vscode-jupyter-cell-tags         # [Python] Jupyter Cell Tags
+    ms-toolsai.vscode-jupyter-slideshow         # [Python] Jupyter Slide Show
+    golang.go                                   # [Go] Go
+    bbenoist.doxygen                            # [Docker] Docker
+  )
+
+  for ext in "${EXT_LIST[@]}"; do
+    if ! codium --install-extension "$ext"; then
+      print_error "[-] Failed to install Codium extension: $ext"
+    fi
+  done
+
+  print_success "[+] Development tools installed and configured!"
 }
 
 hack_tools() {
