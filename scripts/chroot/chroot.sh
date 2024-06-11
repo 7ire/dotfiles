@@ -109,8 +109,8 @@ conf_bluetooth() {
   BLUETOOTH_CONF="/etc/bluetooth/main.conf"
   
   # Update ControllerMode to dual
-  if grep -q "^#*ControllerMode = bredr" "$BLUETOOTH_CONF"; then
-    if ! sudo sed -i 's/^#*ControllerMode = bredr/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
+  if grep -q "^#*ControllerMode = dual" "$BLUETOOTH_CONF"; then
+    if ! sudo sed -i 's/^#*ControllerMode = dual/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
       print_error "[-] Failed to update ControllerMode in Bluetooth configuration!"
       return 1
     fi
