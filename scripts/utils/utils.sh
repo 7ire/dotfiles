@@ -119,6 +119,15 @@ debian_installer() {
 # UTILITY FUNCTIONS
 #============================
 
+# Check root excetuion
+root_checker() {
+  # Ensure the script is not run as root
+  if [ "$EUID" -eq 0 ]; then
+    print_error "[-] FATAL: Please do not run this script as root."
+    exit 1
+  fi
+}
+
 # Detect Linux Distribution
 detect_distro() {
   if [ -f /etc/os-release ]; then
