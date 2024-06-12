@@ -147,7 +147,7 @@ default_app() {
 # Theming
 theming_gnome() {
   git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null
-  git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/nulls
+  git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/null
   git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null
   installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null
   
