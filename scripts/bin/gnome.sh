@@ -7,10 +7,15 @@ source ../utils/utils.sh
 # UTILITY FUNCTIONS
 #============================
 
-# Change the audio step from X to Y
+# Change the audio step
 audio_steps() {
-  # X = 5, Y = 2
-  gsettings set org.gnome.settings-daemon.plugins.media-keys volume-step 2 &> /dev/null
+  # Desire step value given as argument by user
+  local STEP="$1"
+
+  # Change the GNOME audio step
+  if ! gsettings set org.gnome.settings-daemon.plugins.media-keys volume-step "$STEP" &> /dev/null; then
+    return 1
+  fi
 }
 
 # Install gnome extensions
@@ -50,21 +55,17 @@ ext_installer() {
 
 # Rice system theme and application
 theming() {
-  # Wallpapers
-  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null
-
-  # Packages
-  ## arch
-  installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null
-  ## TODO: fedora
-  ## TODO: debian
-
-  # Enable themes
+  # Enable themes - mandatory to be installed before the function call on the main script
   gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita' &> /dev/null
   gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null
   gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null
+  
+  # Clone my wallpapers repository
+  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null
 
-  # TODO: clone firefox and thunderbird theme
+  # Clone Firefox and Thunderbird libwaita theme
+  git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/null
+  git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null
 
   # TODO: copy .local directory
 }
