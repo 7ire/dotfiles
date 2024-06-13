@@ -293,30 +293,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
 fi
 
 # List of packages to be removed
-default_packages=(
-  totem
-  yelp
-  gnome-software
-  gnome-tour
-  gnome-music
-  epiphany
-  gnome-maps
-  gnome-contacts
-  gnome-logs
-  gnome-font-viewer
-  simple-scan
-  orca
-  gnome-system-monitor
-  gnome-connections
-  gnome-characters
-  snapshot
-  baobab
-  gnome-disk-utility
-  gnome-remote-desktop
-  gnome-console
-  gnome-clocks
-  flatpak
-)
+
 
 # Prompt user to debloat GNOME system
 read -p "Do you want to remove useless packages? [y/N]: " choice

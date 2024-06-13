@@ -56,7 +56,25 @@ EOL
   fi
 }
 
-conf_git() {}
+conf_git() {
+  local email="$1"
+  local name="$2"
+
+  git config --global user.email "$email"
+  git config --global user.name "$name"
+
+  # Create ~/.ssh directory if it doesn't exist
+  mkdir -p "$HOME/.ssh"
+
+  # Add the SSH key to the config file
+  cat <<EOF >> ~/.ssh/config
+Host github.com
+  HostName github.com
+  IdentityFile "$HOME/.ssh/keyring/github/github"
+  IdentitiesOnly yes
+EOF
+  print_success "[+] git configured and its key added to ~/.ssh/config"
+}
 
 conf_snapper() {}
 
@@ -64,7 +82,48 @@ conf_nvidia() {}
 
 conf_win_dualboot() {}
 
-conf_zsh() {}
+conf_zsh() {
+  print_warning "[*] Configuring Zsh ..."
+  
+  # Install zsh and set it as default shell
+  if ! installer zsh &> /dev/null || ! chsh -s /bin/zsh; then
+    print_error "[-] Failed to install and set Zsh as default shell!"
+    return 1
+  fi
+
+  # Install Oh My Zsh
+  if ! sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended; then
+    print_error "[-] Failed to install Oh My Zsh!"
+    return 1
+  fi
+
+  # Install Powerlevel10k theme
+  if ! git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &> /dev/null; then
+    print_error "[-] Failed to install Powerlevel10k theme!"
+    return 1
+  fi
+
+  sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' $HOME/.zshrc
+
+  # Install Plugins
+  local plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-completions)
+  for plugin in "${plugins[@]}"; do
+    if ! git clone "https://github.com/zsh-users/$plugin" ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin &> /dev/null; then
+      print_error "[-] Failed to install $plugin!"
+      return 1
+    fi
+  done
+
+  sed -i 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-completions)|' $HOME/.zshrc
+
+  # Install fzf (fuzzy finder)
+  if ! installer fd &> /dev/null || ! git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &> /dev/null || ! ~/.fzf/install --all &> /dev/null; then
+    print_error "[-] Failed to install fzf!"
+    return 1
+  fi
+
+  print_success "[+] Zsh, Oh My Zsh, themes, plugins, and fzf configured!"
+}
 
 ssh_keygen() {
   local email="$1"
@@ -92,4 +151,15 @@ ssh_keygen() {
   fi
 }
 
-ssh_keyimport() {}
+ssh_keyimport() {
+  local import_path="$1"
+  print_info "[*] Importing SSH keys from $import_path ..."
+  local target_dir="$HOME/.ssh/keyring"
+  mkdir -p "$target_dir"
+  if cp -r "$import_path"/* "$target_dir" && chmod -R 700 "$target_dir"; then
+    print_success "[+] SSH keys imported successfully!"
+  else
+    print_error "[-] Failed to import SSH keys!"
+    return 1
+  fi
+}

@@ -85,7 +85,7 @@ workspace_binding() {
     return 1
   fi
 
-  print_success "[+] Reseted useless keybinds!"
+  print_info "[:] Reseted useless keybinds!"
 
   if ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-1 "['<Super>1']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-2 "['<Super>2']" &> /dev/null ||
