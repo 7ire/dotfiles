@@ -8,7 +8,6 @@
 print_debug() {
   local color="$1"
   local message="$2"
-  # Format message with specified color.
   echo -e "\e[${color}m${message}\e[0m"
 }
 
@@ -35,8 +34,37 @@ print_warning() {
 
 # Arch Linux: update package manager server
 arch_update_server() {
-  if ! sudo pacman -Syy &> /dev/null ||
-     ! paru -Syy &> /dev/null; then
+  if ! sudo pacman -Syy &> /dev/null || ! paru -Syy &> /dev/null; then
+    return 1
+  fi
+}
+
+# Arch Linux: install packages
+arch_installer() {
+  if ! command -v paru &> /dev/null; then
+    print_error "[-] Paru is not installed! Please install it first."
+    return 1
+  fi
+
+  local PKGs=("$@")
+  for pkg in "${PKGs[@]}"; do
+    if paru -S --noconfirm "$pkg" &> /dev/null; then
+      print_success "[+] $pkg installed successfully!"
+    else
+      print_error "[-] $pkg failed to install!"
+    fi
+  done
+}
+
+# Arch Linux: remove packages
+arch_remover() {
+  if ! command -v paru &> /dev/null; then
+    print_error "[-] Paru is not installed! Please install it first."
+    return 1
+  fi
+
+  local PKGs=("$@")
+  if ! paru -Rcns --noconfirm "${PKGs[@]}" &> /dev/null; then
     return 1
   fi
 }
@@ -48,6 +76,26 @@ fedora_update_server() {
   fi
 }
 
+# Fedora: install packages
+fedora_installer() {
+  local PKGs=("$@")
+  for pkg in "${PKGs[@]}"; do
+    if sudo dnf install -y "$pkg" &> /dev/null; then
+      print_success "[+] $pkg installed successfully!"
+    else
+      print_error "[-] $pkg failed to install!"
+    fi
+  done
+}
+
+# Fedora: remove packages
+fedora_remover() {
+  local PKGs=("$@")
+  if ! sudo dnf remove -y "${PKGs[@]}" &> /dev/null; then
+    return 1
+  fi
+}
+
 # Debian: update package manager server
 debian_update_server() {
   if ! sudo apt update &> /dev/null; then
@@ -55,73 +103,32 @@ debian_update_server() {
   fi
 }
 
-# Arch Linux: install packages
-arch_installer() {
-  # Check if 'paru' is installed
-  if ! command -v paru &> /dev/null; then
-    print_error "[-] Paru is not installed! Please install it first."
-    return 1
-  fi
-
-  # List of packages to install given as arg to function call
-  local PKGs=("$@")
-
-  # Iterate for each package
-  for pkg in "${PKGs[@]}"; do
-    # Install package without confirmation
-    if paru -S --noconfirm "$pkg" &> /dev/null; then
-      # Success
-      print_success "[+] $pkg installed successfully!"
-    else
-      # Error in installation
-      print_error "[-] $pkg failed to install!"
-    fi
-  done
-}
-
-# Fedora: install packages
-fedora_installer() {
-  # List of packages to install given as arg to function call
-  local PKGs=("$@")
-
-  # Iterate for each package
-  for pkg in "${PKGs[@]}"; do
-    # Install package without confirmation
-    if sudo dnf install -y "$pkg" &> /dev/null; then
-      # Success
-      print_success "[+] $pkg installed successfully!"
-    else
-      # Error in installation
-      print_error "[-] $pkg failed to install!"
-    fi
-  done
-}
-
 # Debian: install packages
 debian_installer() {
-  # List of packages to install given as arg to function call
   local PKGs=("$@")
-
-  # Iterate for each package
   for pkg in "${PKGs[@]}"; do
-    # Install package without confirmation
     if sudo apt install -y "$pkg" &> /dev/null; then
-      # Success
       print_success "[+] $pkg installed successfully!"
     else
-      # Error in installation
       print_error "[-] $pkg failed to install!"
     fi
   done
+}
+
+# Debian: remove packages
+debian_remover() {
+  local PKGs=("$@")
+  if ! sudo apt remove -y "${PKGs[@]}" &> /dev/null; then
+    return 1
+  fi
 }
 
 #============================
 # UTILITY FUNCTIONS
 #============================
 
-# Check root excetuion
+# Check root execution
 root_checker() {
-  # Ensure the script is not run as root
   if [ "$EUID" -eq 0 ]; then
     print_error "[-] FATAL: Please do not run this script as root."
     exit 1
@@ -168,17 +175,19 @@ update_server() {
       return 1
       ;;
   esac
+
+  print_success "[+] Package manager server updated successfully!"
 }
 
 # Package installation
 installer() {
-  # Check if there are specify packages to install
+  print_warning "[*] Installing packages ..."
+
   if [ "$#" -eq 0 ]; then
     print_error "[-] No packages specified to install!"
     return 1
   fi
 
-  # Update the package manager server
   if ! update_server; then
     print_warning "[*] I will try anyway to install the specified packages."
   fi
@@ -187,17 +196,67 @@ installer() {
   
   case "$distro" in
     arch)
-      arch_installer "$@"
+      if ! arch_installer "$@"; then
+        print_error "[-] Failed to install specified packages!"
+        return 1
+      fi
       ;;
     fedora)
-      fedora_installer "$@"
+      if ! fedora_installer "$@"; then
+        print_error "[-] Failed to install specified packages!"
+        return 1
+      fi
       ;;
     debian|ubuntu)
-      debian_installer "$@"
+      if ! debian_installer "$@"; then
+        print_error "[-] Failed to install specified packages!"
+        return 1
+      fi
       ;;
     *)
       print_error "[-] Unsupported distribution: $distro"
       return 1
       ;;
   esac
+
+  print_success "[+] Packages installed successfully!"
+}
+
+# Package removal
+remover() {
+  print_warning "[*] Removing packages ..."
+
+  if [ "$#" -eq 0 ]; then
+    print_error "[-] No packages specified to remove!"
+    return 1
+  fi
+
+  local distro=$(detect_distro)
+
+  case "$distro" in
+    arch)
+      if ! arch_remover "$@"; then
+        print_error "[-] Failed to remove specified packages!"
+        return 1
+      fi
+      ;;
+    fedora)
+      if ! fedora_remover "$@"; then
+        print_error "[-] Failed to remove specified packages!"
+        return 1
+      fi
+      ;;
+    debian|ubuntu)
+      if ! debian_remover "$@"; then
+        print_error "[-] Failed to remove specified packages!"
+        return 1
+      fi
+      ;;
+    *)
+      print_error "[-] Unsupported distribution: $distro"
+      return 1
+      ;;
+  esac
+
+  print_success "[+] Packages removed successfully!"
 }
