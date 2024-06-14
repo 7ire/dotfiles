@@ -56,18 +56,31 @@ ext_installer() {
 # Rice system theme and application
 theming() {
   # Enable themes - mandatory to be installed before the function call on the main script
-  gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita' &> /dev/null
-  gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null
-  gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null
+  if ! gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita' &> /dev/null ||
+     ! gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3' &> /dev/null ||
+     ! gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null; then
+    return 1
+  fi
   
   # Clone my wallpapers repository
-  git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null
+  if ! git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null;
+    print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
+  fi
 
   # Clone Firefox and Thunderbird libwaita theme
-  git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/null
-  git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null
+  if ! git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/null; then
+    print_warning "[-] Couldn't clone Firefox libwaita theme, do it manually."
+  fi
+  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null; then
+    print_warning "[-] Couldn't clone Thunderbird libwaita theme, do it manually."
+  fi
 
-  # TODO: copy .local directory
+  # Copy .local directory
+  if ! cp -r "$HOME/dotfiles/.local/share/bin" "$HOME/.local/share" &> /dev/null; then
+    print_warning "[-] Couldn't copy bin/ inside .local/share, do it manually."
+  fi
+
+  print_success "[+] GNOME riced successfully!"
 }
 
 workspace_binding() {
@@ -96,7 +109,6 @@ workspace_binding() {
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-7 "['<Super>7']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-8 "['<Super>8']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-9 "['<Super>9']" &> /dev/null; then
-    print_success "[-]  Failed to bind keybinds for workspaces"
     return 1
   fi
 

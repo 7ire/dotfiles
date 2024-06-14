@@ -54,8 +54,8 @@ while true; do
             ;;
         2)
             echo "Running the GNOME setup script..."
-            if [ -f "$SCRIPT_DIR/gnome/gnome.sh" ]; then
-                bash "$SCRIPT_DIR/gnome/gnome.sh"
+            if [ -f "$SCRIPT_DIR/gnome-installer.sh" ]; then
+                bash "$SCRIPT_DIR/gnome-installer.sh"
             else
                 echo "The GNOME setup script was not found."
             fi

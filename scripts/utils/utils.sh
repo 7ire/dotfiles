@@ -197,19 +197,16 @@ installer() {
   case "$distro" in
     arch)
       if ! arch_installer "$@"; then
-        print_error "[-] Failed to install specified packages!"
         return 1
       fi
       ;;
     fedora)
       if ! fedora_installer "$@"; then
-        print_error "[-] Failed to install specified packages!"
         return 1
       fi
       ;;
     debian|ubuntu)
       if ! debian_installer "$@"; then
-        print_error "[-] Failed to install specified packages!"
         return 1
       fi
       ;;
@@ -236,19 +233,16 @@ remover() {
   case "$distro" in
     arch)
       if ! arch_remover "$@"; then
-        print_error "[-] Failed to remove specified packages!"
         return 1
       fi
       ;;
     fedora)
       if ! fedora_remover "$@"; then
-        print_error "[-] Failed to remove specified packages!"
         return 1
       fi
       ;;
     debian|ubuntu)
       if ! debian_remover "$@"; then
-        print_error "[-] Failed to remove specified packages!"
         return 1
       fi
       ;;

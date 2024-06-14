@@ -105,56 +105,82 @@ EXT_LIST=(
 #============================
 # CONFIGURATION FUNCTIONS
 #============================
+
+# Rounded window
 rounded_window_corner() {
-  # Rounded window
-  installer nodejs npm gettext just &> /dev/null
-  git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null
-  cd rounded-window-corners
-  just install
-  cd .. && rm -rf rounded-window-corners
+  if ! installer nodejs npm gettext just &> /dev/null ||
+     ! git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null ||
+     ! cd rounded-window-corners ||
+     ! just install; then
+    return 1
+  fi
+
+  if ! cd .. || ! rm -rf rounded-window-corners; then
+    print_warning "[-] Couldn't remove the build files, do it manually."
+  fi
+
   print_success "[+] Rounded window corners installed successfully!"
 }
 
+# Unite
 unite() {
-  # Unite
+  installer xorg-xprop
+
   local url="https://github.com/hardpixel/unite-shell/releases/download/v78/unite-shell-v78.zip"
   local ext_path="$HOME/.local/share/gnome-shell/extensions"
   mkdir -p "$ext_path"
-  curl -sL -o /tmp/unite-shell-v78.zip "$url" || { print_error "[-] Download failed"; exit 1; }
-  unzip -qo /tmp/unite-shell-v78.zip -d "$ext_path" || { print_error "Extraction failed"; exit 1; }
-  rm /tmp/unite-shell-v78.zip
+  
+  if ! curl -sL -o /tmp/unite-shell-v78.zip "$url" &> /dev/null ||
+     ! unzip -qo /tmp/unite-shell-v78.zip -d "$ext_path"; then
+    return 1
+  fi
+
+  if ! rm /tmp/unite-shell-v78.zip &> /dev/null; then
+    print_warning "[-] Couldn't remove the build files, do it manually."
+  fi
+
   print_success "[+] Unite installed successfully!"
 }
 
+# Pop shell
 pop_shell() {
-  # Pop shell
-  installer typescript &> /dev/null
-  git clone https://github.com/pop-os/shell.git &> /dev/null
+  if ! installer typescript &> /dev/null ||
+     ! git clone https://github.com/pop-os/shell.git &> /dev/null; then
+    return 1
+  fi
+
   cd shell
   make local-install || true
-  cd ..
-  rm -rf shell
+  
+  if ! cd .. || rm -rf shell; then
+    print_warning "[-] Couldn't remove the build files, do it manually."
+  fi
+
   print_success "[+] Pop shell installed successfully!"
 }
 
-top_bar_orhanizer() {
-  # Top Bar Organizer
+# Top Bar Organizer
+top_bar_organizer() {
   if ! wget https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip &> /dev/null ||
      ! gnome-extensions install -f top-bar-*.zip; then
-    print_error "[-] Tob Bar Organizer failed to install."
     return 1
   fi
+
+  print_success "[+] Tob Bar Organizer installed successfully!"
 }
 
+# Hanabi
 hanabi() {
-  # Hanabi
   if ! git clone https://github.com/jeffshee/gnome-ext-hanabi.git &> /dev/null ||
      ! cd gnome-ext-hanabi &> /dev/null ||
      ! ./run.sh install &> /dev/null; then
-    print_error "[-] Hanabi failed to install!"
     return 1
   fi
-  cd .. && rm -rf gnome-ext-hanabi
+
+  if ! cd .. || ! rm -rf gnome-ext-hanabi; then
+    print_warning "[-] Couldn't remove the build files, do it manually."
+  fi
+
   print_success "[+] Hanabi installed successfully!"
 }
 
@@ -171,13 +197,18 @@ cd $HOME
 # Debloat GNOME system
 read -p "Debloat GNOME? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  remover "${REMOVE_PKG[@]}"
+  remover "${REMOVE_PKG[@]}" || print_error "[-] Failed to remove specified packages!"
 fi
 
 # Install prefer application
 read -p "Install the desired applications? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  installer "${INSTALL_PKG[@]}"
+  installer "${INSTALL_PKG[@]}" || print_error "[-] Failed to install specified packages!"
+  if ! git clone git@github.com:andreatirelli3/vault.git $HOME/Documenti/Obsidian &> /dev/null; then
+    print_warning "[-] Couldn't clone the Obsidian vault, do it manually."
+  else
+    print_info "[:] Cloned the Obsidian vault in ~/Documenti/Obsidian."
+  fi
 fi
 
 # GNOME tweak
@@ -190,7 +221,7 @@ fi
 ## workspace keybinds
 read -p "Bind shortcut for workspace? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  workspace_binding
+  workspace_binding || print_error "[-] Failed to bind keybinds for workspaces!"
 fi
 
 # Rice GNOME
@@ -198,23 +229,29 @@ fi
 read -p "Rice GNOME with libwaita theming? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   # Install required packages
-  installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null
-  # GNOME ricing
-  theming
+  if ! installer morewaita flat-remix adw-gtk3 bibata-cursor-theme-bin papirus-icon-theme-git papirus-folders-git &> /dev/null; then
+    print_error "[-] Failed to install specified packages!"
+  else 
+    # GNOME ricing
+    theming || print_error "[-] Failed to rice GNOME!"
+  fi
 fi
-
 
 ## extensions
 read -p "Install GNOME extensions? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
+  # Install general dependencies
+  installer jq unzip wget curl clutter
   # Rounded window
-  rounded_window_corner
+  rounded_window_corner || print_error "[-] Rounded Window Corner failed to install!"
   # Unite
-  unite
+  unite || print_error "[-] Unite failed to install!"
   # Top Bar organizer
-  top_bar_orhanizer
+  top_bar_organizer || print_error "[-] Tob Bar Organizer failed to install!"
   # Hanabi
-  hanabi
+  hanabi || print_error "[-] Hanabi failed to install!"
+  # Pop Shell!
+  pop_shell || print_error "[-] Pop Shell! failed to install!"
   # Install the extension from list
   ext_installer "${EXT_LIST[@]}"
 fi
