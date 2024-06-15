@@ -97,9 +97,9 @@ EXT_LIST=(
   quick-settings-avatar@d-go                   # User Avatar In Quick Settings
   PrivacyMenu@stuarthayhurst                   # Privacy Quick Settings
   quick-settings-audio-panel@rayzeq.github.io  # Quick Settings Audio Panel
-  gnome-ui-tune@itstime.tech                  # GNOME 4x UI Improvements
-  app-hider@lynith.dev                        # App Hider
-  AlphabeticalAppGrid@stuarthayhurst          # Alphabetical App Grid
+  gnome-ui-tune@itstime.tech                   # GNOME 4x UI Improvements
+  app-hider@lynith.dev                         # App Hider
+  AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
 )
 
 #============================

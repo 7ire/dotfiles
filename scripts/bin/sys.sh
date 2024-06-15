@@ -3,14 +3,55 @@
 # Import the utils function
 source ../utils/utils.sh
 
-bt_controllermode_dua() {}
+# Bluetooth ControllerMode = dual
+bt_controllermode_dual() {
+  # Bluetooth configuration file
+  local BLUETOOTH_CONF="/etc/bluetooth/main.conf"
 
-bt_enable_kernel_exp() {}
+  # Update ControllerMode to dual
+  if grep -q "^#*ControllerMode = dual" "$BLUETOOTH_CONF"; then
+    if ! sudo sed -i 's/^#*ControllerMode = dual/ControllerMode = dual/' "$BLUETOOTH_CONF"; then
+      return 1
+    fi
+  else
+    if ! echo "ControllerMode = dual" | sudo tee -a "$BLUETOOTH_CONF" > /dev/null; then
+      return 1
+    fi
+  fi
+}
 
-generate_mirrorlist() {
+# Bluetooth Kernel Experimental
+bt_kernel_exp() {
+  # Bluetooth configuration file
+  local BLUETOOTH_CONF="/etc/bluetooth/main.conf"
+
+  # Enable Experimental feature
+  if grep -q "^\[General\]" "$BLUETOOTH_CONF"; then
+    if grep -q "^#*Experimental = false" "$BLUETOOTH_CONF"; then
+      if ! sudo sed -i 's/^#*Experimental = false/Experimental = true/' "$BLUETOOTH_CONF"; then
+        return 1
+      fi
+    elif ! grep -q "^Experimental = true" "$BLUETOOTH_CONF"; then
+      if ! sudo sed -i '/^\[General\]/a Experimental = true' "$BLUETOOTH_CONF"; then
+        return 1
+      fi
+    fi
+  else
+    if ! echo -e "\n[General]\nExperimental = true" | sudo tee -a "$BLUETOOTH_CONF" > /dev/null; then
+      return 1
+    fi
+  fi
+}
+
+# Generate mirrorlist
+gen_mirrorlist() {
+  # Backup existing mirrorlist
+  if ! sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak; then
+    print_warning "[-] Failed to backup existing mirrorlist! I will continue anyway ..."
+  fi
+
   # Update the mirrorlist using reflector
   if ! sudo reflector -n 20 -p https --sort rate --save /etc/pacman.d/mirrorlist --country 'Italy,Germany,France' --latest 20 &> /dev/null; then
-    print_error "[-] Failed to update mirrorlist!"
     return 1
   fi
 
@@ -54,112 +95,6 @@ EOL
     print_error "[-] Failed to restart and enable Reflector service!"
     return 1
   fi
-}
 
-conf_git() {
-  local email="$1"
-  local name="$2"
-
-  git config --global user.email "$email"
-  git config --global user.name "$name"
-
-  # Create ~/.ssh directory if it doesn't exist
-  mkdir -p "$HOME/.ssh"
-
-  # Add the SSH key to the config file
-  cat <<EOF >> ~/.ssh/config
-Host github.com
-  HostName github.com
-  IdentityFile "$HOME/.ssh/keyring/github/github"
-  IdentitiesOnly yes
-EOF
-  print_success "[+] git configured and its key added to ~/.ssh/config"
-}
-
-conf_snapper() {}
-
-conf_nvidia() {}
-
-conf_win_dualboot() {}
-
-conf_zsh() {
-  print_warning "[*] Configuring Zsh ..."
-  
-  # Install zsh and set it as default shell
-  if ! installer zsh &> /dev/null || ! chsh -s /bin/zsh; then
-    print_error "[-] Failed to install and set Zsh as default shell!"
-    return 1
-  fi
-
-  # Install Oh My Zsh
-  if ! sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended; then
-    print_error "[-] Failed to install Oh My Zsh!"
-    return 1
-  fi
-
-  # Install Powerlevel10k theme
-  if ! git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &> /dev/null; then
-    print_error "[-] Failed to install Powerlevel10k theme!"
-    return 1
-  fi
-
-  sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|' $HOME/.zshrc
-
-  # Install Plugins
-  local plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-completions)
-  for plugin in "${plugins[@]}"; do
-    if ! git clone "https://github.com/zsh-users/$plugin" ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin &> /dev/null; then
-      print_error "[-] Failed to install $plugin!"
-      return 1
-    fi
-  done
-
-  sed -i 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-completions)|' $HOME/.zshrc
-
-  # Install fzf (fuzzy finder)
-  if ! installer fd &> /dev/null || ! git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &> /dev/null || ! ~/.fzf/install --all &> /dev/null; then
-    print_error "[-] Failed to install fzf!"
-    return 1
-  fi
-
-  print_success "[+] Zsh, Oh My Zsh, themes, plugins, and fzf configured!"
-}
-
-ssh_keygen() {
-  local email="$1"
-  local key_name="$2"
-  print_info "[*] Generating SSH key for $email ..."
-  local key_dir="$HOME/.ssh/keyring/$key_name"
-  mkdir -p "$key_dir"
-
-  # Set permissions to 700 for keyring and SSH key directory
-  chmod 700 "$HOME/.ssh"
-  chmod 700 "$HOME/.ssh/keyring"
-  chmod 700 "$key_dir"
-
-  # Generate SSH key using ed25519 algorithm
-  if ssh-keygen -t ed25519 -C "$email" -f "$key_dir/$key_name"; then
-    print_success "[+] SSH key generated successfully in $key_dir!"
-    eval "$(ssh-agent -s)"
-    ssh-add "$key_dir/$key_name"
-    cat "$key_dir/$key_name.pub"
-
-    print_success "[+] SSH key added to ~/.ssh/config!"
-  else
-    print_error "[-] Failed to generate SSH key!"
-    return 1
-  fi
-}
-
-ssh_keyimport() {
-  local import_path="$1"
-  print_info "[*] Importing SSH keys from $import_path ..."
-  local target_dir="$HOME/.ssh/keyring"
-  mkdir -p "$target_dir"
-  if cp -r "$import_path"/* "$target_dir" && chmod -R 700 "$target_dir"; then
-    print_success "[+] SSH keys imported successfully!"
-  else
-    print_error "[-] Failed to import SSH keys!"
-    return 1
-  fi
+  print_success "[+] Mirrorlist updated and Reflector service configured successfully!"
 }
