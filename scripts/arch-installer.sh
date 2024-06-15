@@ -93,3 +93,38 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
     print_success "[+] Bluetooth configured!"
   fi
 fi
+
+# Prompt user to configure Power Plan
+read -p "Do you want to configure power plan? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  print_warning "[*] Configuring power plans ..."
+
+  # Install power-profiles-daemon package and enable the service
+  if ! installer power-profiles-daemon || ! sudo systemctl enable power-profiles-daemon.service &> /dev/null; then
+    print_error "[-] Failed to configure power plan!"
+  else
+    print_success "[+] Power plan configured!"
+  fi
+fi
+
+# Prompt user to configure Nvidia and GDM
+read -p "Do you want to configure NVIDIA, NVENC and GDM? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  print_warning "[*] Configuring NVIDIA, NVENC and GDM ..."
+
+  conf_nvidia || print_error "[-] Failed to configure NVIDIA, NVENC and GDM!"
+fi
+
+# Prompt user to configure Windows Dualboot
+read -p "Do you want to configure Windows dualboot? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  print_warning "[*] Configuring Windows Dualboot ..."
+
+  if ! installer sbctl os-prober ntfs-3g; then
+    print_error "[-] Failed to install required packages!"
+  else
+    win_dualboot || print_error "[-] Failed to configure Windows Dualboot!"
+  fi
+fi
+
+print_info "All selected configurations are completed!"

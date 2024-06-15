@@ -46,8 +46,8 @@ while true; do
     case $choice in
         1)
             echo "Running the chroot script..."
-            if [ -f "$SCRIPT_DIR/chroot/chroot.sh" ]; then
-                bash "$SCRIPT_DIR/chroot/chroot.sh"
+            if [ -f "$SCRIPT_DIR/arch-installer.sh" ]; then
+                bash "$SCRIPT_DIR/arch-installer.sh"
             else
                 echo "The chroot script was not found."
             fi
