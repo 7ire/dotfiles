@@ -25,10 +25,9 @@ show_ascii_art() {
 show_menu() {
     clear
     show_ascii_art
-    echo "1) Run chroot script"
-    echo "2) Run GNOME setup script"
-    echo "3) Run Development setup script"
-    echo "4) Run Tweak setup script"
+    echo "1) Run arch script"
+    echo "2) Run first system setup script"
+    echo "3) Run GNOME setup script"
     echo "q) Quit"
     echo -n "Choose an option: "
 }
@@ -45,35 +44,27 @@ while true; do
     read -r choice
     case $choice in
         1)
-            echo "Running the chroot script..."
+            echo "Running the arch script..."
             if [ -f "$SCRIPT_DIR/arch-installer.sh" ]; then
                 bash "$SCRIPT_DIR/arch-installer.sh"
             else
-                echo "The chroot script was not found."
+                echo "The arch script was not found."
             fi
             ;;
         2)
+            echo "Running first system setup script..."
+            if [ -f "$SCRIPT_DIR/env-installer.sh" ]; then
+                bash "$SCRIPT_DIR/env-installer.sh"
+            else
+                echo "The first system setup script was not found."
+            fi
+            ;;
+        3)
             echo "Running the GNOME setup script..."
             if [ -f "$SCRIPT_DIR/gnome-installer.sh" ]; then
                 bash "$SCRIPT_DIR/gnome-installer.sh"
             else
                 echo "The GNOME setup script was not found."
-            fi
-            ;;
-        3)
-            echo "Running the Development setup script..."
-            if [ -f "$SCRIPT_DIR/dev/dev.sh" ]; then
-                bash "$SCRIPT_DIR/dev/dev.sh"
-            else
-                echo "The Development setup script was not found."
-            fi
-            ;;
-        4)
-            echo "Running the Tweak setup script..."
-            if [ -f "$SCRIPT_DIR/tweak/tweak.sh" ]; then
-                bash "$SCRIPT_DIR/tweak/tweak.sh"
-            else
-                echo "The Tweak setup script was not found."
             fi
             ;;
         q|Q)
