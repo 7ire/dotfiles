@@ -146,17 +146,17 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
       print_error "[-] Failed to configure TMUX!"
     fi
 
-    # Full tmux setup
+    # Full nvim setup
     if [ -d "$HOME/dotfiles/linux/src/.config/nvim" ]; then
       mkdir -p "$HOME/.config/"
       cp -r "$HOME/dotfiles/linux/src/.config/nvim" "$HOME/.config/"
-      print_success "[+] TMUX configured!"
+      print_success "[+] Nvim configured!"
     else
-      print_error "[-] Failed to configure TMUX!"
+      print_error "[-] Failed to configure Nvim!"
     fi
     
-    docker || print_error "[-] Failed to configure Docker!"
-    kvm || print_error "[-] Failed to configure QEMU and KVM!"
+    conf_docker || print_error "[-] Failed to configure Docker!"
+    conf_kvm || print_error "[-] Failed to configure QEMU and KVM!"
 
     # Base codium extensions
     codium_install_ext "${BASE_EXT[@]}"

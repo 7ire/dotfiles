@@ -17,7 +17,7 @@ conf_docker() {
 }
 
 # QEMU and KVM setup
-kvm() {
+conf_kvm() {
   if sudo systemctl enable --now libvirtd &> /dev/null && \
      sudo sed -i 's/#unix_sock_group = "libvirt"/unix_sock_group = "libvirt"/' /etc/libvirt/libvirtd.conf &> /dev/null && \
      sudo sed -i 's/#unix_sock_ro_perms = "0777"/unix_sock_ro_perms = "0777"/' /etc/libvirt/libvirtd.conf &> /dev/null && \
