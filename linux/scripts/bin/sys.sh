@@ -4,7 +4,7 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Import the utils function
-source "$SCRIPT_DIR/utils/utils.sh"
+source "../utils/utils.sh"
 
 # Bluetooth ControllerMode = dual
 bt_controllermode_dual() {

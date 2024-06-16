@@ -8,7 +8,7 @@ source "$SCRIPT_DIR/utils/utils.sh"
 # Import the system function
 source "$SCRIPT_DIR/bin/sys.sh"
 # Import the arch function
-source "$SCRIPT_DIR/bin/arch.sh"
+source "$SCRIPT_DIR/arch.sh"
 
 #============================
 # CONSTANTS STRUCTS
