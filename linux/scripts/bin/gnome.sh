@@ -65,7 +65,7 @@ theming() {
   fi
   
   # Clone my wallpapers repository
-  if ! git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null;
+  if ! git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
     print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
   fi
 
