@@ -1,9 +1,12 @@
 #!/bin/bash
 
+# Get the absolute directory of the current script
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 # Import the utils function
-source utils/utils.sh
+source "$SCRIPT_DIR/utils/utils.sh"
 # Import the envirorment function
-source bin/env.sh
+source "$SCRIPT_DIR/bin/env.sh"
 
 #============================
 # CONSTANTS STRUCTS
