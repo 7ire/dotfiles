@@ -100,6 +100,8 @@ EXT_LIST=(
   gnome-ui-tune@itstime.tech                   # GNOME 4x UI Improvements
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
+  NotificationCounter@coolllsk                 # Notification counter
+  do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
 )
 
 #============================

@@ -11,13 +11,14 @@ source bin/dev.sh
 
 # List of CLI packages to install
 CLI_PKG=(
-  btop    # System monitor
-  tmux    # Terminal multiplexer
-  neovim  # VI imporoved with plugin
-  yazi    # File manager
-  xh      # Fast HTTP request sender
-  rnr     # Regex renamer
-  
+  btop        # System monitor
+  tmux        # Terminal multiplexer
+  neovim      # VI imporoved with plugin
+  yazi        # File manager
+  xh          # Fast HTTP request sender
+  rnr         # Regex renamer
+  lazygit     # Manage git
+  lazydocker  # Manager docker
 )
 
 # List of packages to install
@@ -43,6 +44,7 @@ INSTALL_PKG=(
 HACK_PKG=(
   ghidra-desktop  # Ghidra (w/ desktop entry)
   wireshark-qt    # Wireshark
+  burpsuite       # Burp Suite
 )
 
 # Base extensions

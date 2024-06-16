@@ -96,3 +96,17 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
     conf_zsh
   fi
 fi
+
+# Prompt user to configure fingerprint hardware
+read -p "Do you want to configure fingerprint login? [y/N]: "  choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  print_warning "[*] Importing VPN configuration files ..."
+
+  if ! installer fprintd libfprint imagemagick usbutils; then
+    print_error "[-] Failed to install required packages for fingerprint reader!"
+  else
+    sudo usermod -aG input "$USER"
+
+    conf_fprint
+  fi
+fi

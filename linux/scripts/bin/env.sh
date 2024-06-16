@@ -13,7 +13,41 @@ gen_grub() {
 }
 
 # Fingerprint reader
-conf_fingerprint() {}
+conf_fprint() {
+    # Variabili
+    POLKIT_RULES_FILE="/etc/polkit-1/rules.d/50-default.rules"
+    PAM_POLKIT_FILE="/etc/pam.d/polkit-1"
+    USER_GROUP=$(id -gn)
+
+    # Controlla se il file di configurazione PAM per polkit esiste, altrimenti crealo
+    if [[ ! -f "$PAM_POLKIT_FILE" ]]; then
+        echo "Creazione del file $PAM_POLKIT_FILE..."
+        sudo touch "$PAM_POLKIT_FILE"
+    fi
+
+    # Configurazione di PAM per polkit
+    echo "Configurazione di PAM per polkit..."
+    sudo bash -c "cat > $PAM_POLKIT_FILE" <<EOF
+auth    sufficient    pam_fprintd.so
+auth    include       system-auth
+account include       system-auth
+password include      system-auth
+session include       system-auth
+EOF
+
+    # Copia il file delle regole di default di polkit se non esiste
+    if [[ ! -f "$POLKIT_RULES_FILE" ]]; then
+        echo "Copia del file delle regole di default di polkit..."
+        sudo cp /usr/share/polkit-1/rules.d/50-default.rules "$POLKIT_RULES_FILE"
+    fi
+
+    # Modifica del gruppo di utenti nel file delle regole di polkit
+    echo "Modifica del gruppo di utenti nel file delle regole di polkit..."
+    sudo sed -i "s/unix-group:wheel/unix-group:$USER_GROUP/" "$POLKIT_RULES_FILE"
+
+    print_success "[+] Fprint configured successfully"
+}
+
 
 # Git identity + SSH key
 conf_git() {
