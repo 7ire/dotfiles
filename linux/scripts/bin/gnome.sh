@@ -76,7 +76,7 @@ theming() {
   fi
 
   # Copy .local directory
-  if ! cp -r "$HOME/dotfiles/.local/share/bin" "$HOME/.local/share" &> /dev/null; then
+  if ! cp -r "$HOME/dotfiles/linux/src/.local/share/bin" "$HOME/.local/share" &> /dev/null; then
     print_warning "[-] Couldn't copy bin/ inside .local/share, do it manually."
   fi
 
@@ -100,6 +100,7 @@ workspace_binding() {
 
   print_info "[:] Reseted useless keybinds!"
 
+  # Swith to N workspace
   if ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-1 "['<Super>1']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-2 "['<Super>2']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-3 "['<Super>3']" &> /dev/null ||
@@ -109,6 +110,19 @@ workspace_binding() {
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-7 "['<Super>7']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-8 "['<Super>8']" &> /dev/null ||
      ! dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-9 "['<Super>9']" &> /dev/null; then
+    return 1
+  fi
+
+  # Switch current application to the N workspace
+  if ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-1 "['<Shift><Super>1']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-2 "['<Shift><Super>2']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-3 "['<Shift><Super>3']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-4 "['<Shift><Super>4']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-5 "['<Shift><Super>5']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-6 "['<Shift><Super>6']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-7 "['<Shift><Super>7']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-8 "['<Shift><Super>8']" &> /dev/null ||
+     ! dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-9 "['<Shift><Super>9']" &> /dev/null; then
     return 1
   fi
 
