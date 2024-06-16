@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Get the absolute directory of the current script
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+BASE_DIR="$HOME/dotfiles/linux/scripts"
 
 # Import the utils function
-source "$SCRIPT_DIR/utils/utils.sh"
+source "$BASE_DIR/utils/utils.sh"
 # Import the development function
-source "$SCRIPT_DIR/bin/dev.sh"
+source "$BASE_DIR/bin/dev.sh"
 
 #============================
 # CONSTANTS STRUCTS

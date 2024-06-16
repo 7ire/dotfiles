@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Get the absolute directory of the current script
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+BASE_DIR="$HOME/dotfiles/linux/scripts"
 
 # Import the utils function
-source "../utils/utils.sh"
+source "$BASE_DIR/utils/utils.sh"
 
 # Bluetooth ControllerMode = dual
 bt_controllermode_dual() {
