@@ -28,6 +28,7 @@ show_menu() {
     echo "1) Run arch script"
     echo "2) Run first system setup script"
     echo "3) Run GNOME setup script"
+    echo "4) Run development setup script"
     echo "q) Quit"
     echo -n "Choose an option: "
 }
@@ -65,6 +66,14 @@ while true; do
                 bash "$SCRIPT_DIR/gnome-installer.sh"
             else
                 echo "The GNOME setup script was not found."
+            fi
+            ;;
+        4)
+            echo "Running the development setup script..."
+            if [ -f "$SCRIPT_DIR/dev-installer.sh" ]; then
+                bash "$SCRIPT_DIR/dev-installer.sh"
+            else
+                echo "The development setup script was not found."
             fi
             ;;
         q|Q)
