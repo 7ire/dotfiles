@@ -200,6 +200,9 @@ if [[ "$choice"  =~ ^[Yy]$ ]]; then
   
   # Move to the home directory
   cd $HOME
+  
+  # Install hack tools
+  installer "${HACK_PKG[@]}"
 
   # Install nebula container
   nebula || print_error "[-] Failed to install Nebula machine!"

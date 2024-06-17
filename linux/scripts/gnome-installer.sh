@@ -106,7 +106,7 @@ EXT_LIST=(
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
   NotificationCounter@coolllsk                 # Notification counter
-  easy_docker_containers@red.software.systems  # Easy docker containers
+  docker@stickman_0x00.com                     # Docker
   do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
 )
 
