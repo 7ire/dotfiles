@@ -39,6 +39,8 @@ REMOVE_PKG=(
 
 # List of packages to install
 INSTALL_PKG=(
+  downgrade  # Downgrade
+  fastfetch  # Fastfetch
   # Fonts and Emoji
   noto-fonts-emoji  # Noto Emoji
   nerd-fonts        # Nerd Fonts
@@ -53,6 +55,7 @@ INSTALL_PKG=(
   vscodium-bin       # Text editor - VSCodium
   obsidian           # Notes - Obsidian
   thunderbird        # Mail client - Thunderbird
+  planify            # Planify
   # Libreoffice + LaTeX support
   libreoffice-fresh
   libreoffice-extension-texmaths
@@ -103,6 +106,7 @@ EXT_LIST=(
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
   NotificationCounter@coolllsk                 # Notification counter
+  easy_docker_containers@red.software.systems  # Easy docker containers
   do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
 )
 
