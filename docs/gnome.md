@@ -45,6 +45,7 @@ My list of application that I rock in my GNOME system:
 | telegram-desktop                              | Telegram                                       |
 | telegram-desktop                              | Signal                                         |
 
+
 Some tweaking of the system, to have more control and better workflow of the GNOME desktop environment.
 
 One annoying thing is the audio step, that by default is set to 5. For more or less control and accuracy of the audio volume, change it with the desire value, in this case.
@@ -140,4 +141,5 @@ For more custom experience in the GNOME desktop environment it is possible to in
 This are some of my extensions that I install in my system, for more details, please check the dotfiles and the `ext_installer` and the list of all extensions passed to the installer.
 ## Additional notes
 - Fix **Arch Linux update indicator**
+
 `blackbox -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"`
