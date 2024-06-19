@@ -34,18 +34,18 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   aur || print_error "[-] Failed to install AUR helper!"
 fi
 
-# Prompt user to configure pacman
-read -p "Do you want to configure pacman? [y/N]: " choice
-if [[ "$choice" =~ ^[Yy]$ ]]; then
-  print_warning "[*] Configuring pacman ..."
-  conf_pacman || print_error "[-] Failed to configure pacman!"
-fi
-
 # Prompt user to configure Chaotic AUR repository
 read -p "Do you want to configure Chaotic AUR? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   print_warning "[*] Configuring Chaotic AUR repository ..."
   chaoticaur || print_error "[-] Failed to configure Chaotic AUR repository!"
+fi
+
+# Prompt user to configure pacman
+read -p "Do you want to configure pacman? [y/N]: " choice
+if [[ "$choice" =~ ^[Yy]$ ]]; then
+  print_warning "[*] Configuring pacman ..."
+  conf_pacman || print_error "[-] Failed to configure pacman!"
 fi
 
 # Prompt user to update the mirrorlist
