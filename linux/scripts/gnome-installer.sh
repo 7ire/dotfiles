@@ -67,7 +67,7 @@ INSTALL_PKG=(
   clapper     # Video player - Clapper
   smile       # Emoji picker - Smile
   # Social
-  webcord             # WebCord
+  vesktop-bin         # Vesktop - Discord
   telegram-desktop    # Telegram
   signal-desktop      # Signal
 )
