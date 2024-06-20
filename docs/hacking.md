@@ -68,4 +68,6 @@ Based on which task is require to perform, there are specific tools/task to be i
 > For **radare2** and **pwndbg** that are tools installed system wide, so my recommendation is to clone their repos inside a hidden directory, like **.local/share/bin** or just **."package"**.
 
 
-- crypto
+- **crypto**
+
+> WIP
