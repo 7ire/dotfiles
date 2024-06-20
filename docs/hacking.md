@@ -46,7 +46,7 @@ virt-manager --connect qemu:///system --show-domain-console "VM-NAME"
 ## Hacking environment and tools
 Based on which task is require to perform, there are specific tools/task to be install. All tools and task are divided by category. (So if a package/tool is repeated you can just ignore and keep the last version of that tool installed in the system).
 
-- General purpose tools
+- **General purpose tools**
 
 | Package            | Description                             |
 | ------------------ | --------------------------------------- |
@@ -54,7 +54,8 @@ Based on which task is require to perform, there are specific tools/task to be i
 | **wireshark-qt**   | Traffic packet sniffer                  |
 | **burpsuite**      | HTTP request/response handler and proxy |
 
-- pwn
+- **pwn**
+
 *Install al the package inside a python virtualenv, you can call it with the category name.*
 
 | Package       | Description                                                         |
