@@ -14,36 +14,36 @@ totem yelp epiphany orca snapshot baobab flatpak simple-scan gnome-software gnom
 My list of application that I rock in my GNOME system:
 - TUI Application
 
-| Package   | Description               |
-| --------- | ------------------------- |
-| fastfest  | Show system information   |
-| downgrade | Downgrade package version |
+| Package       | Description               |
+| ------------- | ------------------------- |
+| **fastfetch** | Show system information   |
+| **downgrade** | Downgrade package version |
 
 - GUI Application
 
-| Package                                       | Description                                    |
-| --------------------------------------------- | ---------------------------------------------- |
-| blackbox-terminal                             | Terminal emulator                              |
-| extension-manager                             | GNOME Extension manager                        |
-| brave-bin                                     | Browser - Brave                                |
-| firefox                                       | Browser - Firefox                              |
-| spotify                                       | Music - Spotify                                |
-| amberol                                       | Music - Amberol                                |
-| vscodium-bin                                  | IDE - VSCodium                                 |
-| obsidian                                      | Note - Obsidian                                |
-| thunderbird                                   | Mail client - Thunderbird                      |
-| planify                                       | Productivity - Planify                         |
-| libreoffice-fresh                             | Office - Libre Office                          |
-| [Arch BTW] libreoffice-extension-texmaths     | Office - Libre Office support of math equation |
-| [Arch BTW] libreoffice-extension-writer2latex | Office - Libre Office support of LaTeX         |
-| xmind                                         | Mind map - XMind                               |
-| obs-studio                                    | Video recorder - OBS                           |
-| kdenlive                                      | Video editor - KDEnlive                        |
-| clapper                                       | Video player - Clapper                         |
-| smile                                         | Emoji picker - Smile                           |
-| vesktop-bin                                   | Vesktop - Discord                              |
-| telegram-desktop                              | Telegram                                       |
-| telegram-desktop                              | Signal                                         |
+| Package                                           | Description                                    |
+| ------------------------------------------------- | ---------------------------------------------- |
+| **blackbox-terminal**                             | Terminal emulator                              |
+| **extension-manager**                             | GNOME Extension manager                        |
+| **brave-bin**                                     | Browser - Brave                                |
+| **firefox**                                       | Browser - Firefox                              |
+| **spotify**                                       | Music - Spotify                                |
+| **amberol**                                       | Music - Amberol                                |
+| **vscodium-bin**                                  | IDE - VSCodium                                 |
+| **obsidian**                                      | Note - Obsidian                                |
+| **thunderbird**                                   | Mail client - Thunderbird                      |
+| **planify**                                       | Productivity - Planify                         |
+| **libreoffice-fresh**                             | Office - Libre Office                          |
+| [Arch BTW] **libreoffice-extension-texmaths**     | Office - Libre Office support of math equation |
+| [Arch BTW] **libreoffice-extension-writer2latex** | Office - Libre Office support of LaTeX         |
+| **xmind**                                         | Mind map - XMind                               |
+| **obs-studio**                                    | Video recorder - OBS                           |
+| **kdenlive**                                      | Video editor - KDEnlive                        |
+| **clapper**                                       | Video player - Clapper                         |
+| **smile**                                         | Emoji picker - Smile                           |
+| **vesktop-bin**                                   | Vesktop - Discord                              |
+| **telegram-desktop**                              | Telegram                                       |
+| **signal-desktop**                                | Signal                                         |
 
 
 Some tweaking of the system, to have more control and better workflow of the GNOME desktop environment.
@@ -59,39 +59,39 @@ Next is it possible to bind some shortcut to improve the workflow of the system.
 
 - Launch applications:
 
-| Command              | Shortcut    |
-| -------------------- | ----------- |
-| Terminal             | `super + T` |
-| Browser              | `super + F` |
-| File manager         | `super + E` |
-| System settings      | `super + I` |
-| Note taking          | `super + N` |
-| Application launcher | `super + A` |
+| Command                  | Shortcut    |
+| ------------------------ | ----------- |
+| **Terminal**             | `super + T` |
+| **Browser**              | `super + F` |
+| **File manager**         | `super + E` |
+| **System settings**      | `super + I` |
+| **Note taking**          | `super + N` |
+| **Application launcher** | `super + A` |
 
 - Motion and control
 
-| Command                     | Shortcut              |
-| --------------------------- | --------------------- |
-| Kill application            | `super + Q`           |
-| Go to last workspace        | `super + 0`           |
-| Move to the right workspace | `super + TAB`         |
-| Move to the left workspace  | `super + shift + TAB` |
+| Command                         | Shortcut              |
+| ------------------------------- | --------------------- |
+| **Kill application**            | `super + Q`           |
+| **Go to last workspace**        | `super + 0`           |
+| **Move to the right workspace** | `super + TAB`         |
+| **Move to the left workspace**  | `super + shift + TAB` |
 
 > For the next binding - workspace, keep in mind to disable **dynamic workspaces** in the **gnome-control-settings** to a better usability of each shortcut and more organization of each workspace.
 
 - Switch to a desire workspace:
 
-| Command     | Shortcut    |
-| ----------- | ----------- |
-| Workspace 1 | `super + 1` |
-| Workspace 2 | `super + 2` |
-| Workspace 3 | `super + 3` |
-| Workspace 4 | `super + 4` |
-| Workspace 5 | `super + 5` |
-| Workspace 6 | `super + 6` |
-| Workspace 7 | `super + 7` |
-| Workspace 8 | `super + 8` |
-| Workspace 9 | `super + 9` |
+| Command         | Shortcut    |
+| --------------- | ----------- |
+| **Workspace 1** | `super + 1` |
+| **Workspace 2** | `super + 2` |
+| **Workspace 3** | `super + 3` |
+| **Workspace 4** | `super + 4` |
+| **Workspace 5** | `super + 5` |
+| **Workspace 6** | `super + 6` |
+| **Workspace 7** | `super + 7` |
+| **Workspace 8** | `super + 8` |
+| **Workspace 9** | `super + 9` |
 > It is recommend to use the command binding provided by **dconf** because the *gnome-control-center* is limited to 4 workspace.
 
 `dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-1 "['<Super>1']"`
@@ -100,17 +100,17 @@ And edit the value `1` based on the X workspace binding.
 
 - Move application to a desire workspace:
 
-| Command                         | Shortcut            |
-| ------------------------------- | ------------------- |
-| Move application to workspace 1 | `super + shift + 1` |
-| Move application to workspace 2 | `super + shift + 2` |
-| Move application to workspace 3 | `super + shift + 3` |
-| Move application to workspace 4 | `super + shift + 4` |
-| Move application to workspace 5 | `super + shift + 5` |
-| Move application to workspace 6 | `super + shift + 6` |
-| Move application to workspace 7 | `super + shift + 7` |
-| Move application to workspace 8 | `super + shift + 8` |
-| Move application to workspace 9 | `super + shift + 9` |
+| Command                             | Shortcut            |
+| ----------------------------------- | ------------------- |
+| **Move application to workspace 1** | `super + shift + 1` |
+| **Move application to workspace 2** | `super + shift + 2` |
+| **Move application to workspace 3** | `super + shift + 3` |
+| **Move application to workspace 4** | `super + shift + 4` |
+| **Move application to workspace 5** | `super + shift + 5` |
+| **Move application to workspace 6** | `super + shift + 6` |
+| **Move application to workspace 7** | `super + shift + 7` |
+| **Move application to workspace 8** | `super + shift + 8` |
+| **Move application to workspace 9** | `super + shift + 9` |
 > It is recommend to use the command binding provided by **dconf** because the *gnome-control-center* is limited to 4 workspace.
 
 `dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-1 "['<Shift><Super>1']"` 
