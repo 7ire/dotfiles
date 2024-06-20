@@ -37,8 +37,15 @@ To start the VMs in QEMU/virt manager via terminal, so it is like a vm as a serv
 ``` bash
 # start the VM
 virsh --connect qemu:///system start "VM-NAME"
-# connect to the VM
+# connect to the VM interface (GUI)
 virt-manager --connect qemu:///system --show-domain-console "VM-NAME"
+# shutdown the VM
+virsh --connect qemu:///system shutdown "VM-NAME"
+# If shutdown not respond, force it
+virsh --connect qemu:///system destroy "VM-NAME"
+
+# Check the list of running VM and status
+virsh --connect qemu:///system list --all
 ```
 
 - [How to start QEMU VM from command line?](https://unix.stackexchange.com/questions/638844/how-to-start-qemu-vm-from-command-line)
