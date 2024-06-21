@@ -107,6 +107,7 @@ EXT_LIST=(
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
   NotificationCounter@coolllsk                 # Notification counter
   docker@stickman_0x00.com                     # Docker
+  tilingshell@ferrarodomenico.com              # Tiling shell
   do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
 )
 
