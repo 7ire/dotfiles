@@ -61,6 +61,24 @@ Based on which task is require to perform, there are specific tools/task to be i
 | **wireshark-qt**   | Traffic packet sniffer                  |
 | **burpsuite**      | HTTP request/response handler and proxy |
 
+- Dockerized tools
+	- [parrotsec/nmap](https://parrotsec.org/docs/cloud/parrot-on-docker/#parrotsecnmap)
+	- [parrotsec/metasploit](https://parrotsec.org/docs/cloud/parrot-on-docker/#parrotsecmetasploit)
+	- [parrotsec/set](https://parrotsec.org/docs/cloud/parrot-on-docker/#parrotsecset)
+	- [parrotsec/beef](https://parrotsec.org/docs/cloud/parrot-on-docker/#parrotsecbeef)
+	- [parrotsec/sqlmap](https://parrotsec.org/docs/cloud/parrot-on-docker/#parrotsecsqlmap)
+	- Kali
+
+``` bash
+# Exec kali-rolling with host network and shared directory with host
+docker run -it --network host --name kali-linux-container -v /home/user/shared:/shared kalilinux/kali-rolling
+
+# Attach to a terminal
+docker exec -it kali-linux-container /bin/bash
+```
+
+[Docker usages and examples](https://parrotsec.org/docs/cloud/general-usage-docker)
+
 - **pwn**
 
 *Install al the package inside a python virtualenv, you can call it with the category name.*
