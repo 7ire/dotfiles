@@ -13,7 +13,6 @@ source "$BASE_DIR/bin/dev.sh"
 
 # List of CLI packages to install
 CLI_PKG=(
-  btop        # System monitor
   tmux        # Terminal multiplexer
   neovim      # VI imporoved with plugin
   yazi        # File manager
@@ -56,6 +55,7 @@ BASE_EXT=(
   jeanp413.open-remote-ssh   # Open Remote - SSH
   mhutchie.git-graph         # Git Graph
   bbenoist.doxygen           # Docker
+  formulahendry.code-runner  # Code runner
 )
 
 # Python extensions
@@ -102,7 +102,11 @@ DART_EXT=(
 )
 
 # JS extensions
-JS_EXT=()
+JS_EXT=(
+  xabikos.javascriptsnippets     # JavaScript (ES6) code snippets
+  hansuxdev.bootstrap5-snippets  # Bootstrap 5 & Font Awesome Snippets
+  ritwickdey.liveserver          # Live Server
+)
 
 #============================
 # CONFIGURATION FUNCTIONS
@@ -186,9 +190,15 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
     fi
 
     # Dart for codium
-    read -p "Do you want to configure codium for Go? [y/N]: " choice
+    read -p "Do you want to configure codium for Dart? [y/N]: " choice
     if [[ "$choice" =~ ^[Yy]$ ]]; then
       codium_install_ext "${DART_EXT[@]}"
+    fi
+
+    # Dart for codium
+    read -p "Do you want to configure codium for JavaScript? [y/N]: " choice
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+      codium_install_ext "${JS_EXT[@]}"
     fi
   fi
 fi
@@ -203,19 +213,4 @@ if [[ "$choice"  =~ ^[Yy]$ ]]; then
   
   # Install hack tools
   installer "${HACK_PKG[@]}"
-
-  # Install nebula container
-  nebula || print_error "[-] Failed to install Nebula machine!"
-
-  # Move to the home directory
-  cd $HOME
-
-  # Install protostar container
-  protostar || print_error "[-] Failed to install Protostar machine!"
-
-  # Move to the home directory
-  cd $HOME
-
-  # Install wev4pentest container
-  web4pentest || print_error "[-] Failed to install Web4Pentest machine!"
 fi

@@ -40,6 +40,7 @@ REMOVE_PKG=(
 # List of packages to install
 INSTALL_PKG=(
   # TUI
+  btop       # System monitor
   downgrade  # Downgrade
   fastfetch  # Fastfetch
   # Fonts and Emoji
