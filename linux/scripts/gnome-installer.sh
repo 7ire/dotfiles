@@ -39,6 +39,7 @@ REMOVE_PKG=(
 
 # List of packages to install
 INSTALL_PKG=(
+  # TUI
   downgrade  # Downgrade
   fastfetch  # Fastfetch
   # Fonts and Emoji

@@ -5,12 +5,19 @@
 local M = {}
 
 M.ui = {
-	theme = "onedark",
+	transparency = true,
+	theme = "chadracula-evondev",
 
-	-- hl_override = {
-	-- 	Comment = { italic = true },
-	-- 	["@comment"] = { italic = true },
-	-- },
+	hl_override = {
+		Comment = { italic = true },
+		["@comment"] = { italic = true },
+	},
+
+	statusline = {
+		theme = "default",
+		separator_style = "default",
+		overriden_modules = nil,
+	},
 }
 
 return M
