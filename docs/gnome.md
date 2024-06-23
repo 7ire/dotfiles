@@ -132,6 +132,9 @@ Cursor:
 Application:
 - [Firefox](https://github.com/rafaelmardojai/firefox-gnome-theme)
 - [Thunderbird](https://github.com/rafaelmardojai/thunderbird-gnome-theme)
+- Spotify:
+	- [spicetify](https://spicetify.app/docs/advanced-usage/installation/#note-for-linux-users)
+	- [spicetify-theme](https://github.com/spicetify/spicetify-themes)
 
 For more custom experience in the GNOME desktop environment it is possible to install some extensions. There are listed some of my favorite one:
 - [pop-shell!](https://github.com/pop-os/shell.git)
