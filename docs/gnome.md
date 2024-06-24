@@ -131,6 +131,7 @@ Cursor:
 
 Application:
 - [Firefox](https://github.com/rafaelmardojai/firefox-gnome-theme)
+	- [ShyFox](https://www.reddit.com/r/unixporn/comments/1dl1xzx/oc_shyfox_theme_for_firefox_i_made/)
 - [Thunderbird](https://github.com/rafaelmardojai/thunderbird-gnome-theme)
 - Spotify:
 	- [spicetify](https://spicetify.app/docs/advanced-usage/installation/#note-for-linux-users)
