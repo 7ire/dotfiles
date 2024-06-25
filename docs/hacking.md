@@ -21,6 +21,8 @@ Download and install the following VMs, that contains challenges and training ab
 - [Web4Pentester](https://pentesterlab.com/exercises/web_for_pentester/course)
 - [OWASP Broken Web Applications](https://sourceforge.net/projects/owaspbwa/)
 
+(Useful for OVA disk image) => [How to converto ova images to support QEMU](https://www.reddit.com/r/qemu_kvm/comments/t8gi5c/how_do_i_convert_ova_images_to_something_that/)
+
 Last install another VMs, this is useful to do tasks about **binary exploitation**, especially when is needed that the system running the binary have disable:
 - ASLR
 - Memory address randomization
