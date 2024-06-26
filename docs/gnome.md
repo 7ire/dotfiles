@@ -23,6 +23,7 @@ My list of application that I rock in my GNOME system:
 
 | Package                                           | Description                                    |
 | ------------------------------------------------- | ---------------------------------------------- |
+| **kitty**                                         | Terminal emulator                              |
 | **blackbox-terminal**                             | Terminal emulator                              |
 | **extension-manager**                             | GNOME Extension manager                        |
 | **brave-bin**                                     | Browser - Brave                                |
@@ -47,6 +48,8 @@ My list of application that I rock in my GNOME system:
 
 
 Some tweaking of the system, to have more control and better workflow of the GNOME desktop environment.
+
+> For kitty, copy the config file inside the `.config` folder of the dotfiles.
 
 One annoying thing is the audio step, that by default is set to 5. For more or less control and accuracy of the audio volume, change it with the desire value, in this case.
 - Volume step = `2`
@@ -119,6 +122,9 @@ And edit the value `1` based on the X workspace binding.
 ## Ricing of the desktop environment
 To rice a bit the system, install some packages for GNOME shell theme, icon theme, cursor and extensions. This is all about preferences so fell free to ignore the recommendations and all the packages installed in the following sections to make your own system.
 
+GNOME-shell/theme:
+- [gtk-catppucin](https://github.com/catppuccin/gtk/blob/main/docs/USAGE.md)
+
 Icons:
 - [MoreWaita](https://github.com/somepaulo/MoreWaita)
 - [adw-gkt3](https://github.com/lassekongo83/adw-gtk3)
@@ -136,6 +142,14 @@ Application:
 - Spotify:
 	- [spicetify](https://spicetify.app/docs/advanced-usage/installation/#note-for-linux-users)
 	- [spicetify-theme](https://github.com/spicetify/spicetify-themes)
+- Venvcord:
+	- [catppucin](https://github.com/catppuccin/discord)
+
+Put this in the customCSS file (Venvcord settings, inside Discord)
+``` css
+/* mocha */
+@import url("https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css");
+```
 
 For more custom experience in the GNOME desktop environment it is possible to install some extensions. There are listed some of my favorite one:
 - [pop-shell!](https://github.com/pop-os/shell.git)
