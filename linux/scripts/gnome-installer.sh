@@ -47,11 +47,13 @@ INSTALL_PKG=(
   noto-fonts-emoji  # Noto Emoji
   nerd-fonts        # Nerd Fonts
   # Base
-  blackbox-terminal  # Terminal
+  kitty              # Terminal
+  # blackbox-terminal  # Terminal
   extension-manager  # GNOME Extension manager
   brave-bin          # Browser - Brave
   firefox            # Browser - Firefox
   spotify            # Music - Spotify
+  spicetify-cli      # Music - Spicetify (Spotify themer)
   amberol            # Music - Amberol
   # Office
   vscodium-bin       # Text editor - VSCodium
@@ -121,10 +123,11 @@ EXT_LIST=(
 rounded_window_corner() {
   if ! installer nodejs npm gettext just &> /dev/null ||
      ! git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null ||
-     ! cd rounded-window-corners ||
-     ! just install; then
+     ! cd rounded-window-corners; then
     return 1
   fi
+
+  just install || true
 
   if ! cd .. || ! rm -rf rounded-window-corners; then
     print_warning "[-] Couldn't remove the build files, do it manually."

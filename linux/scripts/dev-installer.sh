@@ -141,6 +141,15 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
       print_error "[-] Failed to configure Zsh!"
     fi
 
+    # Full kitty setup
+    if [ -d "$HOME/dotfiles/linux/src/.config/kitty" ]; then
+      mkdir -p "$HOME/.config/"
+      cp -r "$HOME/dotfiles/linux/src/.config/kitty" "$HOME/.config/"
+      print_success "[+] Kitty configured!"
+    else
+      print_error "[-] Failed to configure Kitty!"
+    fi
+
     # Full tmux setup
     if [ -d "$HOME/dotfiles/linux/src/.config/tmux" ]; then
       mkdir -p "$HOME/.config/"

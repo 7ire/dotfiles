@@ -160,4 +160,4 @@ This are some of my extensions that I install in my system, for more details, pl
 ## Additional notes
 - Fix **Arch Linux update indicator**
 
-`blackbox -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"`
+`kitty -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"`

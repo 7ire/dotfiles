@@ -1,0 +1,22 @@
+# Enable/disable extensions
+gnome-extensions disable light-style@gnome-shell-extensions.gcampax.github.com
+
+# Shell theme
+## color scheme
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+## shell
+dconf write /org/gnome/shell/extensions/user-theme/name "'catppuccin-mocha-blue-standard+default'"
+## gtk
+gsettings set org.gnome.desktop.interface gtk-theme 'catppuccin-mocha-blue-standard+default'
+## gtk3 fix
+export THEME_DIR="$HOME/.local/share/themes/catppuccin-mocha-blue-standard+default"
+
+# Optionally, add support for libadwaita
+mkdir -p "${HOME}/.config/gtk-4.0" && 
+ln -sf "${THEME_DIR}/gtk-4.0/assets" "${HOME}/.config/gtk-4.0/assets" &&
+ln -sf "${THEME_DIR}/gtk-4.0/gtk.css" "${HOME}/.config/gtk-4.0/gtk.css" &&
+ln -sf "${THEME_DIR}/gtk-4.0/gtk-dark.css" "${HOME}/.config/gtk-4.0/gtk-dark.css"
+
+
+# Icon theme
+gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'

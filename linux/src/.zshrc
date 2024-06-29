@@ -11,6 +11,8 @@ fi
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+export TERM=xterm-256color
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -141,10 +143,22 @@ alias flshdns='$HOME/.local/share/bin/flushdns'
 
 # Always mkdir a path (this doesn't inhibit functionality to make a single dir)
 alias mkdir='mkdir -p'
+# Fix ssh errors
+alias ssh='kitten ssh'
 
-# Switch from day/night
-alias   day='$HOME/.local/share/bin/daymode'
-alias night='$HOME/.local/share/bin/nightmode'
+# VMs
+alias qemu-list='virsh --connect qemu:///system list --all'  # List of all qemu VMs
+## nebula
+# alias start-nebula='virsh --connect qemu:///system start "nebula" && echo "ssh levelXX@192.168.122.216"'
+# alias  stop-nebula='virsh --connect qemu:///system destroy "nebula"'
+## protostar
+# alias   start-protostar='virsh --connect qemu:///system start "protostar" && echo "Remove the key in the .ssh/know_hosts"' 
+# alias connect-protostar='kitten ssh -oHostKeyAlgorithms=+ssh-dss user@192.168.122.156'
+# alias    stop-protostar='virsh --connect qemu:///system destroy "protostar"'
+## web4pentest
+# alias start-web4pentest='virsh --connect qemu:///system start "web4pentest" && echo "go to 192.168.122.115 in your browser"'
+# alias  stop-web4pentest='virsh --connect qemu:///system destroy "web4pentest"'
+
 
 # Fuzzy finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

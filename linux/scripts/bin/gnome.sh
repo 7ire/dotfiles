@@ -63,6 +63,17 @@ theming() {
      ! gsettings set org.gnome.desktop.interface color-scheme 'default' &> /dev/null; then
     return 1
   fi
+
+  # Install catppucin shell themes
+  curl -LsSO "https://raw.githubusercontent.com/catppuccin/gtk/v1.0.3/install.py"
+
+  # Light - latte
+  python3 install.py latte blue
+  python3 install.py latte red
+
+  # Dark - mocha
+  python3 install.py mocha blue
+  python3 install.py mocha red
   
   # Clone my wallpapers repository
   if ! git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
