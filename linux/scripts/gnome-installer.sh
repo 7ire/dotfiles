@@ -40,15 +40,17 @@ REMOVE_PKG=(
 # List of packages to install
 INSTALL_PKG=(
   # TUI
-  btop       # System monitor
-  downgrade  # Downgrade
-  fastfetch  # Fastfetch
+  btop           # System monitor
+  downgrade      # Downgrade
+  fastfetch      # Fastfetch
+  1password-cli  # 1password CLI
   # Fonts and Emoji
   noto-fonts-emoji  # Noto Emoji
   nerd-fonts        # Nerd Fonts
   # Base
   kitty              # Terminal
   # blackbox-terminal  # Terminal
+  1password          # Password manager
   extension-manager  # GNOME Extension manager
   brave-bin          # Browser - Brave
   firefox            # Browser - Firefox

@@ -1,5 +1,6 @@
 # Enable/disable extensions
 gnome-extensions disable light-style@gnome-shell-extensions.gcampax.github.com
+gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
 
 # Shell theme
 ## color scheme

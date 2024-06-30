@@ -1,0 +1,17 @@
+# Enable/disable extensions
+gnome-extensions disable light-style@gnome-shell-extensions.gcampax.github.com
+gnome-extensions disable user-theme@gnome-shell-extensions.gcampax.github.com
+
+# Shell theme
+## color scheme
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+## gtk
+gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3'
+
+# Fix libadwaita
+rm -rf "${HOME}/.config/gtk-4.0/assets" || true
+rm -rf "${HOME}/.config/gtk-4.0/gtk.css" || true
+rm -rf "${HOME}/.config/gtk-4.0/gtk-dark.css" || true
+
+# Icon theme
+gsettings set org.gnome.desktop.interface icon-theme 'MoreWaita'

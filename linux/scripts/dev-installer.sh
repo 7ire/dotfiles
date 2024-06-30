@@ -130,6 +130,9 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   if ! installer "${INSTALL_PKG[@]}"; then
     print_error "[-] Failed to install specified packages!"
   else
+    # Dev folder
+    mkdir -p "$HOME/Sviluppi/"
+
     # Install CLI tools
     installer "${CLI_PKG[@]}" || print_error "[-] Failed to install CLI packages!"
 
@@ -222,4 +225,26 @@ if [[ "$choice"  =~ ^[Yy]$ ]]; then
   
   # Install hack tools
   installer "${HACK_PKG[@]}"
+
+  # Vm folder
+  mkdir -p "$HOME/Sviluppi/vm"
+
+  # Nebula
+  mkdir -p "$HOME/Sviluppi/vm/nebula/"
+  cd "$HOME/Sviluppi/vm/nebula/"
+  wget https://github.com/ExploitEducation/Nebula/releases/download/v5.0.0/exploit-exercises-nebula-5.iso
+
+  cd "$HOME"
+
+  # Protostar
+  mkdir -p "$HOME/Sviluppi/vm/protostar/"
+  cd "$HOME/Sviluppi/vm/protostar/"
+  wget https://github.com/ExploitEducation/Protostar/releases/download/v2.0.0/exploit-exercises-protostar-2.iso
+
+  cd "$HOME"
+
+  # Web for pentester
+  mkdir -p "$HOME/Sviluppi/vm/web4pentest/"
+  cd "$HOME/Sviluppi/vm/web4pentest/"
+  wget https://pentesterlab.com/exercises/web_for_pentester/iso
 fi
