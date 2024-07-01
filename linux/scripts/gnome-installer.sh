@@ -78,30 +78,23 @@ INSTALL_PKG=(
   signal-desktop      # Signal
 )
 
-# List of GNOME extensions to install
+
+# List of GNOME extensions to install:
 EXT_LIST=(
   blur-my-shell@aunetx                         # Blur my Shell
   just-perfection-desktop@just-perfection      # Just Perfection
-  nightthemeswitcher@romainvigier.fr           # Night Theme Switcher
   custom-accent-colors@demiskp                 # Custom Accent Colors
   osd-volume-number@deminder                   # OSD Volume Number
   workspace-switcher-manager@G-dH.github.com   # WSM
   smile-extension@mijorus.it                   # Smile
-  burn-my-windows@schneegans.github.com        # Burn my Windows
   dash-to-dock@micxgx.gmail.com                # Dash to Dock
   logomenu@aryan_k                             # Logo Menu
-  aztaskbar@aztaskbar.gitlab.com               # App Icon Taskbar (optional)
   mediacontrols@cliffniff.github.com           # Media Controls
   weatheroclock@CleoMenezesJr.github.io        # Weather O'Clock
-  media-progress@krypion17                     # Media Progress (optional)
-  appindicatorsupport@rgcjonas.gmail.com       # AppIndicator and KStatusNotifierItem (optional)
+  appindicatorsupport@rgcjonas.gmail.com       # AppIndicator and KStatusNotifierItem
   monitor@astraext.github.io                   # Astra Monitor
-  netspeed@alynx.one                           # Net Speed (optional)
-  tophat@fflewddur.github.io                   # TopHat (optional)
   arch-update@RaphaelRochet                    # Arch Linux Updates Indicator
-  extension-list@tu.berry                      # Extension List
   clipboard-indicator@tudmotu.com              # Clipboard Indicator
-  IP-Finder@linxgem33.com                      # IP Finder (optional)
   caffeine@patapon.info                        # Caffeine
   Airpod-Battery-Monitor@maniacx.github.com    # Airpod Battery Monitor
   Bluetooth-Battery-Meter@maniacx.github.com   # Bluetooth Battery Meter
@@ -111,9 +104,10 @@ EXT_LIST=(
   gnome-ui-tune@itstime.tech                   # GNOME 4x UI Improvements
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
-  NotificationCounter@coolllsk                 # Notification counter
-  docker@stickman_0x00.com                     # Docker
-  tilingshell@ferrarodomenico.com              # Tiling shell
+  tiling-assistant@leleat-on-github            # Tiling assistant
+  useless-gaps@pimsnel.com                     # Useless gaps
+  gsconnect@andyholmes.github.io               # GSConnect
+  rounded-window-corners@fxgn                  # Rounded window corners
   do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
 )
 
@@ -125,11 +119,10 @@ EXT_LIST=(
 rounded_window_corner() {
   if ! installer nodejs npm gettext just &> /dev/null ||
      ! git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null ||
-     ! cd rounded-window-corners; then
+     ! cd rounded-window-corners ||
+     ! just install &> /dev/null; then
     return 1
   fi
-
-  just install || true
 
   if ! cd .. || ! rm -rf rounded-window-corners; then
     print_warning "[-] Couldn't remove the build files, do it manually."
@@ -259,7 +252,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   # Install general dependencies
   installer jq unzip wget curl clutter
   # Rounded window
-  rounded_window_corner || print_error "[-] Rounded Window Corner failed to install!"
+  # rounded_window_corner || print_error "[-] Rounded Window Corner failed to install!"
   # Unite
   unite || print_error "[-] Unite failed to install!"
   # Top Bar organizer

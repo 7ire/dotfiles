@@ -158,6 +158,9 @@ alias qemu-list='virsh --connect qemu:///system list --all'  # List of all qemu 
 ## web4pentest
 # alias start-web4pentest='virsh --connect qemu:///system start "web4pentest" && echo "go to 192.168.122.115 in your browser"'
 # alias  stop-web4pentest='virsh --connect qemu:///system destroy "web4pentest"'
+## cyber-sec (university)
+# alias start-cybersec='virsh --connect qemu:///system start "cyber-sec" && sleep 20 && ssh user@192.168.122.107'
+# alias  stop-cybersec='virsh --connect qemu:///system shutdown "cyber-sec"'
 
 
 # Fuzzy finder
