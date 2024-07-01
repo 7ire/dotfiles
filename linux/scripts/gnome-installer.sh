@@ -108,6 +108,7 @@ EXT_LIST=(
   useless-gaps@pimsnel.com                     # Useless gaps
   gsconnect@andyholmes.github.io               # GSConnect
   rounded-window-corners@fxgn                  # Rounded window corners
+  window-title-is-back@fthx                    # Window title
   do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
 )
 
