@@ -92,7 +92,7 @@ EXT_LIST=(
   mediacontrols@cliffniff.github.com           # Media Controls
   weatheroclock@CleoMenezesJr.github.io        # Weather O'Clock
   appindicatorsupport@rgcjonas.gmail.com       # AppIndicator and KStatusNotifierItem
-  # Run cat
+  runcat@kolesnikov.se                         # Run cat
   arch-update@RaphaelRochet                    # Arch Linux Updates Indicator
   clipboard-indicator@tudmotu.com              # Clipboard Indicator
   caffeine@patapon.info                        # Caffeine
