@@ -85,7 +85,7 @@ EXT_LIST=(
   just-perfection-desktop@just-perfection      # Just Perfection
   custom-accent-colors@demiskp                 # Custom Accent Colors
   osd-volume-number@deminder                   # OSD Volume Number
-  workspace-switcher-manager@G-dH.github.com   # WSM
+  # workspace-switcher-manager@G-dH.github.com   # WSM
   smile-extension@mijorus.it                   # Smile
   dash-to-dock@micxgx.gmail.com                # Dash to Dock
   logomenu@aryan_k                             # Logo Menu
@@ -114,7 +114,7 @@ EXT_LIST=(
 # CONFIGURATION FUNCTIONS
 #============================
 
-# Rounded window
+# [DEPRECATED] - Rounded window
 rounded_window_corner() {
   if ! installer nodejs npm gettext just &> /dev/null ||
      ! git clone https://github.com/flexagoon/rounded-window-corners &> /dev/null ||
