@@ -92,7 +92,7 @@ EXT_LIST=(
   mediacontrols@cliffniff.github.com           # Media Controls
   weatheroclock@CleoMenezesJr.github.io        # Weather O'Clock
   appindicatorsupport@rgcjonas.gmail.com       # AppIndicator and KStatusNotifierItem
-  monitor@astraext.github.io                   # Astra Monitor
+  # Run cat
   arch-update@RaphaelRochet                    # Arch Linux Updates Indicator
   clipboard-indicator@tudmotu.com              # Clipboard Indicator
   caffeine@patapon.info                        # Caffeine
@@ -104,8 +104,6 @@ EXT_LIST=(
   gnome-ui-tune@itstime.tech                   # GNOME 4x UI Improvements
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
-  tiling-assistant@leleat-on-github            # Tiling assistant
-  useless-gaps@pimsnel.com                     # Useless gaps
   gsconnect@andyholmes.github.io               # GSConnect
   rounded-window-corners@fxgn                  # Rounded window corners
   window-title-is-back@fthx                    # Window title
