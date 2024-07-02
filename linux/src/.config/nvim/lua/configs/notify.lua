@@ -23,7 +23,7 @@ return {
             priority = 10,
         })
         api.nvim_buf_set_extmark(bufnr, namespace, 1, 0, {
-            virt_text = {1
+            virt_text = {
                 {
                     string.rep("━", math.max(max_message_width, title_accum, config.minimum_width())),
                     highlights.border,
