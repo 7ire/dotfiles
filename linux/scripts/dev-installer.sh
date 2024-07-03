@@ -13,19 +13,22 @@ source "$BASE_DIR/bin/dev.sh"
 
 # List of CLI packages to install
 CLI_PKG=(
-  tmux        # Terminal multiplexer
-  neovim      # VI imporoved with plugin
-  xh          # Fast HTTP request sender
-  rnr         # Regex renamer
-  lazygit     # Manage git
-  lazydocker  # Manager docker
+  tmux              # Terminal multiplexer
+  neovim            # Fork of Vim aiming to improve user experience, plugins, and GUIs
+  eza               # Modern replacement for ls
+  xh                # Friendly and fast tool for sending HTTP requests
+  rnr               # CLI tool to rename files and directories that supports regex
+  pyenv             # Switch between multiple versions of Python
+  pyenv-virtualenv  # Pyenv plugin to manage virtualenv (a.k.a. python-virtualenv)
+  lazygit           # Simple terminal UI for git commands
+  lazydocker        # Simple terminal UI for docker and docker-compose
 )
 
 # List of packages to install
 INSTALL_PKG=(
-  postman-bin             # Postman
-  docker                  # Docker
-  networkmanager-openvpn  # OpenVPN
+  postman-bin             # Build, test, and document your APIs faster
+  docker                  # Pack, ship and run any application as a lightweight container
+  networkmanager-openvpn  # NetworkManager VPN plugin for OpenVPN
   # QEMU and KVM
   qemu-full
   virt-manager
@@ -34,17 +37,13 @@ INSTALL_PKG=(
   vde2
   bridge-utils
   openbsd-netcat
-  # Pyenv
-  pyenv
-  pyenv-virtualenv
-  eza   # Better ls
 )
 
 # List of hacking packages
 HACK_PKG=(
-  ghidra-desktop  # Ghidra (w/ desktop entry)
-  wireshark-qt    # Wireshark
-  burpsuite       # Burp Suite
+  ghidra-desktop  # Software reverse engineering framework
+  wireshark-qt    # Network traffic and protocol analyzer/sniffer
+  burpsuite       # Integrated platform for performing security testing of web applications (free edition)
 )
 
 # Base extensions

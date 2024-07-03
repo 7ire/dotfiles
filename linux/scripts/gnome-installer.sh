@@ -84,13 +84,10 @@ SOCIAL_PKG=(
   vesktop-bin       # Snappier Discord experience with Vencord pre-installed
 )
 
-# List of packages to install
-INSTALL_PKG=(
-
-  # Other
-  obs-studio  # Video recorder - OBS
-  kdenlive    # Video editor - KDEnlive
+OTHER_PKG=(
+  obs-studio  # Free, open source software for live streaming and recording
 )
+
 
 
 # List of GNOME extensions to install:
@@ -99,7 +96,8 @@ EXT_LIST=(
   just-perfection-desktop@just-perfection      # Just Perfection
   custom-accent-colors@demiskp                 # Custom Accent Colors
   osd-volume-number@deminder                   # OSD Volume Number
-  # workspace-switcher-manager@G-dH.github.com   # WSM
+  quick-settings-tweaks@qwreey                 # Quick Settings Tweaks
+  aztaskbar@aztaskbar.gitlab.com               # App Icon Taskbar
   smile-extension@mijorus.it                   # Smile
   dash-to-dock@micxgx.gmail.com                # Dash to Dock
   logomenu@aryan_k                             # Logo Menu
@@ -114,14 +112,14 @@ EXT_LIST=(
   Bluetooth-Battery-Meter@maniacx.github.com   # Bluetooth Battery Meter
   quick-settings-avatar@d-go                   # User Avatar In Quick Settings
   PrivacyMenu@stuarthayhurst                   # Privacy Quick Settings
-  quick-settings-audio-panel@rayzeq.github.io  # Quick Settings Audio Panel
   gnome-ui-tune@itstime.tech                   # GNOME 4x UI Improvements
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
   gsconnect@andyholmes.github.io               # GSConnect
   rounded-window-corners@fxgn                  # Rounded window corners
   window-title-is-back@fthx                    # Window title
-  do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or  recording
+  do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or recording
+  # workspace-switcher-manager@G-dH.github.com   # WSM
 )
 
 #============================
@@ -231,6 +229,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   installer "${OFFICE_PKG[@]}" || print_error "[-] Failed to install office packages!"
   installer "${MUSIC_PKG[@]}" || print_error "[-] Failed to install music packages!"
   installer "${SOCIAL_PKG[@]}" || print_error "[-] Failed to install social packages!"
+  installer "${OTHER_PKG[@]}" || print_error "[-] Failed to install other packages!"
   if ! git clone git@github.com:andreatirelli3/vault.git $HOME/Documenti/Obsidian &> /dev/null; then
     print_warning "[-] Couldn't clone the Obsidian vault, do it manually."
   else
@@ -269,8 +268,6 @@ read -p "Install GNOME extensions? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
   # Install general dependencies
   installer jq unzip wget curl clutter
-  # Rounded window
-  # rounded_window_corner || print_error "[-] Rounded Window Corner failed to install!"
   # Unite
   unite || print_error "[-] Unite failed to install!"
   # Top Bar organizer
