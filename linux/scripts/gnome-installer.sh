@@ -46,7 +46,7 @@ TUI_PKG=(
   btop           # System resources monitor
   downgrade      # Bash script for downgrading one or more packages
   fastfetch      # Like neofetch, but much faster
-  1password-cli  # 	1Password command line tool
+  1password-cli  # 1Password command line tool
   yazi           # Blazing fast terminal file manager
   sioyek         # PDF viewer
   qutebrowser    # VIm-like browser
@@ -230,7 +230,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   installer "${MUSIC_PKG[@]}" || print_error "[-] Failed to install music packages!"
   installer "${SOCIAL_PKG[@]}" || print_error "[-] Failed to install social packages!"
   installer "${OTHER_PKG[@]}" || print_error "[-] Failed to install other packages!"
-  if ! git clone git@github.com:andreatirelli3/vault.git $HOME/Documenti/Obsidian &> /dev/null; then
+  if ! git clone git@github.com:7ire/vault.git $HOME/Documenti/Obsidian &> /dev/null; then
     print_warning "[-] Couldn't clone the Obsidian vault, do it manually."
   else
     print_info "[:] Cloned the Obsidian vault in ~/Documenti/Obsidian."

@@ -76,14 +76,11 @@ theming() {
   python3 install.py mocha red
   
   # Clone my wallpapers repository
-  if ! git clone git@github.com:andreatirelli3/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
+  if ! git clone git@github.com:7ire/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
     print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
   fi
 
   # Clone Firefox and Thunderbird libwaita theme
-  if ! git clone https://github.com/rafaelmardojai/firefox-gnome-theme &> /dev/null; then
-    print_warning "[-] Couldn't clone Firefox libwaita theme, do it manually."
-  fi
   if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null; then
     print_warning "[-] Couldn't clone Thunderbird libwaita theme, do it manually."
   fi

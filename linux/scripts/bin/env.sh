@@ -224,7 +224,7 @@ ssh_keyimport() {
 # VPN import
 vpn_import() {
   local vpn_dir="$HOME/.vpn"
-  if ! git clone git@github.com:andreatirelli3/vpn.git "$vpn_dir" &> /dev/null; then
+  if ! git clone git@github.com:7ire/vpn.git "$vpn_dir" &> /dev/null; then
     return 1
   fi
   print_success "[+] VPN configuration imported!"
