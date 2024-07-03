@@ -15,7 +15,6 @@ source "$BASE_DIR/bin/dev.sh"
 CLI_PKG=(
   tmux        # Terminal multiplexer
   neovim      # VI imporoved with plugin
-  yazi        # File manager
   xh          # Fast HTTP request sender
   rnr         # Regex renamer
   lazygit     # Manage git

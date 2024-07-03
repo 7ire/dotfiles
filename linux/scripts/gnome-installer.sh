@@ -37,45 +37,59 @@ REMOVE_PKG=(
   gnome-clocks
 )
 
+FONT_PKG=(
+  noto-fonts-emoji  # Google Noto emoji fonts
+  nerd-fonts        # Font aggregator, collection, and patcher: 34 patched fonts
+)
+
+TUI_PKG=(
+  btop           # System resources monitor
+  downgrade      # Bash script for downgrading one or more packages
+  fastfetch      # Like neofetch, but much faster
+  1password-cli  # 	1Password command line tool
+  yazi           # Blazing fast terminal file manager
+  sioyek         # PDF viewer
+  qutebrowser    # VIm-like browser
+)
+
+BASE_PKG=(
+  kitty              # OpenGL-based terminal emulator
+  extension-manager  # GNOME Shell extension manager
+  brave-bin          # Web browser that blocks ads and trackers by default
+  1password          # Password manager and secure wallet
+  vscodium-bin       # Binary releases of VS Code without MS
+  obsidian           # Plain text Markdown files
+  thunderbird        # Standalone mail and news reader from mozilla.org
+  clapper-git        # Modern media player built for the GNOME desktop environment
+  smile              # An emoji picker with custom tags support
+)
+
+OFFICE_PKG=(
+  planify                             # Task manager
+  libreoffice-fresh                   # LibreOffice branch which contains new features and program enhancements
+  libreoffice-extension-texmaths      # LaTeX equation editor for LibreOffice
+  libreoffice-extension-writer2latex  # LibreOffice extensions for converting to and working with LaTeX in LibreOffice
+  xmind                               # Brainstorming and Mind Mapping Software
+)
+
+MUSIC_PKG=(
+  amberol        # Plays music, and nothing else
+  spotify        # Music streaming service
+  spicetify-cli  # Command-line tool to customize Spotify client
+)
+
+SOCIAL_PKG=(
+  signal-desktop    # Signal Private Messenger
+  telegram-desktop  # Telegram Desktop client
+  vesktop-bin       # Snappier Discord experience with Vencord pre-installed
+)
+
 # List of packages to install
 INSTALL_PKG=(
-  # TUI
-  btop           # System monitor
-  downgrade      # Downgrade
-  fastfetch      # Fastfetch
-  1password-cli  # 1password CLI
-  # Fonts and Emoji
-  noto-fonts-emoji  # Noto Emoji
-  nerd-fonts        # Nerd Fonts
-  # Base
-  kitty              # Terminal
-  # blackbox-terminal  # Terminal
-  1password          # Password manager
-  extension-manager  # GNOME Extension manager
-  brave-bin          # Browser - Brave
-  firefox            # Browser - Firefox
-  spotify            # Music - Spotify
-  spicetify-cli      # Music - Spicetify (Spotify themer)
-  amberol            # Music - Amberol
-  # Office
-  vscodium-bin       # Text editor - VSCodium
-  obsidian           # Notes - Obsidian
-  thunderbird        # Mail client - Thunderbird
-  planify            # Planify
-  # Libreoffice + LaTeX support
-  libreoffice-fresh
-  libreoffice-extension-texmaths
-  libreoffice-extension-writer2latex
+
   # Other
-  xmind       # Mind maps - XMind
   obs-studio  # Video recorder - OBS
   kdenlive    # Video editor - KDEnlive
-  clapper     # Video player - Clapper
-  smile       # Emoji picker - Smile
-  # Social
-  vesktop-bin         # Vesktop - Discord
-  telegram-desktop    # Telegram
-  signal-desktop      # Signal
 )
 
 
@@ -211,7 +225,12 @@ fi
 # Install prefer application
 read -p "Install the desired applications? [y/N]: " choice
 if [[ "$choice" =~ ^[Yy]$ ]]; then
-  installer "${INSTALL_PKG[@]}" || print_error "[-] Failed to install specified packages!"
+  installer "${TUI_PKG[@]}" || print_error "[-] Failed to install TUI packages!"
+  installer "${BASE_PKG[@]}" || print_error "[-] Failed to install base packages!"
+  installer "${FONT_PKG[@]}" || print_error "[-] Failed to install base packages!"
+  installer "${OFFICE_PKG[@]}" || print_error "[-] Failed to install office packages!"
+  installer "${MUSIC_PKG[@]}" || print_error "[-] Failed to install music packages!"
+  installer "${SOCIAL_PKG[@]}" || print_error "[-] Failed to install social packages!"
   if ! git clone git@github.com:andreatirelli3/vault.git $HOME/Documenti/Obsidian &> /dev/null; then
     print_warning "[-] Couldn't clone the Obsidian vault, do it manually."
   else
