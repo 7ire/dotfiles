@@ -64,25 +64,52 @@ theming() {
     return 1
   fi
 
+  cd $HOME
+
+  mkdir -p "$HOME/Temi"
+  cd "$HOME/Temi"
+
   # Install catppucin shell themes
+  mkdir "Catppucin-shell" && cd "Catppucin-shell"
   curl -LsSO "https://raw.githubusercontent.com/catppuccin/gtk/v1.0.3/install.py"
 
   # Light - latte
-  python3 install.py latte blue
-  python3 install.py latte red
+  python3 install.py latte blue &> /dev/null
+  python3 install.py latte red &> /dev/null
 
   # Dark - mocha
-  python3 install.py mocha blue
-  python3 install.py mocha red
+  python3 install.py mocha blue &> /dev/null
+  python3 install.py mocha red &> /dev/null
+  cd ..
+
+  # Install marble shell themes
+  git clone https://github.com/imarkoff/Marble-shell-theme.git Marble-shell &> /dev/null
+  cd Marble-shell
+
+  # Install the Marble shell theme
+  python install.py -a --filled --panel_no_pill &> /dev/null
+  cd ..
+
+  # Clone Thunderbird libwaita theme
+  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme Thunderbird-theme &> /dev/null; then
+    print_warning "[-] Couldn't clone Thunderbird libwaita theme, do it manually."
+  fi
+
+  # Clone Rofi themes
+  if ! git clone https://github.com/lr-tech/rofi-themes-collection.git Rofi-themes &> /dev/null; then
+    print_warning "[-] Couldn't clone Rofi themes, do it manually."
+  else
+    # If you don't have the directories needed for the install create them with
+    mkdir -p ~/.local/share/rofi/themes/
+    # Copy the themes to the Rofi directory
+    cp -r Rofi-themes/themes/spotlight.rasi "$HOME/.local/share/rofi/themes"
+  fi
+
+  cd $HOME
   
   # Clone my wallpapers repository
   if ! git clone git@github.com:7ire/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
     print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
-  fi
-
-  # Clone Firefox and Thunderbird libwaita theme
-  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null; then
-    print_warning "[-] Couldn't clone Thunderbird libwaita theme, do it manually."
   fi
 
   # Copy .local directory

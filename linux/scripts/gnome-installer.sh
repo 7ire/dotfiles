@@ -85,7 +85,11 @@ SOCIAL_PKG=(
 )
 
 OTHER_PKG=(
-  obs-studio  # Free, open source software for live streaming and recording
+  obs-studio       # Free, open source software for live streaming and recording
+  impression       # Straight-forward modern application to create bootable drives
+  fragments        # BitTorrent client for GNOME
+  grub-customizer  # Graphical grub2 settings manager
+  rofi             # Window switcher, application launcher and dmenu replacement
 )
 
 
