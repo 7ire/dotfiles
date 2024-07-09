@@ -89,7 +89,8 @@ OTHER_PKG=(
   impression       # Straight-forward modern application to create bootable drives
   fragments        # BitTorrent client for GNOME
   grub-customizer  # Graphical grub2 settings manager
-  rofi             # Window switcher, application launcher and dmenu replacement
+  ulauncher        # Application launcher for Linux
+  wmctrl           # Control your EWMH compliant window manager from command line
 )
 
 
@@ -282,4 +283,6 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   pop_shell || print_error "[-] Pop Shell! failed to install!"
   # Install the extension from list
   ext_installer "${EXT_LIST[@]}"
+
+  print_info 'Copy this line to fix Arch update indicator: kitty -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"'
 fi

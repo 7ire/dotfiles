@@ -37,6 +37,7 @@ INSTALL_PKG=(
   vde2
   bridge-utils
   openbsd-netcat
+  swtpm  # Libtpms-based TPM emulator with socket, character device, and Linux CUSE interface
 )
 
 # List of hacking packages
