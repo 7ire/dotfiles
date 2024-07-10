@@ -53,15 +53,21 @@ TUI_PKG=(
 )
 
 BASE_PKG=(
-  kitty              # OpenGL-based terminal emulator
-  extension-manager  # GNOME Shell extension manager
-  brave-bin          # Web browser that blocks ads and trackers by default
-  1password          # Password manager and secure wallet
-  vscodium-bin       # Binary releases of VS Code without MS
-  obsidian           # Plain text Markdown files
-  thunderbird        # Standalone mail and news reader from mozilla.org
-  clapper-git        # Modern media player built for the GNOME desktop environment
-  smile              # An emoji picker with custom tags support
+  kitty                 # OpenGL-based terminal emulator
+  extension-manager     # GNOME Shell extension manager
+  nemo                  # Cinnamon file manager (Nautilus fork)
+  nemo-fileroller       # File archiver extension for Nemo
+  nemo-image-converter  # Nemo extension to rotate/resize image files
+  nemo-preview          # Quick file previewer for Nemo
+  nemo-seahorse         # PGP encryption and signing extension for Nemo
+  nemo-dropbox-git      # Dropbox for Linux - Nemo extension
+  brave-bin             # Web browser that blocks ads and trackers by default
+  1password             # Password manager and secure wallet
+  vscodium-bin          # Binary releases of VS Code without MS
+  obsidian              # Plain text Markdown files
+  thunderbird           # Standalone mail and news reader from mozilla.org
+  clapper-git           # Modern media player built for the GNOME desktop environment
+  smile                 # An emoji picker with custom tags support
 )
 
 OFFICE_PKG=(

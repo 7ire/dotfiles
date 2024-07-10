@@ -119,6 +119,9 @@ And edit the value `1` based on the X workspace binding.
 `dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-1 "['<Shift><Super>1']"` 
 
 And edit the value `1` based on the X workspace binding. 
+
+- Fix `super + enter` shortcut: https://github.com/pop-os/shell/issues/535
+
 ## Ricing of the desktop environment
 To rice a bit the system, install some packages for GNOME shell theme, icon theme, cursor and extensions. This is all about preferences so fell free to ignore the recommendations and all the packages installed in the following sections to make your own system.
 
