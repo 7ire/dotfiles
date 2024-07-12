@@ -46,7 +46,6 @@ TUI_PKG=(
   btop           # System resources monitor
   downgrade      # Bash script for downgrading one or more packages
   fastfetch      # Like neofetch, but much faster
-  1password-cli  # 1Password command line tool
   yazi           # Blazing fast terminal file manager
   sioyek         # PDF viewer
   qutebrowser    # VIm-like browser
@@ -95,25 +94,21 @@ OTHER_PKG=(
   impression       # Straight-forward modern application to create bootable drives
   fragments        # BitTorrent client for GNOME
   grub-customizer  # Graphical grub2 settings manager
-  ulauncher        # Application launcher for Linux
-  wmctrl           # Control your EWMH compliant window manager from command line
 )
 
 
 
 # List of GNOME extensions to install:
 EXT_LIST=(
+  arcmenu@arcmenu.com                          # ArcMenu
   blur-my-shell@aunetx                         # Blur my Shell
   just-perfection-desktop@just-perfection      # Just Perfection
-  custom-accent-colors@demiskp                 # Custom Accent Colors
   osd-volume-number@deminder                   # OSD Volume Number
   quick-settings-tweaks@qwreey                 # Quick Settings Tweaks
   aztaskbar@aztaskbar.gitlab.com               # App Icon Taskbar
   smile-extension@mijorus.it                   # Smile
   dash-to-dock@micxgx.gmail.com                # Dash to Dock
-  logomenu@aryan_k                             # Logo Menu
   mediacontrols@cliffniff.github.com           # Media Controls
-  weatheroclock@CleoMenezesJr.github.io        # Weather O'Clock
   appindicatorsupport@rgcjonas.gmail.com       # AppIndicator and KStatusNotifierItem
   runcat@kolesnikov.se                         # Run cat
   arch-update@RaphaelRochet                    # Arch Linux Updates Indicator
@@ -123,12 +118,12 @@ EXT_LIST=(
   Bluetooth-Battery-Meter@maniacx.github.com   # Bluetooth Battery Meter
   quick-settings-avatar@d-go                   # User Avatar In Quick Settings
   PrivacyMenu@stuarthayhurst                   # Privacy Quick Settings
-  gnome-ui-tune@itstime.tech                   # GNOME 4x UI Improvements
   app-hider@lynith.dev                         # App Hider
   AlphabeticalAppGrid@stuarthayhurst           # Alphabetical App Grid
   gsconnect@andyholmes.github.io               # GSConnect
   rounded-window-corners@fxgn                  # Rounded window corners
   window-title-is-back@fthx                    # Window title
+  tilingshell@ferrarodomenico.com              # Tiling shell
   do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com  # Do not disturb while screen sharing or recording
   # workspace-switcher-manager@G-dH.github.com   # WSM
 )
@@ -245,6 +240,15 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
     print_warning "[-] Couldn't clone the Obsidian vault, do it manually."
   else
     print_info "[:] Cloned the Obsidian vault in ~/Documenti/Obsidian."
+  fi
+
+  # Full fastfetch setup
+  if [ -d "$HOME/dotfiles/linux/src/.config/fastfetch" ]; then
+    mkdir -p "$HOME/.config/"
+    cp -r "$HOME/dotfiles/linux/src/.config/fastfetch" "$HOME/.config/"
+    print_success "[+] Fastfetch configured!"
+  else
+    print_error "[-] Failed to configure Fastfetch!"
   fi
 fi
 

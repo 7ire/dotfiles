@@ -49,12 +49,12 @@ HACK_PKG=(
 
 # Base extensions
 BASE_EXT=(
-  pkief.material-icon-theme  # Material Icon Themes
-  catppuccin.catppuccin-vsc  # Catppuccin for VSCode
-  jeanp413.open-remote-ssh   # Open Remote - SSH
-  mhutchie.git-graph         # Git Graph
-  bbenoist.doxygen           # Docker
-  formulahendry.code-runner  # Code runner
+  pkief.material-icon-theme    # Material Icon Themes
+  catppuccin.catppuccin-vsc    # Catppuccin for VSCode
+  jeanp413.open-remote-ssh     # Open Remote - SSH
+  mhutchie.git-graph           # Git Graph
+  ms-azuretools.vscode-docker  # Docker
+  formulahendry.code-runner    # Code runner
 )
 
 # Python extensions
