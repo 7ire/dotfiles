@@ -295,4 +295,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
   ext_installer "${EXT_LIST[@]}"
 
   print_info 'Copy this line to fix Arch update indicator: kitty -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"'
+
+  # Fix pop shell keybind super+enter
+  dconf write /org/gnome/shell/extensions/pop-shell/tile-enter "['<Super>?']"
 fi
