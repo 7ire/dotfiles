@@ -60,7 +60,7 @@ BASE_PKG=(
   nemo-preview          # Quick file previewer for Nemo
   nemo-seahorse         # PGP encryption and signing extension for Nemo
   nemo-dropbox-git      # Dropbox for Linux - Nemo extension
-  brave-bin             # Web browser that blocks ads and trackers by default
+  # brave-bin             # Web browser that blocks ads and trackers by default
   firefox               # Fast, Private & Safe Web Browser
   1password             # Password manager and secure wallet
   vscodium-bin          # Binary releases of VS Code without MS
@@ -95,7 +95,7 @@ OTHER_PKG=(
   impression       # Straight-forward modern application to create bootable drives
   fragments        # BitTorrent client for GNOME
   grub-customizer  # Graphical grub2 settings manager
-  gdm-settings     # Settings app for Gnome's Login Manager, GDM
+  # gdm-settings     # Settings app for Gnome's Login Manager, GDM
 )
 
 

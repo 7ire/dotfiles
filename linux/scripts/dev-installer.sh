@@ -29,15 +29,15 @@ INSTALL_PKG=(
   postman-bin             # Build, test, and document your APIs faster
   docker                  # Pack, ship and run any application as a lightweight container
   networkmanager-openvpn  # NetworkManager VPN plugin for OpenVPN
-  # QEMU and KVM
-  qemu-full
-  virt-manager
-  virt-viewer
-  dnsmasq
-  vde2
-  bridge-utils
-  openbsd-netcat
-  swtpm  # Libtpms-based TPM emulator with socket, character device, and Linux CUSE interface
+  # # QEMU and KVM
+  # qemu-full
+  # virt-manager
+  # virt-viewer
+  # dnsmasq
+  # vde2
+  # bridge-utils
+  # openbsd-netcat
+  # swtpm  # Libtpms-based TPM emulator with socket, character device, and Linux CUSE interface
 )
 
 # List of hacking packages
@@ -171,7 +171,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
     fi
     
     conf_docker || print_error "[-] Failed to configure Docker!"
-    conf_kvm || print_error "[-] Failed to configure QEMU and KVM!"
+    # conf_kvm || print_error "[-] Failed to configure QEMU and KVM!"
 
     # Base codium extensions
     codium_install_ext "${BASE_EXT[@]}"
