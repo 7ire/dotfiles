@@ -91,7 +91,7 @@ theming() {
   cd ..
 
   # Clone Thunderbird libwaita theme
-  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme Thunderbird-theme &> /dev/null; then
+  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null; then
     print_warning "[-] Couldn't clone Thunderbird libwaita theme, do it manually."
   fi
 
