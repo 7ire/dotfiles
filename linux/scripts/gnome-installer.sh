@@ -35,6 +35,7 @@ REMOVE_PKG=(
   gnome-remote-desktop
   gnome-console
   gnome-clocks
+  gnome-weather
 )
 
 FONT_PKG=(
@@ -59,7 +60,7 @@ BASE_PKG=(
   nemo-image-converter  # Nemo extension to rotate/resize image files
   nemo-preview          # Quick file previewer for Nemo
   nemo-seahorse         # PGP encryption and signing extension for Nemo
-  nemo-dropbox-git      # Dropbox for Linux - Nemo extension
+  nemo-dropbox          # Dropbox for Linux - Nemo extension
   # brave-bin             # Web browser that blocks ads and trackers by default
   firefox               # Fast, Private & Safe Web Browser
   1password             # Password manager and secure wallet
