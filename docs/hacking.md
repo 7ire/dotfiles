@@ -52,6 +52,10 @@ virsh --connect qemu:///system list --all
 
 - [How to start QEMU VM from command line?](https://unix.stackexchange.com/questions/638844/how-to-start-qemu-vm-from-command-line)
 - [How to open Virt-manager VM from command line?](https://unix.stackexchange.com/questions/704325/how-to-open-virt-manager-vm-from-command-line)
+
+> Right now the KVM and QEMU automatic configuration is deprecated, follow the new link for a better config.
+- [Install KVM on Linux](https://sysguides.com/install-kvm-on-linux)
+- [Win11 VM on KVM](https://sysguides.com/install-a-windows-11-virtual-machine-on-kvm)
 ## Hacking environment and tools
 Based on which task is require to perform, there are specific tools/task to be install. All tools and task are divided by category. (So if a package/tool is repeated you can just ignore and keep the last version of that tool installed in the system).
 

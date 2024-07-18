@@ -29,14 +29,15 @@ INSTALL_PKG=(
   postman-bin             # Build, test, and document your APIs faster
   docker                  # Pack, ship and run any application as a lightweight container
   networkmanager-openvpn  # NetworkManager VPN plugin for OpenVPN
-  # QEMU and KVM
-  qemu-full
-  virt-manager
-  virt-viewer
-  dnsmasq
-  vde2
-  bridge-utils
-  openbsd-netcat
+  # # QEMU and KVM
+  # qemu-full
+  # virt-manager
+  # virt-viewer
+  # dnsmasq
+  # vde2
+  # bridge-utils
+  # openbsd-netcat
+  # swtpm  # Libtpms-based TPM emulator with socket, character device, and Linux CUSE interface
 )
 
 # List of hacking packages
@@ -48,12 +49,12 @@ HACK_PKG=(
 
 # Base extensions
 BASE_EXT=(
-  pkief.material-icon-theme  # Material Icon Themes
-  catppuccin.catppuccin-vsc  # Catppuccin for VSCode
-  jeanp413.open-remote-ssh   # Open Remote - SSH
-  mhutchie.git-graph         # Git Graph
-  bbenoist.doxygen           # Docker
-  formulahendry.code-runner  # Code runner
+  pkief.material-icon-theme    # Material Icon Themes
+  catppuccin.catppuccin-vsc    # Catppuccin for VSCode
+  jeanp413.open-remote-ssh     # Open Remote - SSH
+  mhutchie.git-graph           # Git Graph
+  ms-azuretools.vscode-docker  # Docker
+  formulahendry.code-runner    # Code runner
 )
 
 # Python extensions
@@ -170,7 +171,7 @@ if [[ "$choice" =~ ^[Yy]$ ]]; then
     fi
     
     conf_docker || print_error "[-] Failed to configure Docker!"
-    conf_kvm || print_error "[-] Failed to configure QEMU and KVM!"
+    # conf_kvm || print_error "[-] Failed to configure QEMU and KVM!"
 
     # Base codium extensions
     codium_install_ext "${BASE_EXT[@]}"

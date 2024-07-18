@@ -91,26 +91,21 @@ theming() {
   cd ..
 
   # Clone Thunderbird libwaita theme
-  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme Thunderbird-theme &> /dev/null; then
+  if ! git clone https://github.com/rafaelmardojai/thunderbird-gnome-theme &> /dev/null; then
     print_warning "[-] Couldn't clone Thunderbird libwaita theme, do it manually."
   fi
 
-  # Clone Rofi themes
-  if ! git clone https://github.com/lr-tech/rofi-themes-collection.git Rofi-themes &> /dev/null; then
-    print_warning "[-] Couldn't clone Rofi themes, do it manually."
-  else
-    # If you don't have the directories needed for the install create them with
-    mkdir -p ~/.local/share/rofi/themes/
-    # Copy the themes to the Rofi directory
-    cp -r Rofi-themes/themes/spotlight.rasi "$HOME/.local/share/rofi/themes"
+  # Clone Firefox libwaita theme
+  if ! git clone https://github.com/rafaelmardojai/firefox-gnome-theme.git &> /dev/null; then
+    print_warning "[-] Couldn't clone Firefox libwaita theme, do it manually."
   fi
 
   cd $HOME
   
   # Clone my wallpapers repository
-  if ! git clone git@github.com:7ire/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
-    print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
-  fi
+  # if ! git clone git@github.com:7ire/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
+  #   print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
+  # fi
 
   # Copy .local directory
   if ! cp -r "$HOME/dotfiles/linux/src/.local/share/bin" "$HOME/.local/share" &> /dev/null; then

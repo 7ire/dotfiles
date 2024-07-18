@@ -119,6 +119,9 @@ And edit the value `1` based on the X workspace binding.
 `dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-1 "['<Shift><Super>1']"` 
 
 And edit the value `1` based on the X workspace binding. 
+
+- Fix `super + enter` shortcut: https://github.com/pop-os/shell/issues/535
+
 ## Ricing of the desktop environment
 To rice a bit the system, install some packages for GNOME shell theme, icon theme, cursor and extensions. This is all about preferences so fell free to ignore the recommendations and all the packages installed in the following sections to make your own system.
 
@@ -138,12 +141,14 @@ Cursor:
 Application:
 - [Firefox](https://github.com/rafaelmardojai/firefox-gnome-theme)
 	- [ShyFox](https://www.reddit.com/r/unixporn/comments/1dl1xzx/oc_shyfox_theme_for_firefox_i_made/)
+	- (Recomended) [EdgyArg](https://github.com/artsyfriedchicken/EdgyArc-fr)
 - [Thunderbird](https://github.com/rafaelmardojai/thunderbird-gnome-theme)
 - Spotify:
 	- [spicetify](https://spicetify.app/docs/advanced-usage/installation/#note-for-linux-users)
 	- [spicetify-theme](https://github.com/spicetify/spicetify-themes)
 - Venvcord:
 	- [catppucin](https://github.com/catppuccin/discord)
+	- [system24](https://github.com/refact0r/system24)
 
 Put this in the customCSS file (Venvcord settings, inside Discord)
 ``` css
@@ -161,3 +166,89 @@ This are some of my extensions that I install in my system, for more details, pl
 - Fix **Arch Linux update indicator**
 
 `kitty -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"`
+
+## Fix Nemo thumbnails
+Se non funziona ancora e non ci sono errori evidenti nel journal, possiamo provare alcuni altri approcci per diagnosticare e risolvere il problema delle miniature in Nemo su Arch Linux.
+
+### 1. **Verifica dei pacchetti MIME**
+A volte, le associazioni MIME possono influenzare la generazione delle miniature. Prova a reinstallare i pacchetti che gestiscono queste associazioni:
+
+```sh
+sudo pacman -Sxd shared-mime-info
+```
+
+### 2. **Controlla le configurazioni di Tumbler**
+Se stai usando Tumbler per generare le miniature, assicurati che sia correttamente configurato. Puoi fare questo modificando il file di configurazione di Tumbler:
+
+```sh
+sudo nano /etc/xdg/tumbler/tumbler.rc
+```
+
+Assicurati che i plugin appropriati siano abilitati. Dovrebbero esserci sezioni come `[FFMPEGThumbnailer]`, `[PopplerThumbnailer]`, ecc. Verifica che `Disabled=false` sia impostato per i plugin che desideri utilizzare.
+
+### 3. **Verifica le autorizzazioni**
+Assicurati che Nemo abbia le autorizzazioni appropriate per leggere i file e creare miniature. Verifica le autorizzazioni delle directory pertinenti:
+
+```sh
+ls -ld ~/.cache/thumbnails
+```
+
+Dovrebbe restituire qualcosa come:
+
+```sh
+drwx------ 3 yourusername yourusername 4096 date time ~/.cache/thumbnails
+```
+
+Se le autorizzazioni non sono corrette, puoi correggerle con:
+
+```sh
+chmod 700 ~/.cache/thumbnails
+```
+
+### 4. **Rimozione della cache delle miniature**
+A volte, la cache delle miniature può essere corrotta. Prova a rimuoverla e a farla rigenerare:
+
+```sh
+rm -rf ~/.cache/thumbnails/*
+```
+
+### 5. **Controlla i plugin di Nemo**
+Verifica che i plugin di Nemo siano attivi. Puoi farlo andando su:
+
+`Modifica -> Plugin`
+
+Qui, assicurati che i plugin relativi alle anteprime siano abilitati.
+
+### 6. **Verifica i log di Tumbler**
+Se stai usando Tumbler, potrebbe essere utile controllare i suoi log per errori specifici:
+
+```sh
+journalctl -xe | grep tumbler
+```
+
+### 7. **Prova un'altra directory**
+A volte, il problema potrebbe essere specifico di una directory particolare. Prova a creare una nuova directory con alcuni file multimediali e verifica se le miniature vengono generate correttamente lì.
+
+### 8. **Reinstalla Nemo**
+Se tutto il resto fallisce, potresti provare a reinstallare Nemo per assicurarti che non ci siano file corrotti o configurazioni errate:
+
+```sh
+sudo pacman -Rsn nemo
+sudo pacman -S nemo
+```
+
+### 9. **Aggiorna il sistema**
+Assicurati che il tuo sistema sia completamente aggiornato:
+
+```sh
+sudo pacman -Syu
+```
+
+### 10. **Alternative a Tumbler**
+Se Tumbler continua a non funzionare, puoi provare a installare alternative come `gnome-sushi`:
+
+```sh
+sudo pacman -S gnome-sushi
+```
+
+Dopo aver seguito questi passaggi, riavvia il tuo ambiente desktop e verifica se il problema è risolto.
