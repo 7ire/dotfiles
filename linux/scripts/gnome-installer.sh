@@ -37,7 +37,6 @@ REMOVE_PKG=(
   gnome-clocks
   gnome-weather
 )
-
 FONT_PKG=(
   noto-fonts-emoji  # Google Noto emoji fonts
   nerd-fonts        # Font aggregator, collection, and patcher: 34 patched fonts
