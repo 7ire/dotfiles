@@ -1,74 +1,68 @@
 # Arch Linux guide
 ---
 ## Pre Requirements
-First of all get the latest **Arch Linux** ISO image, you can download it [here](https://archlinux.org/download/). It is necessary a bootable USB:
-- at least 4GB
-- optimal 8GB
 
-To make a bootable USB you can:
+First of all get the latest **Arch Linux** ISO image, you can download it [here](https://archlinux.org/download/). It is necessary a bootable USB:
+
+Start by downloading the latest ISO image version available of **Arch Linux**. You can download it [here](https://archlinux.org/download/).
+Make sure to have a free USB stick of at least 4GB, you need it to make the bootable USB stick with the ISO installation.
+
+To make a bootable USB you can use one of the following programs:
+
 - [Rufus](https://rufus.ie/it/) (Windows)
 - [Impression](https://apps.gnome.org/it/Impression/) (Linux)
 
-Based on your system, enter in the boot menu, some common keys:
+Now you are ready to install Arch linux. Just enter in the boot select of your system and boot in the USB stick.
+To enter in the boot selector, these are some common keys:
+
 - DEL
 - F1
 - F8
 - F11
 - F12
 
-But check your motherboard and BIOS specification of it
+> [!WARNING]
+> It is necessary to disable **Secure boot** to boot inside the Arch linux USB installation. Otherwise you will get an error when accessing it.
 
-> Warning, to boot inside the Arch Linux USB it is necessary to disable **Secure boot**.
+Before running `archinstall`, do:
 
-Once inside the media installation, just:
-1. Update the package manager server
+1. update the package manager servers
+2. install/update some packages
+   - [archlinux-keyring](https://archlinux.org/packages/core/any/archlinux-keyring/)
+   - [archinstall](https://wiki.archlinux.org/title/archinstall)
+3. run `archinstall`
+
 ``` bash
-pacman -Syy
-```
-2. Install the latest version of these packages:
-	- [archlinux-keyring](https://archlinux.org/packages/core/any/archlinux-keyring/)
-	- [archinstall](https://wiki.archlinux.org/title/archinstall)
-``` bash
-pacman -S archlinux-keyring archinstall
+pacman -Syy && pacman -S --noconfirm archlinux-keyring archinstall && archinstall
 ```
 
-Wifi problem? It is easy, use **iwctl** tool to connect to your wifi network.
-- [iwctl(1) - Arch manual pages](https://man.archlinux.org/man/iwctl.1)
+> [!IMPORTANT]
+> If you are not connect via cable, but with WiFi, read the manuale page of `iwctl` for connecting to a WiFi network.
+>
+> - [iwctl(1) - Arch manual pages](https://man.archlinux.org/man/iwctl.1)
 
-Use **archinstall** package tool to install the system.
-``` bash
-archinstall
-```
 ### Easy installation via SSH
-For an easy installation of the system via your prefer host machine, configure SSH.
-1. Set a password for root
-``` bash
-passwd
-<insert_new_root_pwd>
-```
-2. Check the IP of the machine
-``` bash
-ip address
-```
-3. Connect to it (this in your prefer host machine)
-``` bash
-ssh root@<ip>
-```
 
-> By default the **sshd** service should be running and the port 22 open. If this isn't the case do the following.
+For an easy installation of the system, connect to the machine with `ssh` from your host.
 
-``` bash
-systemctl start sshd.service
-```
+1. set `passwd` for the ISO media installation user - root
+2. check the `ip address`
+3. from your host connect via `ssh root@<ip>`
 
-- [How to setup SSH access to Arch Linux ISO (livecd) booted computer?](https://unix.stackexchange.com/questions/352139/how-to-setup-ssh-access-to-arch-linux-iso-livecd-booted-computer)
-## System configuration via chroot
-Now configure the following packages/services based on your preferences.
-Start by install an **AUR Helper**:
+> [!NOTE]
+> The **sshd** service should be running by default. Is is not running, start the service.
+>
+> `systemctl start sshd.service`
+
+## System configuration - chroot
+
+Start by installing an **AUR Helper**. It is necessary to have access to all packages available for arch the one maintained by the community.
+
 - [paru](https://github.com/Morganamilo/paru)
 - [yay](https://github.com/Jguer/yay)
 
-> For more details base on which AUR Helper choose, follow their guide shown in their repository. Following it is shown the paru installation.
+> [!NOTE]
+> Commands for installing **paru**. If you choose another AUR Helper, follow their guide in their repository.
 
 ``` bash
 git clone https://aur.archlinux.org/paru.git
@@ -79,23 +73,25 @@ makepkg -si
 sudo pacman -Syy && paru
 ```
 
-Next proceed to configure the [Chaotic AUR](https://aur.chaotic.cx/docs) repository.
+Now you can proceed to configure the [Chaotic AUR](https://aur.chaotic.cx/docs) repository servers in the package manager.
 
-``` bash
-sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-sudo pacman-key --lsign-key 3056513887B78AEB
-sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-```
+1. Install the keys and mirrorlists
 
-Add the repository to the package manager list.
+    ``` bash
+    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    sudo pacman-key --lsign-key 3056513887B78AEB
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    ```
 
-```bash
-etc/pacman.conf
----------------------------------------------------------------------------------
-[chaotic-aur]  
-Include = /etc/pacman.d/chaotic-mirrorlist
-```
+2. Edit the package manager configuration file
+
+    ```bash
+    etc/pacman.conf
+    ---------------------------------------------------------------------------------
+    [chaotic-aur]  
+    Include = /etc/pacman.d/chaotic-mirrorlist
+    ```
 
 Install the package [pacman-contrib](https://github.com/archlinux/pacman-contrib) for enable the package cache cleaning.
 
