@@ -74,8 +74,6 @@ Install the necessary/prefer application for your workstation. Above there is my
     - [nerd-fonts](https://archlinux.org/groups/x86_64/nerd-fonts/)
     - [noto-fonts-emoji](https://archlinux.org/packages/extra/any/noto-fonts-emoji/)
     - [smile](https://aur.archlinux.org/packages/smile)
-  - Development:
-    - [vscodium-bin](https://aur.archlinux.org/packages/vscodium-bin)
   - Social:
     - [vesktop-bin](https://aur.archlinux.org/packages/vesktop-bin)
     - [telegram-desktop](https://archlinux.org/packages/extra/x86_64/telegram-desktop/)
@@ -86,6 +84,7 @@ Install the necessary/prefer application for your workstation. Above there is my
     - [kdenlive](https://archlinux.org/packages/extra/x86_64/kdenlive/)
     - [upscaler](https://aur.archlinux.org/packages/upscaler)
   - Utils:
+    - [ulauncher](https://aur.archlinux.org/packages/ulauncher)
     - [impression](https://aur.archlinux.org/packages/impression)
     - [fragments](https://archlinux.org/packages/extra/x86_64/fragments/)
     - [grub-customizer](https://archlinux.org/packages/extra/x86_64/grub-customizer/)
