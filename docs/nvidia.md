@@ -14,23 +14,23 @@ Check if in the following file if the kernel modules and params are enabled and 
 
 - **grub** check if `nvidia-drm.modeset=1` is in the file, if not add it (like shown).
 
-  ``` bash
-  /etc/default/grub
-  ______________________________________________________________________________________________________
-  ...
-  GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet nvidia_drm.modeset=1"
-  ...
-  ```
+``` bash
+/etc/default/grub
+______________________________________________________________________________________________________
+...
+GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet nvidia_drm.modeset=1"
+...
+```
 
 - **mkinitcpio**, check if `nvidia_modeset`, `nvidia_uvm`, and `nvidia_drm` modules are loaded with the kernel, if not add it (like shown).
 
-  ``` bash
-  /etc/mkinitcpio.conf
-  ______________________________________________________________________________________________________
-  ...
-  MODULES=(... nvidia nvidia_modeset nvidia_uvm nvidia_drm)
-  ...
-  ```
+``` bash
+/etc/mkinitcpio.conf
+______________________________________________________________________________________________________
+...
+MODULES=(... nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+...
+```
 
 If you applied some changes, regenerate kernel and GRUB configurations.
 
@@ -58,17 +58,17 @@ ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", RUN+="/usr/bin/nvidia-modprob
 
 - Disable GDM **udev** rule which force NVIDIA user the use **Xorg** 
 
-  ``` bash
-  ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
-  ```
+``` bash
+ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
+```
 
 - Enable **Wayland** in the **GDM** configuration
 
-  ``` bash
-  /etc/gdm/custom.conf
-  ______________________________________________________________________________________________________
-  "WaylandEnable=true"
-  ```
+``` bash
+/etc/gdm/custom.conf
+______________________________________________________________________________________________________
+"WaylandEnable=true"
+```
 
 ## Fix suspsension
 
