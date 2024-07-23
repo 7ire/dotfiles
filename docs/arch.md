@@ -135,15 +135,15 @@ sudo pacman -S bluez bluez-utils
   2. Enable the service `bluetooth.service`
 
 ``` bash
-sudo systemctl enable bluetooth
+sudo systemctl enable bluetooth.service
 ```
 
 > [!NOTE]
 > The next step is optional but reccomended to have a better support of all type of bluetooth devices.
 
   3. In the service configuration enable:
-    - **Experimental features**
-    - **dual ControllerMode**
+  - **Experimental features**
+  - **dual ControllerMode**
 
 ``` bash
 /etc/bluetooth/main.conf
@@ -169,5 +169,5 @@ KernelExperimental = true
   - Enable the service `sshd.service`
 
 ``` bash
-sudo systemctl enable sshd
+sudo systemctl enable sshd.service
 ```
