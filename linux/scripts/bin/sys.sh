@@ -53,7 +53,7 @@ gen_mirrorlist() {
   fi
 
   # Update the mirrorlist using reflector
-  if ! sudo reflector -n 20 -p https --sort rate --save /etc/pacman.d/mirrorlist --country 'Italy,Germany,France' --latest 20 &> /dev/null; then
+  if ! sudo reflector --country 'Italy,France,Germany,' --protocol https --age 6 --sort rate --save /etc/pacman.d/mirrorlist &> /dev/null; then
     return 1
   fi
 
@@ -83,6 +83,8 @@ gen_mirrorlist() {
 
 # Use only the most recently synchronized mirrors (--latest).
 --latest 20
+
+--age 6
 
 # Sort the mirrors by download speed (--sort).
 --sort rate

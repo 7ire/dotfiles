@@ -103,9 +103,9 @@ theming() {
   cd $HOME
   
   # Clone my wallpapers repository
-  # if ! git clone git@github.com:7ire/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
-  #   print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
-  # fi
+  if ! git clone git@github.com:7ire/wallpapers.git ~/Immagini/wallpaper &> /dev/null; then
+    print_warning "[-] Couldn't clone the Wallpeper repo, do it manually."
+  fi
 
   # Copy .local directory
   if ! cp -r "$HOME/dotfiles/linux/src/.local/share/bin" "$HOME/.local/share" &> /dev/null; then

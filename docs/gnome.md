@@ -1,129 +1,254 @@
-# GNOME Configuration
+# GNOME configuration guide
+---
+## General base configuration
+Start by removing useless application that come with the GNOME desktop environment and install the desired one.
 
-## Volume steps keys
+My list of application that I remove from my GNOME desktop environment.
 
-Change the default value of the GNOME media key **volume-step**.
+> Warning, take a closer look of which application you remove and there is in the following list, might be useful for you and you want to keep it. But no panic, you can always reinstall it in a second moment.
 
-- Default = `5`
+``` bash
+totem yelp epiphany orca snapshot baobab flatpak simple-scan gnome-software gnome-tour gnome-music gnome-maps gnome-contacts gnome-logs gnome-font-viewer gnome-system-monitor gnome-connections gnome-characters gnome-disk-utility gnome-remote-desktop gnome-console gnome-clocks
+```
+
+My list of application that I rock in my GNOME system:
+- TUI Application
+
+| Package       | Description               |
+| ------------- | ------------------------- |
+| **fastfetch** | Show system information   |
+| **downgrade** | Downgrade package version |
+
+- GUI Application
+
+| Package                                           | Description                                    |
+| ------------------------------------------------- | ---------------------------------------------- |
+| **kitty**                                         | Terminal emulator                              |
+| **blackbox-terminal**                             | Terminal emulator                              |
+| **extension-manager**                             | GNOME Extension manager                        |
+| **brave-bin**                                     | Browser - Brave                                |
+| **firefox**                                       | Browser - Firefox                              |
+| **spotify**                                       | Music - Spotify                                |
+| **amberol**                                       | Music - Amberol                                |
+| **vscodium-bin**                                  | IDE - VSCodium                                 |
+| **obsidian**                                      | Note - Obsidian                                |
+| **thunderbird**                                   | Mail client - Thunderbird                      |
+| **planify**                                       | Productivity - Planify                         |
+| **libreoffice-fresh**                             | Office - Libre Office                          |
+| [Arch BTW] **libreoffice-extension-texmaths**     | Office - Libre Office support of math equation |
+| [Arch BTW] **libreoffice-extension-writer2latex** | Office - Libre Office support of LaTeX         |
+| **xmind**                                         | Mind map - XMind                               |
+| **obs-studio**                                    | Video recorder - OBS                           |
+| **kdenlive**                                      | Video editor - KDEnlive                        |
+| **clapper**                                       | Video player - Clapper                         |
+| **smile**                                         | Emoji picker - Smile                           |
+| **vesktop-bin**                                   | Vesktop - Discord                              |
+| **telegram-desktop**                              | Telegram                                       |
+| **signal-desktop**                                | Signal                                         |
+
+
+Some tweaking of the system, to have more control and better workflow of the GNOME desktop environment.
+
+> For kitty, copy the config file inside the `.config` folder of the dotfiles.
+
+One annoying thing is the audio step, that by default is set to 5. For more or less control and accuracy of the audio volume, change it with the desire value, in this case.
+- Volume step = `2`
 
 ``` bash
 gsettings set org.gnome.settings-daemon.plugins.media-keys volume-step 2
 ```
 
-## Workstation application
+Next is it possible to bind some shortcut to improve the workflow of the system.
 
-Install the necessary/prefer application for your workstation. Above there is my application picks for each category/purpose.
+- Launch applications:
 
-> [!IMPORTANT]
-> All the packages are reference at the AUR repository, so for **Arch linux**. But the same packages or similar can be found in your current running linux distribution or other repository like [AppImage](https://appimage.org/), [Flatpak](https://flatpak.org/) or [Snapcraft](https://snapcraft.io/).
+| Command                  | Shortcut    |
+| ------------------------ | ----------- |
+| **Terminal**             | `super + T` |
+| **Browser**              | `super + F` |
+| **File manager**         | `super + E` |
+| **System settings**      | `super + I` |
+| **Note taking**          | `super + N` |
+| **Application launcher** | `super + A` |
 
-- TUI:
-  - [kitty](https://archlinux.org/packages/extra/x86_64/kitty/)
-  - [fastfetch](https://archlinux.org/packages/extra/x86_64/fastfetch/)
-  - [btop](https://archlinux.org/packages/extra-staging/x86_64/btop/)
-  - [yazi](https://archlinux.org/packages/extra/x86_64/yazi/)
-  - [sioyek](https://aur.archlinux.org/packages/sioyek)
-  - [qutebrowser](https://archlinux.org/packages/extra/any/qutebrowser/)
-  
-  ``` bash
-  paru -S --noconfirm kitty fastfetch btop yazi sioyek qutebrowser
-  ```
+- Motion and control
 
-- GNOME control and customization:
-  - [extension-manager](https://aur.archlinux.org/packages/extension-manager)
-  - [grub-customizer](https://archlinux.org/packages/extra/x86_64/grub-customizer/)
+| Command                         | Shortcut              |
+| ------------------------------- | --------------------- |
+| **Kill application**            | `super + Q`           |
+| **Go to last workspace**        | `super + 0`           |
+| **Move to the right workspace** | `super + TAB`         |
+| **Move to the left workspace**  | `super + shift + TAB` |
 
-  ``` bash
-  paru -S --noconfirm extension-manager grub-customizer
-  ```
+> For the next binding - workspace, keep in mind to disable **dynamic workspaces** in the **gnome-control-settings** to a better usability of each shortcut and more organization of each workspace.
 
-- General usage:
-  - [firefox](https://archlinux.org/packages/extra/x86_64/firefox/)
-  - [brave-bin](https://aur.archlinux.org/packages/brave-bin)
-  - [thunderbird](https://archlinux.org/packages/extra/x86_64/thunderbird/)
-  - [obsidian](https://archlinux.org/packages/extra/x86_64/obsidian/)
-  - [1password](https://aur.archlinux.org/packages/1password)
-  
-  ``` bash
-  paru -S --noconfirm firefox brave-bin thunderbird obsidian 1password
-  ```
+- Switch to a desire workspace:
 
-- Office:
-  - [libreoffice-fresh](https://archlinux.org/packages/extra/x86_64/libreoffice-fresh/)
-  - [libreoffice-extension-texmaths](https://archlinux.org/packages/extra/any/libreoffice-extension-texmaths/)
-  - [libreoffice-extension-writer2latex](https://archlinux.org/packages/extra/any/libreoffice-extension-writer2latex/)
-  - [planify](https://aur.archlinux.org/packages/planify)
-  - [xmind](https://aur.archlinux.org/packages/xmind)
-  
-  ``` bash
-  paru -S --noconfirm libreoffice-fresh libreoffice-extension-texmaths libreoffice-extension-writer2latex planify xmind
-  ```
+| Command         | Shortcut    |
+| --------------- | ----------- |
+| **Workspace 1** | `super + 1` |
+| **Workspace 2** | `super + 2` |
+| **Workspace 3** | `super + 3` |
+| **Workspace 4** | `super + 4` |
+| **Workspace 5** | `super + 5` |
+| **Workspace 6** | `super + 6` |
+| **Workspace 7** | `super + 7` |
+| **Workspace 8** | `super + 8` |
+| **Workspace 9** | `super + 9` |
+> It is recommend to use the command binding provided by **dconf** because the *gnome-control-center* is limited to 4 workspace.
 
-- Media/Music:
-  - [spotify](https://aur.archlinux.org/packages/spotify)
-  - [spicetify-cli](https://aur.archlinux.org/packages/spicetify-cli)
-  - [amberol](https://aur.archlinux.org/packages/amberol)
-  - [clapper](https://archlinux.org/packages/extra-testing/x86_64/clapper/)
-  
-  ``` bash
-  paru -S --noconfirm spotify spicetify-cli amberol clapper
-  ```
+`dconf write /org/gnome/desktop/wm/keybindings/switch-to-workspace-1 "['<Super>1']"`
 
-- Other useful packages:
-  - Fonts:
-    - [nerd-fonts](https://archlinux.org/groups/x86_64/nerd-fonts/)
-    - [noto-fonts-emoji](https://archlinux.org/packages/extra/any/noto-fonts-emoji/)
-    - [smile](https://aur.archlinux.org/packages/smile)
-  - Social:
-    - [vesktop-bin](https://aur.archlinux.org/packages/vesktop-bin)
-    - [telegram-desktop](https://archlinux.org/packages/extra/x86_64/telegram-desktop/)
-    - [signal-desktop](https://archlinux.org/packages/extra/x86_64/signal-desktop/)
-  - Recording/Editing:
-    - [obs-studio](https://archlinux.org/packages/extra/x86_64/obs-studio/)
-    - [obs-pipewire-audio-capture-bin](https://aur.archlinux.org/packages/obs-pipewire-audio-capture-bin)
-    - [kdenlive](https://archlinux.org/packages/extra/x86_64/kdenlive/)
-    - [upscaler](https://aur.archlinux.org/packages/upscaler)
-  - Utils:
-    - [ulauncher](https://aur.archlinux.org/packages/ulauncher)
-    - [impression](https://aur.archlinux.org/packages/impression)
-    - [fragments](https://archlinux.org/packages/extra/x86_64/fragments/)
-    - [grub-customizer](https://archlinux.org/packages/extra/x86_64/grub-customizer/)
-    - [gdm-settings](https://aur.archlinux.org/packages/gdm-settings)
-  - File manager - Nemo:
-    - [nemo](https://archlinux.org/packages/extra/x86_64/nemo/)
-    - [nemo-fileroller](https://archlinux.org/packages/extra/x86_64/nemo-fileroller/)
-    - [nemo-image-converter](https://archlinux.org/packages/extra/x86_64/nemo-image-converter/)
-    - [nemo-preview](https://archlinux.org/packages/extra/x86_64/nemo-preview/)
-    - [nemo-seahorse](https://archlinux.org/packages/extra/x86_64/nemo-seahorse/)
-    - [nemo-dropbox-git](https://aur.archlinux.org/packages/nemo-dropbox-git)
+And edit the value `1` based on the X workspace binding.
 
-> [!NOTE]
-> If you installed `nemo` as a file manager, to configure correctly the right-click option "*Open in Terminal*"  use the following **gsettings** command to assign your default/prefer terminal emulator.
+- Move application to a desire workspace:
 
-``` bash
-gsettings set org.cinnamon.desktop.default-applications.terminal exec <terminal>
+| Command                             | Shortcut            |
+| ----------------------------------- | ------------------- |
+| **Move application to workspace 1** | `super + shift + 1` |
+| **Move application to workspace 2** | `super + shift + 2` |
+| **Move application to workspace 3** | `super + shift + 3` |
+| **Move application to workspace 4** | `super + shift + 4` |
+| **Move application to workspace 5** | `super + shift + 5` |
+| **Move application to workspace 6** | `super + shift + 6` |
+| **Move application to workspace 7** | `super + shift + 7` |
+| **Move application to workspace 8** | `super + shift + 8` |
+| **Move application to workspace 9** | `super + shift + 9` |
+> It is recommend to use the command binding provided by **dconf** because the *gnome-control-center* is limited to 4 workspace.
+
+`dconf write /org/gnome/desktop/wm/keybindings/move-to-workspace-1 "['<Shift><Super>1']"` 
+
+And edit the value `1` based on the X workspace binding. 
+
+- Fix `super + enter` shortcut: https://github.com/pop-os/shell/issues/535
+
+## Ricing of the desktop environment
+To rice a bit the system, install some packages for GNOME shell theme, icon theme, cursor and extensions. This is all about preferences so fell free to ignore the recommendations and all the packages installed in the following sections to make your own system.
+
+GNOME-shell/theme:
+- [gtk-catppucin](https://github.com/catppuccin/gtk/blob/main/docs/USAGE.md)
+
+Icons:
+- [MoreWaita](https://github.com/somepaulo/MoreWaita)
+- [adw-gkt3](https://github.com/lassekongo83/adw-gtk3)
+- [papirus-icon-theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
+	- extend with [papirus-folder-git](https://github.com/PapirusDevelopmentTeam/papirus-folders)
+- [flat-remix](https://github.com/daniruiz/flat-remix)
+
+Cursor:
+- [bibata-cursor](https://github.com/ful1e5/Bibata_Cursor)
+
+Application:
+- [Firefox](https://github.com/rafaelmardojai/firefox-gnome-theme)
+	- [ShyFox](https://www.reddit.com/r/unixporn/comments/1dl1xzx/oc_shyfox_theme_for_firefox_i_made/)
+	- (Recomended) [EdgyArg](https://github.com/artsyfriedchicken/EdgyArc-fr)
+- [Thunderbird](https://github.com/rafaelmardojai/thunderbird-gnome-theme)
+- Spotify:
+	- [spicetify](https://spicetify.app/docs/advanced-usage/installation/#note-for-linux-users)
+	- [spicetify-theme](https://github.com/spicetify/spicetify-themes)
+- Venvcord:
+	- [catppucin](https://github.com/catppuccin/discord)
+	- [system24](https://github.com/refact0r/system24)
+
+Put this in the customCSS file (Venvcord settings, inside Discord)
+``` css
+/* mocha */
+@import url("https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css");
 ```
 
-## Workflow
+For more custom experience in the GNOME desktop environment it is possible to install some extensions. There are listed some of my favorite one:
+- [pop-shell!](https://github.com/pop-os/shell.git)
+- [unite](https://github.com/hardpixel/unite-shell/)
+- [Top bar organizer](https://github.com/jamespo/gnome-extensions/releases/download/gnome46/top-bar-organizerjulian.gse.jsts.xyz.v10.shell-extension.zip)
 
-## Ricing
+This are some of my extensions that I install in my system, for more details, please check the dotfiles and the `ext_installer` and the list of all extensions passed to the installer.
+## Additional notes
+- Fix **Arch Linux update indicator**
 
-- Firefox:
-  - [EdgyArg](https://github.com/artsyfriedchicken/EdgyArc-fr)
+`kitty -- /bin/sh -c "echo 'Starting update...' && sudo pacman -Syu && echo 'Done - Press enter to exit' && read _"`
 
-- Thunderbird:
-  - [Libadwaita](https://github.com/rafaelmardojai/thunderbird-gnome-theme)
+## Fix Nemo thumbnails
+Se non funziona ancora e non ci sono errori evidenti nel journal, possiamo provare alcuni altri approcci per diagnosticare e risolvere il problema delle miniature in Nemo su Arch Linux.
 
-- Spotify:
-  - [spicetify](https://spicetify.app/docs/advanced-usage/installation/#note-for-linux-users)
-  - [spicetify-theme](https://github.com/spicetify/spicetify-themes)
+### 1. **Verifica dei pacchetti MIME**
+A volte, le associazioni MIME possono influenzare la generazione delle miniature. Prova a reinstallare i pacchetti che gestiscono queste associazioni:
 
-- Venvcord:
-  - [catppucin](https://github.com/catppuccin/discord)
+```sh
+sudo pacman -Sxd shared-mime-info
+```
 
-    ``` css
-    /* mocha */
-    @import url("https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css");
-    ```
+### 2. **Controlla le configurazioni di Tumbler**
+Se stai usando Tumbler per generare le miniature, assicurati che sia correttamente configurato. Puoi fare questo modificando il file di configurazione di Tumbler:
 
-  - [system24](https://github.com/refact0r/system24)
+```sh
+sudo nano /etc/xdg/tumbler/tumbler.rc
+```
+
+Assicurati che i plugin appropriati siano abilitati. Dovrebbero esserci sezioni come `[FFMPEGThumbnailer]`, `[PopplerThumbnailer]`, ecc. Verifica che `Disabled=false` sia impostato per i plugin che desideri utilizzare.
+
+### 3. **Verifica le autorizzazioni**
+Assicurati che Nemo abbia le autorizzazioni appropriate per leggere i file e creare miniature. Verifica le autorizzazioni delle directory pertinenti:
+
+```sh
+ls -ld ~/.cache/thumbnails
+```
+
+Dovrebbe restituire qualcosa come:
+
+```sh
+drwx------ 3 yourusername yourusername 4096 date time ~/.cache/thumbnails
+```
+
+Se le autorizzazioni non sono corrette, puoi correggerle con:
+
+```sh
+chmod 700 ~/.cache/thumbnails
+```
+
+### 4. **Rimozione della cache delle miniature**
+A volte, la cache delle miniature può essere corrotta. Prova a rimuoverla e a farla rigenerare:
+
+```sh
+rm -rf ~/.cache/thumbnails/*
+```
+
+### 5. **Controlla i plugin di Nemo**
+Verifica che i plugin di Nemo siano attivi. Puoi farlo andando su:
+
+`Modifica -> Plugin`
+
+Qui, assicurati che i plugin relativi alle anteprime siano abilitati.
+
+### 6. **Verifica i log di Tumbler**
+Se stai usando Tumbler, potrebbe essere utile controllare i suoi log per errori specifici:
+
+```sh
+journalctl -xe | grep tumbler
+```
+
+### 7. **Prova un'altra directory**
+A volte, il problema potrebbe essere specifico di una directory particolare. Prova a creare una nuova directory con alcuni file multimediali e verifica se le miniature vengono generate correttamente lì.
+
+### 8. **Reinstalla Nemo**
+Se tutto il resto fallisce, potresti provare a reinstallare Nemo per assicurarti che non ci siano file corrotti o configurazioni errate:
+
+```sh
+sudo pacman -Rsn nemo
+sudo pacman -S nemo
+```
+
+### 9. **Aggiorna il sistema**
+Assicurati che il tuo sistema sia completamente aggiornato:
+
+```sh
+sudo pacman -Syu
+```
+
+### 10. **Alternative a Tumbler**
+Se Tumbler continua a non funzionare, puoi provare a installare alternative come `gnome-sushi`:
+
+```sh
+sudo pacman -S gnome-sushi
+```
+
+Dopo aver seguito questi passaggi, riavvia il tuo ambiente desktop e verifica se il problema è risolto.
