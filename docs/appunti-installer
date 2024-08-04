@@ -1,0 +1,113 @@
+https://www.dwarmstrong.org/archlinux-install/
+
+# Arch installation
+
+iwctl --passphrase=PASSPHRASE station DEVICE connect SSID
+passwd
+ip a
+ssh root@IP
+
+loadkeys KEYBOARD
+timedatectl set-ntp true
+reflector --country 'Italy,France,Germany' --protocol https --age 6 --sort rate --save /etc/pacman.d/mirrorlist
+pacman -Syy
+
+lsblk
+wipefs -af DISK 
+sgdisk --zap-all --clear DISK
+partprobe DISK
+
+cryptsetup open --type plain -d /dev/urandom DISK target
+dd if=/dev/zero of=/dev/mapper/target bs=1M status=progress oflag=direct
+cryptsetup close target
+
+sgdisk -n 0:0:+1024MiB -t 0:ef00 -c 0:esp DISK
+sgdisk -n 0:0:0 -t 0:8309 -c 0:luks DISK
+partprobe DISK
+
+cryptsetup --type luks1 -v -y luksFormat DISKp2
+cryptsetup open DISKp2 root
+mkfs.vfat -F32 -n ESP DISKp1
+mkfs.btrfs -L archlinux /dev/mapper/root
+
+mount /dev/mapper/root /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@snapshots
+btrfs subvolume create /mnt/@cache
+btrfs subvolume create /mnt/@libvirt
+btrfs subvolume create /mnt/@log
+btrfs subvolume create /mnt/@tmp
+
+umount /mnt
+export sv_opts="rw,noatime,compress-force=zstd:1,space_cache=v2"
+mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
+mkdir -p /mnt/{home,.snapshots,var/cache,var/lib/libvirt,var/log,var/tmp}
+mount -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
+mount -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
+mount -o ${sv_opts},subvol=@cache /dev/mapper/root /mnt/var/cache
+mount -o ${sv_opts},subvol=@libvirt /dev/mapper/root /mnt/var/lib/libvirt
+mount -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
+mount -o ${sv_opts},subvol=@tmp /dev/mapper/root /mnt/var/tmp
+
+mkdir /mnt/boot
+mount DISKp1 /mnt/boot
+
+pacstrap /mnt base base-devel ${microcode} linux-firmware linux-zen linux-zen-headers btrfs-progs neovim bash-completion sudo
+
+genfstab -U -p /mnt >> /mnt/etc/fstab
+arch-chroot /mnt /bin/bash
+
+ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
+hwclock --systohc
+
+echo "amaterasu" > /etc/hostname
+
+cat > /etc/hosts <<EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   amaterasu.localdomain amaterasu
+EOF
+
+export locale="it_IT.UTF-8"
+sed -i "s/^#\(${locale}\)/\1/" /etc/locale.gen
+echo "LANG=${locale}" > /etc/locale.conf
+locale-gen
+
+echo "KEYMAP=it" >> /etc/vconsole.conf
+
+echo "EDITOR=nvim" > /etc/environment && echo "VISUAL=nvim" >> /etc/environment
+
+passwd
+
+pacman -S zsh
+useradd -m -G wheel -s /bin/zsh tire
+passwd tire
+sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
+
+pacman -S --noconfirm networkmanager openssh
+systemctl enable NetworkManager.service
+systemctl enable sshd.service
+
+
+pacman -S --noconfirm cryptsetup
+dd bs=512 count=4 iflag=fullblock if=/dev/random of=/key.bin
+chmod 600 /key.bin
+
+mkinitcpio -P
+
+pacman -S --noconfirm grub efibootmgr sbctl ntfs-3g
+blkid -s UUID -o value DISKp2
+
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --modules="tpm" --disable-shim-lock
+grub-mkconfig -o /boot/grub/grub.cfg
+sbctl status
+sbctl create-keys && sbctl enroll-keys -m
+sbctl sign -s /boot/EFI/GRUB/grubx64.efi && sbctl sign -s /boot/grub/x86_64-efi/core.efi && sbctl sign -s /boot/grub/x86_64-efi/grub.efi && sbctl sign -s /boot/vmlinuz-linux*
+
+- [x] SWAP => https://www.dwarmstrong.org/zram-swap/
+- [x] snaphost
+- [x] pacman contrib
+- [x] Services setup {BT, reflector}
+- [x] AUR
+
